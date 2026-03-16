@@ -4,10 +4,9 @@ import uuid
 from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import Boolean, ForeignKey, Numeric, Text
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base, TimestampMixin
+from app.models.base import Base, TimestampMixin, UUID
 
 if TYPE_CHECKING:
     from app.models.property import Property
@@ -18,13 +17,13 @@ class SavedDeal(TimestampMixin, Base):
     __tablename__ = "saved_deals"
 
     user_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
+        UUID(),
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
     property_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
+        UUID(),
         ForeignKey("properties.id", ondelete="CASCADE"),
         nullable=False,
         index=True,

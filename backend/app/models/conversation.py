@@ -5,11 +5,10 @@ import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING, Any, List, Optional
 
-from sqlalchemy import Enum, Float, ForeignKey, String, Text
-from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy import Enum, Float, ForeignKey, String, Text, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base, TimestampMixin
+from app.models.base import Base, TimestampMixin, UUID
 
 if TYPE_CHECKING:
     from app.models.tenant import Tenant
@@ -39,11 +38,11 @@ class Conversation(TimestampMixin, Base):
     __tablename__ = "conversations"
 
     tenant_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("tenants.id", ondelete="CASCADE"),
+        UUID(), ForeignKey("tenants.id", ondelete="CASCADE"),
         nullable=False, index=True,
     )
     landlord_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"),
+        UUID(), ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False, index=True,
     )
     channel: Mapped[ChannelType] = mapped_column(
@@ -75,7 +74,7 @@ class Message(TimestampMixin, Base):
     __tablename__ = "messages"
 
     conversation_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("conversations.id", ondelete="CASCADE"),
+        UUID(), ForeignKey("conversations.id", ondelete="CASCADE"),
         nullable=False, index=True,
     )
     sender_type: Mapped[SenderType] = mapped_column(
@@ -86,7 +85,7 @@ class Message(TimestampMixin, Base):
     intent: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     confidence: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     metadata_: Mapped[Optional[dict[str, Any]]] = mapped_column(
-        "metadata", JSONB, nullable=True
+        "metadata", JSON, nullable=True
     )
 
     # Relationships

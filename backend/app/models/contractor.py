@@ -4,10 +4,9 @@ import uuid
 from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import Boolean, Float, ForeignKey, Integer, String
-from sqlalchemy.dialects.postgresql import ARRAY, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base, TimestampMixin
+from app.models.base import Base, TimestampMixin, UUID
 
 if TYPE_CHECKING:
     from app.models.user import User
@@ -17,7 +16,7 @@ class Contractor(TimestampMixin, Base):
     __tablename__ = "contractors"
 
     landlord_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"),
+        UUID(), ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False, index=True,
     )
     company_name: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -25,7 +24,7 @@ class Contractor(TimestampMixin, Base):
     phone: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     email: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     trades: Mapped[Optional[list[str]]] = mapped_column(
-        ARRAY(String), nullable=True
+        String, nullable=True
     )
     avg_rating: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     total_jobs: Mapped[int] = mapped_column(

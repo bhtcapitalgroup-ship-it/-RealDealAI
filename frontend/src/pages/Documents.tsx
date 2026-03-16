@@ -5,24 +5,29 @@ import clsx from 'clsx';
 import api from '../lib/api';
 import Badge from '../components/Badge';
 
-interface Document { id: string; name: string; type: 'lease' | 'inspection' | 'contract' | 'receipt' | 'other'; property: string; uploadedAt: string; size: string; status: 'active' | 'expired' | 'pending'; }
+interface Document { id: string; name: string; type: 'lease' | 'inspection' | 'insurance' | 'contract' | 'receipt' | 'other'; property: string; uploadedAt: string; size: string; status: 'active' | 'expired' | 'pending'; }
 
 const mockDocuments: Document[] = [
-  { id: '1', name: 'Lease Agreement - Sarah Johnson', type: 'lease', property: 'Oak Manor', uploadedAt: '2026-01-15', size: '2.4 MB', status: 'active' },
-  { id: '2', name: 'Lease Agreement - Mike Chen', type: 'lease', property: 'Oak Manor', uploadedAt: '2025-12-01', size: '2.1 MB', status: 'active' },
-  { id: '3', name: 'Annual Inspection Report 2025', type: 'inspection', property: 'Oak Manor', uploadedAt: '2025-11-20', size: '5.7 MB', status: 'active' },
-  { id: '4', name: 'Plumbing Repair Contract', type: 'contract', property: 'Elm Street Duplex', uploadedAt: '2026-02-10', size: '890 KB', status: 'active' },
-  { id: '5', name: 'HVAC Maintenance Receipt', type: 'receipt', property: 'Pine Ridge', uploadedAt: '2026-03-05', size: '340 KB', status: 'active' },
-  { id: '6', name: 'Lease Agreement - David Kim', type: 'lease', property: 'Oak Manor', uploadedAt: '2025-09-01', size: '2.3 MB', status: 'active' },
-  { id: '7', name: 'Lease Agreement - Former Tenant', type: 'lease', property: 'Oak Manor', uploadedAt: '2024-03-15', size: '1.9 MB', status: 'expired' },
-  { id: '8', name: 'Fire Inspection Certificate', type: 'inspection', property: 'All Properties', uploadedAt: '2026-01-30', size: '1.2 MB', status: 'active' },
-  { id: '9', name: 'Landscaping Contract Q1 2026', type: 'contract', property: 'Pine Ridge', uploadedAt: '2026-01-05', size: '650 KB', status: 'active' },
-  { id: '10', name: 'Appliance Purchase Receipt', type: 'receipt', property: 'Elm Street Duplex', uploadedAt: '2026-02-22', size: '180 KB', status: 'active' },
+  { id: '1', name: 'Lease Agreement - Sarah Johnson (1A)', type: 'lease', property: 'Maple Street Apartments', uploadedAt: '2026-01-15', size: '2.4 MB', status: 'active' },
+  { id: '2', name: 'Lease Agreement - Mike Chen (1B)', type: 'lease', property: 'Maple Street Apartments', uploadedAt: '2025-12-01', size: '2.1 MB', status: 'active' },
+  { id: '3', name: 'Lease Agreement - James Smith (3A)', type: 'lease', property: 'Maple Street Apartments', uploadedAt: '2025-09-01', size: '2.3 MB', status: 'active' },
+  { id: '4', name: 'Lease Agreement - Marcus Johnson (1A)', type: 'lease', property: 'Oak Park Townhomes', uploadedAt: '2025-10-15', size: '2.2 MB', status: 'active' },
+  { id: '5', name: 'Lease Agreement - Former Tenant (2B)', type: 'lease', property: 'Maple Street Apartments', uploadedAt: '2024-03-15', size: '1.9 MB', status: 'expired' },
+  { id: '6', name: 'Annual Inspection Report 2025', type: 'inspection', property: 'Maple Street Apartments', uploadedAt: '2025-11-20', size: '5.7 MB', status: 'active' },
+  { id: '7', name: 'Fire Safety Inspection Certificate', type: 'inspection', property: 'All Properties', uploadedAt: '2026-01-30', size: '1.2 MB', status: 'active' },
+  { id: '8', name: 'Property Insurance Policy 2026', type: 'insurance', property: 'Maple Street Apartments', uploadedAt: '2026-01-01', size: '3.8 MB', status: 'active' },
+  { id: '9', name: 'Liability Insurance Certificate', type: 'insurance', property: 'All Properties', uploadedAt: '2026-01-01', size: '1.5 MB', status: 'active' },
+  { id: '10', name: 'Plumbing Repair Contract - Unit 4B', type: 'contract', property: 'Oak Park Townhomes', uploadedAt: '2026-02-10', size: '890 KB', status: 'active' },
+  { id: '11', name: 'Landscaping Contract Q1 2026', type: 'contract', property: 'Cedar Heights Condo', uploadedAt: '2026-01-05', size: '650 KB', status: 'active' },
+  { id: '12', name: 'HVAC Maintenance Receipt - 6C', type: 'receipt', property: 'Maple Street Apartments', uploadedAt: '2026-03-05', size: '340 KB', status: 'active' },
+  { id: '13', name: 'Appliance Purchase Receipt - Dishwasher', type: 'receipt', property: 'Oak Park Townhomes', uploadedAt: '2026-02-22', size: '180 KB', status: 'active' },
+  { id: '14', name: 'HOA Bylaws and Regulations', type: 'other', property: 'Cedar Heights Condo', uploadedAt: '2025-06-15', size: '4.2 MB', status: 'active' },
 ];
 
 const typeColors: Record<string, { label: string; variant: 'info' | 'success' | 'purple' | 'warning' | 'neutral' }> = {
   lease: { label: 'Lease', variant: 'info' }, inspection: { label: 'Inspection', variant: 'success' },
-  contract: { label: 'Contract', variant: 'purple' }, receipt: { label: 'Receipt', variant: 'warning' }, other: { label: 'Other', variant: 'neutral' },
+  insurance: { label: 'Insurance', variant: 'purple' }, contract: { label: 'Contract', variant: 'purple' },
+  receipt: { label: 'Receipt', variant: 'warning' }, other: { label: 'Other', variant: 'neutral' },
 };
 
 export default function Documents() {
@@ -58,7 +63,7 @@ export default function Documents() {
 
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
         <div className="relative flex-1 max-w-sm"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" /><input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search documents..." className="w-full pl-10 pr-4 py-2 text-sm bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" /></div>
-        <div className="flex items-center gap-2"><Filter className="w-4 h-4 text-zinc-400" />{['all', 'lease', 'inspection', 'contract', 'receipt'].map((t) => (<button key={t} onClick={() => setTypeFilter(t)} className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-colors ${typeFilter === t ? 'bg-blue-600 text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'}`}>{t.charAt(0).toUpperCase() + t.slice(1)}</button>))}</div>
+        <div className="flex items-center gap-2"><Filter className="w-4 h-4 text-zinc-400" />{['all', 'lease', 'inspection', 'insurance', 'contract', 'receipt'].map((t) => (<button key={t} onClick={() => setTypeFilter(t)} className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-colors ${typeFilter === t ? 'bg-blue-600 text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'}`}>{t.charAt(0).toUpperCase() + t.slice(1)}</button>))}</div>
         <div className="flex items-center gap-1 ml-auto">
           <button onClick={() => setView('grid')} className={clsx('p-2 rounded-lg transition-colors', view === 'grid' ? 'bg-zinc-200 text-zinc-800' : 'text-zinc-400 hover:text-zinc-600')}><LayoutGrid className="w-4 h-4" /></button>
           <button onClick={() => setView('list')} className={clsx('p-2 rounded-lg transition-colors', view === 'list' ? 'bg-zinc-200 text-zinc-800' : 'text-zinc-400 hover:text-zinc-600')}><List className="w-4 h-4" /></button>

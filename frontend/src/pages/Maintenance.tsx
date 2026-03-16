@@ -14,14 +14,15 @@ interface Ticket {
 }
 
 const mockTickets: Ticket[] = [
-  { id: '1', ticketNumber: 'MT-1042', unit: '1B', property: 'Oak Manor', category: 'Plumbing', description: 'Kitchen sink leaking under the cabinet. Water damage visible on floor.', urgency: 'emergency', status: 'open', createdAt: '2026-03-16T10:30:00Z' },
-  { id: '2', ticketNumber: 'MT-1041', unit: '3A', property: 'Oak Manor', category: 'HVAC', description: 'Heater not turning on. Temperature dropping in unit.', urgency: 'emergency', status: 'in_progress', createdAt: '2026-03-15T22:00:00Z' },
-  { id: '3', ticketNumber: 'MT-1040', unit: '4A', property: 'Oak Manor', category: 'Electrical', description: 'Multiple outlets in bedroom not working. Breaker keeps tripping.', urgency: 'urgent', status: 'open', createdAt: '2026-03-15T14:00:00Z' },
-  { id: '4', ticketNumber: 'MT-1039', unit: 'A', property: 'Elm Street Duplex', category: 'Appliance', description: 'Dishwasher making grinding noise and not completing cycles.', urgency: 'urgent', status: 'open', createdAt: '2026-03-15T09:00:00Z' },
-  { id: '5', ticketNumber: 'MT-1038', unit: '2A', property: 'Oak Manor', category: 'General', description: 'Bathroom door handle loose. Needs tightening or replacement.', urgency: 'routine', status: 'open', createdAt: '2026-03-14T16:00:00Z' },
-  { id: '6', ticketNumber: 'MT-1037', unit: '1', property: 'Pine Ridge', category: 'Exterior', description: 'Gutter detached from roofline on south side of building.', urgency: 'routine', status: 'in_progress', createdAt: '2026-03-14T11:00:00Z' },
-  { id: '7', ticketNumber: 'MT-1036', unit: '3B', property: 'Oak Manor', category: 'Painting', description: 'Ceiling water stain in living room from previous plumbing repair.', urgency: 'routine', status: 'open', createdAt: '2026-03-13T09:00:00Z' },
-  { id: '8', ticketNumber: 'MT-1035', unit: 'B', property: 'Elm Street Duplex', category: 'Pest Control', description: 'Ant infestation in kitchen area near window. Recurring issue.', urgency: 'routine', status: 'open', createdAt: '2026-03-12T15:00:00Z' },
+  { id: '1', ticketNumber: 'MT-1049', unit: '2A', property: 'Maple Street Apartments', category: 'Structural', description: 'Gas smell reported in unit 2A. Tenant evacuated. Urgent safety concern.', urgency: 'emergency', status: 'open', createdAt: '2026-03-16T14:50:00Z' },
+  { id: '2', ticketNumber: 'MT-1048', unit: '4B', property: 'Oak Park Townhomes', category: 'Plumbing', description: 'Ceiling leak in bathroom. Water dripping from above, discoloration visible on ceiling.', urgency: 'urgent', status: 'in_progress', createdAt: '2026-03-16T12:00:00Z' },
+  { id: '3', ticketNumber: 'MT-1047', unit: '6C', property: 'Maple Street Apartments', category: 'HVAC', description: 'AC not cooling. Unit reads 82°F with thermostat set to 72°F. Compressor may be failing.', urgency: 'urgent', status: 'open', createdAt: '2026-03-16T09:00:00Z' },
+  { id: '4', ticketNumber: 'MT-1046', unit: '1A', property: 'Oak Park Townhomes', category: 'Plumbing', description: 'No hot water in unit. Water heater pilot light keeps going out.', urgency: 'urgent', status: 'open', createdAt: '2026-03-16T06:00:00Z' },
+  { id: '5', ticketNumber: 'MT-1045', unit: '3B', property: 'Oak Park Townhomes', category: 'Appliance', description: 'Dishwasher leaking water onto kitchen floor during wash cycle.', urgency: 'routine', status: 'open', createdAt: '2026-03-15T14:00:00Z' },
+  { id: '6', ticketNumber: 'MT-1044', unit: '5A', property: 'Maple Street Apartments', category: 'Structural', description: 'Cracked window in living room. Draft coming through. Needs replacement.', urgency: 'routine', status: 'open', createdAt: '2026-03-14T10:00:00Z' },
+  { id: '7', ticketNumber: 'MT-1043', unit: 'D', property: 'Cedar Heights Condo', category: 'Appliance', description: 'Garbage disposal jammed and making grinding noise. Will not reset.', urgency: 'routine', status: 'open', createdAt: '2026-03-13T11:00:00Z' },
+  { id: '8', ticketNumber: 'MT-1042', unit: '--', property: 'Maple Street Apartments', category: 'Other', description: 'Paint peeling in second floor hallway near stairwell. Cosmetic but visible.', urgency: 'routine', status: 'in_progress', createdAt: '2026-03-12T09:00:00Z' },
+  { id: '9', ticketNumber: 'MT-1041', unit: '2C', property: 'Oak Park Townhomes', category: 'Other', description: 'Loose doorknob on front door. Wobbles and difficult to latch properly.', urgency: 'routine', status: 'open', createdAt: '2026-03-11T16:00:00Z' },
 ];
 
 const urgencyConfig = {
@@ -84,7 +85,7 @@ export default function Maintenance() {
       <Modal open={showNew} onClose={() => setShowNew(false)} title="New Maintenance Request" size="lg">
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setShowNew(false); }}>
           <div className="grid grid-cols-2 gap-4">
-            <div><label className="block text-sm font-medium text-zinc-700 mb-1">Property</label><select className="w-full px-3 py-2.5 text-sm border border-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"><option>Oak Manor Apartments</option><option>Elm Street Duplex</option><option>Pine Ridge Townhomes</option></select></div>
+            <div><label className="block text-sm font-medium text-zinc-700 mb-1">Property</label><select className="w-full px-3 py-2.5 text-sm border border-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"><option>Maple Street Apartments</option><option>Oak Park Townhomes</option><option>Cedar Heights Condo</option></select></div>
             <div><label className="block text-sm font-medium text-zinc-700 mb-1">Unit</label><select className="w-full px-3 py-2.5 text-sm border border-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"><option>1A</option><option>1B</option><option>2A</option><option>2B</option></select></div>
           </div>
           <div className="grid grid-cols-2 gap-4">

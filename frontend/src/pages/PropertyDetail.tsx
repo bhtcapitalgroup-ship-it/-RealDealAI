@@ -14,17 +14,21 @@ interface Unit {
 }
 
 const mockProperty = {
-  id: '1', name: 'Oak Manor Apartments', address: '142 Oak Street, Portland, OR 97201', type: 'Multi-Family',
-  monthlyIncome: 14400, monthlyExpenses: 5200, noi: 9200,
+  id: '1', name: 'Maple Street Apartments', address: '742 Maple St, Portland, OR 97201', type: 'Multi-Family',
+  monthlyIncome: 21600, monthlyExpenses: 8400, noi: 13200,
   units: [
-    { id: 'u1', number: '1A', bedrooms: 2, bathrooms: 1, sqft: 850, rent: 1800, status: 'occupied' as const, tenant: 'Sarah Johnson' },
-    { id: 'u2', number: '1B', bedrooms: 1, bathrooms: 1, sqft: 650, rent: 1400, status: 'occupied' as const, tenant: 'Mike Chen' },
-    { id: 'u3', number: '2A', bedrooms: 2, bathrooms: 1, sqft: 850, rent: 1850, status: 'occupied' as const, tenant: 'Lisa Park' },
-    { id: 'u4', number: '2B', bedrooms: 1, bathrooms: 1, sqft: 650, rent: 1400, status: 'vacant' as const, tenant: null },
-    { id: 'u5', number: '3A', bedrooms: 3, bathrooms: 2, sqft: 1100, rent: 2400, status: 'occupied' as const, tenant: 'David Kim' },
-    { id: 'u6', number: '3B', bedrooms: 2, bathrooms: 1, sqft: 850, rent: 1850, status: 'occupied' as const, tenant: 'Emma Wilson' },
-    { id: 'u7', number: '4A', bedrooms: 2, bathrooms: 2, sqft: 950, rent: 2000, status: 'notice' as const, tenant: 'James Brown' },
-    { id: 'u8', number: '4B', bedrooms: 1, bathrooms: 1, sqft: 650, rent: 1700, status: 'occupied' as const, tenant: 'Amy Taylor' },
+    { id: 'u1', number: '1A', bedrooms: 1, bathrooms: 1, sqft: 650, rent: 1200, status: 'occupied' as const, tenant: 'Sarah Johnson' },
+    { id: 'u2', number: '1B', bedrooms: 1, bathrooms: 1, sqft: 650, rent: 1200, status: 'occupied' as const, tenant: 'Mike Chen' },
+    { id: 'u3', number: '2A', bedrooms: 2, bathrooms: 1, sqft: 850, rent: 1800, status: 'occupied' as const, tenant: 'Lisa Park' },
+    { id: 'u4', number: '2B', bedrooms: 2, bathrooms: 1, sqft: 850, rent: 1800, status: 'vacant' as const, tenant: null },
+    { id: 'u5', number: '3A', bedrooms: 3, bathrooms: 2, sqft: 1100, rent: 2400, status: 'occupied' as const, tenant: 'James Smith' },
+    { id: 'u6', number: '3B', bedrooms: 2, bathrooms: 1, sqft: 850, rent: 1800, status: 'occupied' as const, tenant: 'Emma Wilson' },
+    { id: 'u7', number: '4A', bedrooms: 2, bathrooms: 2, sqft: 950, rent: 2000, status: 'notice' as const, tenant: 'David Kim' },
+    { id: 'u8', number: '4B', bedrooms: 1, bathrooms: 1, sqft: 650, rent: 1400, status: 'occupied' as const, tenant: 'Amy Taylor' },
+    { id: 'u9', number: '5A', bedrooms: 2, bathrooms: 1, sqft: 850, rent: 1800, status: 'occupied' as const, tenant: 'Robert Garcia' },
+    { id: 'u10', number: '5B', bedrooms: 1, bathrooms: 1, sqft: 650, rent: 1400, status: 'occupied' as const, tenant: 'Nina Patel' },
+    { id: 'u11', number: '6A', bedrooms: 3, bathrooms: 2, sqft: 1100, rent: 2400, status: 'occupied' as const, tenant: 'Carlos Rivera' },
+    { id: 'u12', number: '6C', bedrooms: 2, bathrooms: 1, sqft: 850, rent: 1800, status: 'occupied' as const, tenant: 'Jennifer Lee' },
   ],
 };
 

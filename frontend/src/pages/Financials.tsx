@@ -4,29 +4,26 @@ import { Download, FileSpreadsheet, FileText } from 'lucide-react';
 import api from '../lib/api';
 
 const monthlyData = [
-  { month: 'Apr', income: 38500, expenses: 12200 }, { month: 'May', income: 39200, expenses: 13100 },
-  { month: 'Jun', income: 41000, expenses: 11800 }, { month: 'Jul', income: 42500, expenses: 14500 },
-  { month: 'Aug', income: 43000, expenses: 12900 }, { month: 'Sep', income: 43500, expenses: 13200 },
-  { month: 'Oct', income: 42500, expenses: 11500 }, { month: 'Nov', income: 44200, expenses: 12800 },
-  { month: 'Dec', income: 43800, expenses: 15200 }, { month: 'Jan', income: 44900, expenses: 13100 },
-  { month: 'Feb', income: 45800, expenses: 12400 }, { month: 'Mar', income: 46200, expenses: 14350 },
+  { month: 'Apr', income: 36200, expenses: 10800 }, { month: 'May', income: 37400, expenses: 11200 },
+  { month: 'Jun', income: 38100, expenses: 10500 }, { month: 'Jul', income: 37800, expenses: 12800 },
+  { month: 'Aug', income: 39200, expenses: 11400 }, { month: 'Sep', income: 39600, expenses: 11900 },
+  { month: 'Oct', income: 38800, expenses: 10300 }, { month: 'Nov', income: 40100, expenses: 11600 },
+  { month: 'Dec', income: 39500, expenses: 13800 }, { month: 'Jan', income: 40200, expenses: 11800 },
+  { month: 'Feb', income: 41000, expenses: 10900 }, { month: 'Mar', income: 41600, expenses: 13500 },
 ];
 
 const noiData = monthlyData.map((d) => ({ month: d.month, noi: d.income - d.expenses }));
 
 const expenseBreakdown = [
-  { name: 'Maintenance', value: 42000, color: '#3b82f6' }, { name: 'Insurance', value: 18000, color: '#8b5cf6' },
-  { name: 'Property Tax', value: 36000, color: '#f59e0b' }, { name: 'Utilities', value: 15000, color: '#10b981' },
-  { name: 'Management', value: 24000, color: '#ef4444' }, { name: 'Other', value: 9000, color: '#6b7280' },
+  { name: 'Maintenance', value: 51600, color: '#3b82f6' }, { name: 'Insurance', value: 29500, color: '#8b5cf6' },
+  { name: 'Property Tax', value: 36900, color: '#f59e0b' }, { name: 'Management', value: 14750, color: '#ef4444' },
+  { name: 'Utilities', value: 14750, color: '#10b981' },
 ];
 
 const propertyPnL = [
-  { property: 'Oak Manor Apartments', income: 172800, expenses: 62400, noi: 110400, units: 8 },
-  { property: 'Elm Street Duplex', income: 45600, expenses: 16800, noi: 28800, units: 2 },
-  { property: 'Pine Ridge Townhomes', income: 158400, expenses: 52800, noi: 105600, units: 6 },
-  { property: 'Cedar Heights', income: 105600, expenses: 38400, noi: 67200, units: 4 },
-  { property: 'Maple View SFR', income: 26400, expenses: 9600, noi: 16800, units: 1 },
-  { property: 'Birch Park Complex', income: 61200, expenses: 22800, noi: 38400, units: 3 },
+  { property: 'Maple Street Apartments', income: 259200, expenses: 92400, noi: 166800, units: 12 },
+  { property: 'Oak Park Townhomes', income: 153600, expenses: 57600, noi: 96000, units: 8 },
+  { property: 'Cedar Heights Condo', income: 86400, expenses: 30000, noi: 56400, units: 4 },
 ];
 
 export default function Financials() {

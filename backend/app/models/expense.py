@@ -6,10 +6,9 @@ from datetime import date
 from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import Date, Enum, ForeignKey, Numeric, String, Text
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base, TimestampMixin
+from app.models.base import Base, TimestampMixin, UUID
 
 if TYPE_CHECKING:
     from app.models.property import Property
@@ -33,15 +32,15 @@ class Expense(TimestampMixin, Base):
     __tablename__ = "expenses"
 
     landlord_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"),
+        UUID(), ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False, index=True,
     )
     property_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("properties.id", ondelete="SET NULL"),
+        UUID(), ForeignKey("properties.id", ondelete="SET NULL"),
         nullable=True, index=True,
     )
     maintenance_request_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("maintenance_requests.id", ondelete="SET NULL"),
+        UUID(), ForeignKey("maintenance_requests.id", ondelete="SET NULL"),
         nullable=True,
     )
     category: Mapped[ExpenseCategory] = mapped_column(

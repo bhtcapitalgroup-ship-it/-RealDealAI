@@ -132,4 +132,43 @@ export const financialsApi = {
     api.post("/financials/expenses", data).then((r) => r.data),
 };
 
+export const onboardingApi = {
+  status: () => api.get("/onboarding/status").then((r) => r.data),
+  savePreferences: (data: Record<string, unknown>) =>
+    api.post("/onboarding/preferences", data).then((r) => r.data),
+  recommendedMarkets: () =>
+    api.get("/onboarding/recommended-markets").then((r) => r.data),
+  createAlerts: () =>
+    api.post("/onboarding/create-alerts").then((r) => r.data),
+};
+
+export const apiKeysApi = {
+  list: () => api.get("/api-keys").then((r) => r.data),
+  create: (data: { name?: string; rate_limit_per_hour?: number; expires_at?: string }) =>
+    api.post("/api-keys", data).then((r) => r.data),
+  revoke: (id: string) => api.delete(`/api-keys/${id}`),
+  usage: (id: string) => api.get(`/api-keys/${id}/usage`).then((r) => r.data),
+};
+
+export const adminApi = {
+  stats: () => api.get("/admin/stats").then((r) => r.data),
+  users: (params?: Record<string, unknown>) =>
+    api.get("/admin/users", { params }).then((r) => r.data),
+  updateUser: (id: string, data: Record<string, unknown>) =>
+    api.put(`/admin/users/${id}`, data).then((r) => r.data),
+  userActivity: (id: string, limit?: number) =>
+    api.get(`/admin/users/${id}/activity`, { params: { limit } }).then((r) => r.data),
+  scrapersStatus: () => api.get("/admin/scrapers/status").then((r) => r.data),
+  triggerScraper: (source: string, market?: string) =>
+    api.post(`/admin/scrapers/${source}/run`, null, { params: { market } }).then((r) => r.data),
+  scraperLogs: (params?: Record<string, unknown>) =>
+    api.get("/admin/scrapers/logs", { params }).then((r) => r.data),
+  engagement: () => api.get("/admin/analytics/engagement").then((r) => r.data),
+  conversion: () => api.get("/admin/analytics/conversion").then((r) => r.data),
+  popularMarkets: (limit?: number) =>
+    api.get("/admin/analytics/popular-markets", { params: { limit } }).then((r) => r.data),
+  reanalyzeProperties: () =>
+    api.post("/admin/properties/reanalyze").then((r) => r.data),
+};
+
 export default api;

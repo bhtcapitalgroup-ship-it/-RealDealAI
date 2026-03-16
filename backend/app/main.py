@@ -6,7 +6,6 @@ from collections.abc import AsyncIterator
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.v1 import api_router
 from app.core.config import settings
 from app.core.database import engine
 from app.models.base import Base
@@ -14,11 +13,9 @@ from app.models.base import Base
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    """Application lifespan handler.
+    # Import all models so they register with Base.metadata
+    import app.models  # noqa: F401
 
-    Creates database tables on startup (useful for development) and disposes
-    of the engine connection pool on shutdown.
-    """
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield
@@ -28,13 +25,12 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
-    description="AI-powered real estate deal finder for U.S. investors",
+    description="AI-powered property management platform",
     docs_url="/docs",
     redoc_url="/redoc",
     lifespan=lifespan,
 )
 
-# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
@@ -43,11 +39,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Routers
-app.include_router(api_router)
+# Import and include routers — catch import errors for optional modules
+from app.api.v1.auth import router as auth_router
+from app.api.v1.properties import router as properties_router
+from app.api.v1.units import router as units_router
+from app.api.v1.tenants import router as tenants_router
+from app.api.v1.leases import router as leases_router
+from app.api.v1.payments import router as payments_router
+from app.api.v1.maintenance import router as maintenance_router
+from app.api.v1.contractors import router as contractors_router
+from app.api.v1.documents import router as documents_router
+from app.api.v1.chat import router as chat_router
+from app.api.v1.financials import router as financials_router
+from app.api.v1.webhooks import router as webhooks_router
+
+for r in [
+    auth_router, properties_router, units_router, tenants_router,
+    leases_router, payments_router, maintenance_router, contractors_router,
+    documents_router, chat_router, financials_router, webhooks_router,
+]:
+    app.include_router(r, prefix="/api/v1")
 
 
 @app.get("/health", tags=["health"])
 async def health_check() -> dict[str, str]:
-    """Health check endpoint for load balancers and monitoring."""
     return {"status": "healthy", "version": settings.APP_VERSION}

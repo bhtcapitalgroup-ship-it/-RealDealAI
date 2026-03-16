@@ -7,12 +7,9 @@ import Badge from '../components/Badge';
 import Modal from '../components/Modal';
 
 const mockProperties = [
-  { id: '1', name: 'Oak Manor Apartments', address: '142 Oak Street, Portland, OR 97201', type: 'Multi-Family', units: 8, occupied: 7, monthlyIncome: 14400 },
-  { id: '2', name: 'Elm Street Duplex', address: '89 Elm Street, Portland, OR 97205', type: 'Duplex', units: 2, occupied: 2, monthlyIncome: 3800 },
-  { id: '3', name: 'Pine Ridge Townhomes', address: '567 Pine Ridge Dr, Beaverton, OR 97008', type: 'Townhome', units: 6, occupied: 5, monthlyIncome: 13200 },
-  { id: '4', name: 'Cedar Heights', address: '234 Cedar Blvd, Lake Oswego, OR 97034', type: 'Multi-Family', units: 4, occupied: 4, monthlyIncome: 8800 },
-  { id: '5', name: 'Maple View SFR', address: '91 Maple Ave, Tigard, OR 97223', type: 'Single Family', units: 1, occupied: 1, monthlyIncome: 2200 },
-  { id: '6', name: 'Birch Park Complex', address: '410 Birch Park Ln, Hillsboro, OR 97124', type: 'Multi-Family', units: 3, occupied: 3, monthlyIncome: 5100 },
+  { id: '1', name: 'Maple Street Apartments', address: '742 Maple St, Portland, OR 97201', type: 'Multi-Family', units: 12, occupied: 11, monthlyIncome: 21600 },
+  { id: '2', name: 'Oak Park Townhomes', address: '1200 Oak Park Dr, Portland, OR 97205', type: 'Townhouse', units: 8, occupied: 7, monthlyIncome: 12800 },
+  { id: '3', name: 'Cedar Heights Condo', address: '890 Cedar Heights Way, Lake Oswego, OR 97034', type: 'Condo', units: 4, occupied: 4, monthlyIncome: 7200 },
 ];
 
 export default function Properties() {

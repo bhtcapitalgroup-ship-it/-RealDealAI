@@ -4,11 +4,10 @@ import enum
 import uuid
 from typing import TYPE_CHECKING, Any, Optional
 
-from sqlalchemy import Boolean, Enum, ForeignKey, String, Text
-from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy import Boolean, Enum, ForeignKey, String, Text, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base, TimestampMixin
+from app.models.base import Base, TimestampMixin, UUID
 
 if TYPE_CHECKING:
     from app.models.user import User
@@ -28,7 +27,7 @@ class Notification(TimestampMixin, Base):
     __tablename__ = "notifications"
 
     landlord_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"),
+        UUID(), ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False, index=True,
     )
     type: Mapped[NotificationType] = mapped_column(
@@ -37,7 +36,7 @@ class Notification(TimestampMixin, Base):
     )
     title: Mapped[str] = mapped_column(String(500), nullable=False)
     message: Mapped[str] = mapped_column(Text, nullable=False)
-    data: Mapped[Optional[dict[str, Any]]] = mapped_column(JSONB, nullable=True)
+    data: Mapped[Optional[dict[str, Any]]] = mapped_column(JSON, nullable=True)
     is_read: Mapped[bool] = mapped_column(
         Boolean, default=False, server_default="false", nullable=False
     )

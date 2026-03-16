@@ -5,11 +5,10 @@ import uuid
 from datetime import date, datetime
 from typing import TYPE_CHECKING, Any, List, Optional
 
-from sqlalchemy import Date, Enum, ForeignKey, Integer, Numeric, String
-from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy import Date, Enum, ForeignKey, Integer, Numeric, String, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base, TimestampMixin
+from app.models.base import Base, TimestampMixin, UUID
 
 if TYPE_CHECKING:
     from app.models.payment import Payment
@@ -32,11 +31,11 @@ class Lease(TimestampMixin, Base):
     __tablename__ = "leases"
 
     unit_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("units.id", ondelete="CASCADE"),
+        UUID(), ForeignKey("units.id", ondelete="CASCADE"),
         nullable=False, index=True,
     )
     tenant_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("tenants.id", ondelete="CASCADE"),
+        UUID(), ForeignKey("tenants.id", ondelete="CASCADE"),
         nullable=False, index=True,
     )
     rent_amount: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
@@ -67,11 +66,11 @@ class Lease(TimestampMixin, Base):
         index=True,
     )
     document_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("documents.id", ondelete="SET NULL"),
+        UUID(), ForeignKey("documents.id", ondelete="SET NULL"),
         nullable=True,
     )
     ai_analysis: Mapped[Optional[dict[str, Any]]] = mapped_column(
-        JSONB, nullable=True
+        JSON, nullable=True
     )
 
     # Relationships

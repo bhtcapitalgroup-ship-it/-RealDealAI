@@ -7,20 +7,25 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import StatCard from '../components/StatCard';
 
 const rentData = [
-  { month: 'Oct', collected: 42500, expected: 45000 },
-  { month: 'Nov', collected: 44200, expected: 45000 },
-  { month: 'Dec', collected: 43800, expected: 45000 },
-  { month: 'Jan', collected: 44900, expected: 46500 },
-  { month: 'Feb', collected: 45800, expected: 46500 },
-  { month: 'Mar', collected: 46200, expected: 46500 },
+  { month: 'Oct', collected: 34200, expected: 41600 },
+  { month: 'Nov', collected: 36800, expected: 41600 },
+  { month: 'Dec', collected: 37100, expected: 41600 },
+  { month: 'Jan', collected: 35900, expected: 41600 },
+  { month: 'Feb', collected: 38400, expected: 41600 },
+  { month: 'Mar', collected: 38400, expected: 41600 },
 ];
 
 const aiActivity = [
-  { id: 1, action: 'Responded to tenant inquiry about lease renewal', tenant: 'Sarah Johnson', time: '5 min ago' },
-  { id: 2, action: 'Diagnosed maintenance request: HVAC compressor failure', tenant: 'Unit 4B - Oak Manor', time: '22 min ago' },
-  { id: 3, action: 'Sent rent reminder to 3 tenants', tenant: 'Multiple units', time: '1 hr ago' },
-  { id: 4, action: 'Escalated noise complaint for landlord review', tenant: 'Mike Chen - Unit 2A', time: '2 hrs ago' },
-  { id: 5, action: 'Approved contractor quote for plumbing repair ($280)', tenant: 'Unit 7 - Elm Street', time: '3 hrs ago' },
+  { id: 1, action: 'Collected $1,800 rent payment from J. Smith (3A)', tenant: 'Maple Street Apartments', time: '5 min ago' },
+  { id: 2, action: 'Scheduled plumber for unit 4B — ceiling leak reported', tenant: 'Oak Park Townhomes', time: '18 min ago' },
+  { id: 3, action: 'Answered lease renewal question from M. Garcia', tenant: 'Cedar Heights Condo', time: '45 min ago' },
+  { id: 4, action: 'Sent rent reminder to 2 tenants with outstanding balances', tenant: 'Multiple properties', time: '1 hr ago' },
+  { id: 5, action: 'Diagnosed maintenance request: AC compressor failure in 6C', tenant: 'Maple Street Apartments', time: '2 hrs ago' },
+  { id: 6, action: 'Approved contractor quote for dishwasher repair ($285)', tenant: 'Oak Park Townhomes - 3B', time: '3 hrs ago' },
+  { id: 7, action: 'Escalated gas smell report in 2A — marked emergency', tenant: 'Maple Street Apartments', time: '4 hrs ago' },
+  { id: 8, action: 'Generated March rent collection summary report', tenant: 'All properties', time: '5 hrs ago' },
+  { id: 9, action: 'Responded to parking question from T. Nguyen', tenant: 'Cedar Heights Condo', time: '6 hrs ago' },
+  { id: 10, action: 'Auto-approved pest control visit for unit B ($120)', tenant: 'Oak Park Townhomes', time: '8 hrs ago' },
 ];
 
 export default function Dashboard() {
@@ -36,15 +41,15 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard label="Total Units" value="24" icon={Building2} trend={{ value: '2', positive: true }} />
         <StatCard label="Occupancy Rate" value="91.7%" icon={Users} trend={{ value: '4.2%', positive: true }} />
-        <StatCard label="Rent Collected" value="$46,200" icon={DollarSign} trend={{ value: '3.1%', positive: true }} />
-        <StatCard label="Outstanding" value="$2,400" icon={AlertCircle} trend={{ value: '12%', positive: false }} />
+        <StatCard label="Rent Collected" value="$38,400" icon={DollarSign} trend={{ value: '3.1%', positive: true }} />
+        <StatCard label="Outstanding" value="$3,200" icon={AlertCircle} trend={{ value: '12%', positive: false }} />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Net Operating Income" value="$31,850" icon={TrendingUp} />
-        <StatCard label="Cash Flow" value="$18,200" icon={BarChart3} />
-        <StatCard label="Cap Rate" value="7.2%" icon={Percent} />
-        <StatCard label="Maintenance Spend" value="$3,450" icon={Wrench} />
+        <StatCard label="Net Operating Income" value="$28,100" icon={TrendingUp} />
+        <StatCard label="Cash Flow" value="$14,200" icon={BarChart3} />
+        <StatCard label="Cap Rate" value="6.8%" icon={Percent} />
+        <StatCard label="Maintenance Spend" value="$4,300" icon={Wrench} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

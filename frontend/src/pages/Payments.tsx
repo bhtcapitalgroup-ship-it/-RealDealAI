@@ -13,16 +13,28 @@ interface Payment {
 }
 
 const mockPayments: Payment[] = [
-  { id: '1', tenant: 'Sarah Johnson', unit: '1A - Oak Manor', amount: 1800, dueDate: '2026-03-01', paidDate: '2026-02-28', status: 'paid', method: 'ACH' },
-  { id: '2', tenant: 'Mike Chen', unit: '1B - Oak Manor', amount: 1400, dueDate: '2026-03-01', paidDate: null, status: 'late', method: '--' },
-  { id: '3', tenant: 'Lisa Park', unit: '2A - Oak Manor', amount: 1850, dueDate: '2026-03-01', paidDate: '2026-03-01', status: 'paid', method: 'Credit Card' },
-  { id: '4', tenant: 'David Kim', unit: '3A - Oak Manor', amount: 2400, dueDate: '2026-03-01', paidDate: '2026-03-02', status: 'paid', method: 'ACH' },
-  { id: '5', tenant: 'Emma Wilson', unit: '3B - Oak Manor', amount: 1850, dueDate: '2026-03-01', paidDate: null, status: 'overdue', method: '--' },
-  { id: '6', tenant: 'James Brown', unit: '4A - Oak Manor', amount: 2000, dueDate: '2026-03-01', paidDate: '2026-03-01', status: 'paid', method: 'ACH' },
-  { id: '7', tenant: 'Amy Taylor', unit: '4B - Oak Manor', amount: 1700, dueDate: '2026-03-01', paidDate: null, status: 'pending', method: '--' },
-  { id: '8', tenant: 'Robert Garcia', unit: 'A - Elm Street', amount: 1900, dueDate: '2026-03-01', paidDate: '2026-02-27', status: 'paid', method: 'Check' },
-  { id: '9', tenant: 'Nina Patel', unit: 'B - Elm Street', amount: 1900, dueDate: '2026-03-01', paidDate: '2026-03-03', status: 'paid', method: 'ACH' },
-  { id: '10', tenant: 'Carlos Rivera', unit: '1 - Pine Ridge', amount: 2200, dueDate: '2026-03-01', paidDate: '2026-03-01', status: 'paid', method: 'ACH' },
+  { id: '1', tenant: 'Sarah Johnson', unit: '1A - Maple Street', amount: 1200, dueDate: '2026-03-01', paidDate: '2026-02-28', status: 'paid', method: 'ACH' },
+  { id: '2', tenant: 'Mike Chen', unit: '1B - Maple Street', amount: 1200, dueDate: '2026-03-01', paidDate: '2026-03-01', status: 'paid', method: 'ACH' },
+  { id: '3', tenant: 'Lisa Park', unit: '2A - Maple Street', amount: 1800, dueDate: '2026-03-01', paidDate: '2026-03-01', status: 'paid', method: 'Credit Card' },
+  { id: '4', tenant: 'James Smith', unit: '3A - Maple Street', amount: 2400, dueDate: '2026-03-01', paidDate: '2026-03-02', status: 'paid', method: 'ACH' },
+  { id: '5', tenant: 'Emma Wilson', unit: '3B - Maple Street', amount: 1800, dueDate: '2026-03-01', paidDate: null, status: 'late', method: '--' },
+  { id: '6', tenant: 'David Kim', unit: '4A - Maple Street', amount: 2000, dueDate: '2026-03-01', paidDate: '2026-03-01', status: 'paid', method: 'ACH' },
+  { id: '7', tenant: 'Amy Taylor', unit: '4B - Maple Street', amount: 1400, dueDate: '2026-03-01', paidDate: '2026-03-10', status: 'paid', method: 'Venmo' },
+  { id: '8', tenant: 'Robert Garcia', unit: '5A - Maple Street', amount: 1800, dueDate: '2026-03-01', paidDate: '2026-02-27', status: 'paid', method: 'Check' },
+  { id: '9', tenant: 'Nina Patel', unit: '5B - Maple Street', amount: 1400, dueDate: '2026-03-01', paidDate: '2026-03-03', status: 'paid', method: 'ACH' },
+  { id: '10', tenant: 'Carlos Rivera', unit: '6A - Maple Street', amount: 2400, dueDate: '2026-03-01', paidDate: '2026-03-01', status: 'paid', method: 'ACH' },
+  { id: '11', tenant: 'Jennifer Lee', unit: '6C - Maple Street', amount: 1800, dueDate: '2026-03-01', paidDate: '2026-03-02', status: 'paid', method: 'Credit Card' },
+  { id: '12', tenant: 'Marcus Johnson', unit: '1A - Oak Park', amount: 1600, dueDate: '2026-03-01', paidDate: '2026-03-01', status: 'paid', method: 'ACH' },
+  { id: '13', tenant: 'Priya Sharma', unit: '1B - Oak Park', amount: 1600, dueDate: '2026-03-01', paidDate: null, status: 'overdue', method: '--' },
+  { id: '14', tenant: 'Tom Nguyen', unit: '2A - Oak Park', amount: 1800, dueDate: '2026-03-01', paidDate: '2026-03-01', status: 'paid', method: 'ACH' },
+  { id: '15', tenant: 'Rachel Adams', unit: '2B - Oak Park', amount: 1800, dueDate: '2026-03-01', paidDate: '2026-03-04', status: 'paid', method: 'ACH' },
+  { id: '16', tenant: 'Kevin O\'Brien', unit: '3B - Oak Park', amount: 1600, dueDate: '2026-03-01', paidDate: '2026-02-28', status: 'paid', method: 'Check' },
+  { id: '17', tenant: 'Angela Martinez', unit: '4A - Oak Park', amount: 1600, dueDate: '2026-03-01', paidDate: '2026-03-01', status: 'paid', method: 'ACH' },
+  { id: '18', tenant: 'Daniel Foster', unit: '4B - Oak Park', amount: 1800, dueDate: '2026-03-01', paidDate: null, status: 'pending', method: '--' },
+  { id: '19', tenant: 'Maria Garcia', unit: 'A - Cedar Heights', amount: 1800, dueDate: '2026-03-01', paidDate: '2026-03-01', status: 'paid', method: 'ACH' },
+  { id: '20', tenant: 'Steven Wright', unit: 'B - Cedar Heights', amount: 1800, dueDate: '2026-03-01', paidDate: '2026-02-28', status: 'paid', method: 'Credit Card' },
+  { id: '21', tenant: 'Laura Chen', unit: 'C - Cedar Heights', amount: 1800, dueDate: '2026-03-01', paidDate: '2026-03-02', status: 'paid', method: 'ACH' },
+  { id: '22', tenant: 'Brian Thompson', unit: 'D - Cedar Heights', amount: 1800, dueDate: '2026-03-01', paidDate: '2026-03-01', status: 'paid', method: 'ACH' },
 ];
 
 const statusVariant: Record<string, { label: string; variant: 'success' | 'warning' | 'danger' | 'info' }> = {

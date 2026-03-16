@@ -70,6 +70,9 @@ class Settings(BaseSettings):
     STRIPE_SECRET_KEY: str = ""
     STRIPE_WEBHOOK_SECRET: str = ""
 
+    # Sentry
+    SENTRY_DSN: str = ""
+
     # CORS
     CORS_ORIGINS: List[str] = [
         "http://localhost:3000",

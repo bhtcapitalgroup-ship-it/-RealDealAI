@@ -6,10 +6,9 @@ from datetime import date
 from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import Date, Enum, Float, ForeignKey, Numeric, Text
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base, TimestampMixin
+from app.models.base import Base, TimestampMixin, UUID
 
 if TYPE_CHECKING:
     from app.models.contractor import Contractor
@@ -27,11 +26,11 @@ class Quote(TimestampMixin, Base):
     __tablename__ = "quotes"
 
     request_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("maintenance_requests.id", ondelete="CASCADE"),
+        UUID(), ForeignKey("maintenance_requests.id", ondelete="CASCADE"),
         nullable=False, index=True,
     )
     contractor_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("contractors.id", ondelete="CASCADE"),
+        UUID(), ForeignKey("contractors.id", ondelete="CASCADE"),
         nullable=False, index=True,
     )
     amount: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)

@@ -6,6 +6,7 @@ from datetime import date, datetime
 from typing import TYPE_CHECKING, Any, List, Optional
 
 from sqlalchemy import (
+    JSON,
     Date,
     DateTime,
     Enum,
@@ -16,10 +17,9 @@ from sqlalchemy import (
     String,
     Text,
 )
-from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base, TimestampMixin
+from app.models.base import Base, TimestampMixin, UUID
 
 if TYPE_CHECKING:
     from app.models.quote import Quote
@@ -61,15 +61,15 @@ class MaintenanceRequest(TimestampMixin, Base):
     __tablename__ = "maintenance_requests"
 
     unit_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("units.id", ondelete="CASCADE"),
+        UUID(), ForeignKey("units.id", ondelete="CASCADE"),
         nullable=False, index=True,
     )
     tenant_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("tenants.id", ondelete="CASCADE"),
+        UUID(), ForeignKey("tenants.id", ondelete="CASCADE"),
         nullable=False, index=True,
     )
     landlord_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"),
+        UUID(), ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False, index=True,
     )
     title: Mapped[str] = mapped_column(String(500), nullable=False)
@@ -92,7 +92,7 @@ class MaintenanceRequest(TimestampMixin, Base):
         index=True,
     )
     ai_diagnosis: Mapped[Optional[dict[str, Any]]] = mapped_column(
-        JSONB, nullable=True
+        JSON, nullable=True
     )
     ai_confidence: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     estimated_cost_low: Mapped[Optional[float]] = mapped_column(
@@ -130,12 +130,12 @@ class MaintenancePhoto(TimestampMixin, Base):
     __tablename__ = "maintenance_photos"
 
     request_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("maintenance_requests.id", ondelete="CASCADE"),
+        UUID(), ForeignKey("maintenance_requests.id", ondelete="CASCADE"),
         nullable=False, index=True,
     )
     s3_key: Mapped[str] = mapped_column(String(1000), nullable=False)
     ai_analysis: Mapped[Optional[dict[str, Any]]] = mapped_column(
-        JSONB, nullable=True
+        JSON, nullable=True
     )
     uploaded_by: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
 

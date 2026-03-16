@@ -8,26 +8,27 @@ import api from '../lib/api';
 import Badge from '../components/Badge';
 
 const mockRequest = {
-  id: '1', ticketNumber: 'MT-1042', title: 'Kitchen Sink Leak', unit: '1B', property: 'Oak Manor Apartments',
-  category: 'Plumbing', urgency: 'emergency' as const, status: 'in_progress' as const,
-  description: 'Kitchen sink is leaking under the cabinet. Water has pooled on the floor and there is visible damage to the cabinet base. The leak appears to be coming from the P-trap connection.',
-  createdAt: '2026-03-16T10:30:00Z', tenant: 'Mike Chen', photos: [1, 2, 3],
+  id: '2', ticketNumber: 'MT-1048', title: 'Ceiling Leak in Bathroom', unit: '4B', property: 'Oak Park Townhomes',
+  category: 'Plumbing', urgency: 'urgent' as const, status: 'in_progress' as const,
+  description: 'Water damage visible on bathroom ceiling. Discoloration pattern suggests active leak from above. Tenant reports dripping during upstairs neighbor\'s shower use. Drywall is soft to touch in a 2-foot radius around the stain.',
+  createdAt: '2026-03-16T12:00:00Z', tenant: 'Daniel Foster', photos: [1, 2, 3],
   aiDiagnosis: {
-    category: 'Plumbing - Drain/P-trap', severity: 78,
-    recommendedAction: 'Replace P-trap assembly and inspect surrounding pipes for corrosion. Check for water damage to cabinet floor.',
-    estimatedCost: { low: 150, high: 350 }, confidence: 92,
+    category: 'Plumbing', severity: 60,
+    recommendedAction: 'Send plumber to inspect pipe connections above unit 4B bathroom. Likely a failing wax ring seal or cracked drain pipe from the unit above. Will need ceiling access panel cut for inspection.',
+    estimatedCost: { low: 350, high: 800 }, confidence: 87,
   },
   quotes: [
-    { id: 'q1', contractor: 'Portland Plumbing Co.', amount: 280, eta: '1-2 days', status: 'pending' as const },
-    { id: 'q2', contractor: 'Quick Fix Services', amount: 320, eta: 'Same day', status: 'pending' as const },
-    { id: 'q3', contractor: 'A+ Home Repair', amount: 245, eta: '2-3 days', status: 'pending' as const },
+    { id: 'q1', contractor: 'ABC Plumbing', amount: 350, eta: 'Tomorrow', status: 'pending' as const },
+    { id: 'q2', contractor: 'QuickFix Plumbing', amount: 420, eta: 'Today', status: 'pending' as const },
   ],
   timeline: [
-    { id: 't1', event: 'Request created by tenant', time: '2026-03-16T10:30:00Z', type: 'created' },
-    { id: 't2', event: 'AI classified as Emergency - Plumbing', time: '2026-03-16T10:30:05Z', type: 'ai' },
-    { id: 't3', event: 'AI diagnosis completed', time: '2026-03-16T10:31:00Z', type: 'ai' },
-    { id: 't4', event: 'Contractor quotes requested (3)', time: '2026-03-16T10:32:00Z', type: 'action' },
-    { id: 't5', event: 'All quotes received', time: '2026-03-16T14:15:00Z', type: 'update' },
+    { id: 't1', event: 'Request created by tenant via SMS', time: '2026-03-16T12:00:00Z', type: 'created' },
+    { id: 't2', event: 'AI classified as Urgent - Plumbing', time: '2026-03-16T12:00:08Z', type: 'ai' },
+    { id: 't3', event: 'AI diagnosis completed — severity 3/5', time: '2026-03-16T12:01:00Z', type: 'ai' },
+    { id: 't4', event: 'Contractor quotes requested (2)', time: '2026-03-16T12:02:00Z', type: 'action' },
+    { id: 't5', event: 'ABC Plumbing quote received — $350', time: '2026-03-16T13:30:00Z', type: 'update' },
+    { id: 't6', event: 'QuickFix Plumbing quote received — $420', time: '2026-03-16T14:00:00Z', type: 'update' },
+    { id: 't7', event: 'Status changed to In Progress', time: '2026-03-16T14:05:00Z', type: 'action' },
   ],
 };
 
