@@ -2,13 +2,12 @@
 
 import enum
 import uuid
-from datetime import date, datetime
+from datetime import date
 from typing import TYPE_CHECKING, Any, List, Optional
 
 from sqlalchemy import (
     JSON,
     Date,
-    DateTime,
     Enum,
     Float,
     ForeignKey,

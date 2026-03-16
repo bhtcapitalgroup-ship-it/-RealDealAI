@@ -1,11 +1,9 @@
 """User (Landlord) ORM model."""
 
 import enum
-import uuid
-from datetime import datetime
 from typing import TYPE_CHECKING, Any, List, Optional
 
-from sqlalchemy import Boolean, DateTime, Enum, Integer, String, func, JSON
+from sqlalchemy import Boolean, Enum, String, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin

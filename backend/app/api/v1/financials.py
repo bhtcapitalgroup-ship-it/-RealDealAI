@@ -1,7 +1,6 @@
 """Financial reporting API endpoints."""
 
 from datetime import date
-from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func, select
@@ -9,8 +8,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.security import get_current_user
-from app.models.expense import Expense, ExpenseCategory
-from app.models.lease import Lease, LeaseStatus
+from app.models.expense import Expense
+from app.models.lease import Lease
 from app.models.payment import Payment, PaymentStatus
 from app.models.property import Property
 from app.models.tenant import Tenant

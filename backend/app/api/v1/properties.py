@@ -10,10 +10,10 @@ from sqlalchemy.orm import selectinload
 from app.core.database import get_db
 from app.core.security import get_current_user
 from app.models.expense import Expense
-from app.models.lease import Lease, LeaseStatus
+from app.models.lease import Lease
 from app.models.payment import Payment, PaymentStatus
 from app.models.property import Property
-from app.models.unit import Unit, UnitStatus
+from app.models.unit import UnitStatus
 from app.models.user import User
 from app.schemas.property import (
     PropertyCreate,

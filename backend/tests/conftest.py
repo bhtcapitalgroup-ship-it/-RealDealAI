@@ -1,16 +1,15 @@
 """Shared pytest fixtures for the RealDeal AI test suite."""
 
-import asyncio
 import uuid
 from collections.abc import AsyncGenerator
-from datetime import date, datetime, timezone
+from datetime import date
 from typing import Any
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
-from sqlalchemy import JSON, StaticPool, event
+from sqlalchemy import StaticPool
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
@@ -18,15 +17,12 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from app.core.config import settings
 from app.core.database import get_db
 from app.core.security import create_access_token, hash_password
 from app.main import app
-from app.models.alert import Alert
 from app.models.base import Base
 from app.models.market import MarketData
 from app.models.property import Property, PropertyType
-from app.models.saved_deal import SavedDeal
 from app.models.user import PlanTier, User
 
 # ---------------------------------------------------------------------------

@@ -9,7 +9,7 @@ import json
 import logging
 import re
 from typing import Any, Optional
-from urllib.parse import quote, urlencode
+from urllib.parse import urlencode
 
 from bs4 import BeautifulSoup
 

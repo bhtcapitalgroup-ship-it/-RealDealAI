@@ -1,7 +1,7 @@
 """Pydantic schemas for AI chat and conversations."""
 
 from datetime import datetime
-from typing import Any, List, Optional
+from typing import List, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field

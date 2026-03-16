@@ -10,14 +10,13 @@ from __future__ import annotations
 import time
 import traceback
 import uuid
-from typing import Any, Callable
+from typing import Any
 
 import structlog
 from fastapi import FastAPI, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
-from starlette.types import ASGIApp
 
 import redis.asyncio as aioredis
 
@@ -259,7 +258,7 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
         duration_ms = round((time.perf_counter() - start_time) * 1000, 2)
 
         # Build safe headers dict
-        safe_headers = {
+        {
             k: ("***REDACTED***" if k.lower() in self.REDACTED_HEADERS else v)
             for k, v in request.headers.items()
         }

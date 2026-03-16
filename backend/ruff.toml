@@ -1,0 +1,10 @@
+[lint]
+ignore = [
+    "E712",  # SQLAlchemy requires `Column == True` syntax
+    "E402",  # Module-level imports after app setup (FastAPI pattern)
+]
+
+[lint.per-file-ignores]
+"scripts/*" = ["F841"]     # Seed scripts have placeholder vars
+"seed_demo.py" = ["F541"]  # f-strings without placeholders OK in scripts
+"tests/*" = ["E402"]       # Test conftest needs late imports

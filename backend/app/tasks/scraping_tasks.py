@@ -8,7 +8,7 @@ deep scrapes, rent estimate updates, and the main daily pipeline.
 import asyncio
 import logging
 import os
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Any
 
 from app.tasks.celery_app import app
@@ -417,7 +417,7 @@ def daily_scrape_pipeline() -> dict[str, Any]:
 
     # After all scrapes complete, refresh market data and check alerts
     callback = refresh_market_data.si()
-    pipeline = chord(scrape_tasks)(callback)
+    chord(scrape_tasks)(callback)
 
     logger.info("Daily pipeline launched for %d markets", len(markets))
     return {
@@ -442,7 +442,6 @@ def _store_properties(properties, city: str, state: str) -> int:
 
 def _load_property(property_id: str):
     """Load a single property from the database."""
-    from app.ai.deal_analyzer import PropertyData
     # In production: SELECT * FROM properties WHERE id = property_id
     logger.debug("Loading property %s", property_id)
     return None  # Placeholder

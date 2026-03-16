@@ -1,9 +1,9 @@
 """Base model with common columns shared by all tables."""
 
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 
-from sqlalchemy import DateTime, String, func, TypeDecorator
+from sqlalchemy import DateTime, func, TypeDecorator
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.types import CHAR, TypeEngine

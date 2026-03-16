@@ -11,13 +11,11 @@ import json
 import logging
 import time
 from typing import Any
-from uuid import UUID
 
 import redis.asyncio as aioredis
-from fastapi import APIRouter, Depends, Query, WebSocket, WebSocketDisconnect, status
+from fastapi import APIRouter, Query, WebSocket, WebSocketDisconnect, status
 from jose import JWTError, jwt
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.core.database import async_session_factory

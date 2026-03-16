@@ -1,7 +1,6 @@
 """Tenant ORM model."""
 
 import uuid
-from datetime import datetime
 from typing import TYPE_CHECKING, List, Optional
 
 from sqlalchemy import Boolean, ForeignKey, String

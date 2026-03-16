@@ -12,11 +12,11 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import case, cast, distinct, func, select, text, Integer, String
+from sqlalchemy import distinct, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.analytics import AnalyticsEvent
-from app.models.user import PlanTier, User
+from app.models.user import User
 
 logger = logging.getLogger(__name__)
 

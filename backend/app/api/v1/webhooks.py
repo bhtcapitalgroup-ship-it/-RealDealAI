@@ -27,7 +27,6 @@ from app.models.conversation import (
     Message,
     SenderType,
 )
-from app.models.payment import Payment, PaymentStatus
 from app.models.tenant import Tenant
 from app.models.user import PlanTier, User
 from app.schemas.webhooks import WebhookAck
@@ -484,7 +483,7 @@ async def _handle_invoice_payment_failed(
     """invoice.payment_failed — Send warning email and apply grace period logic."""
     customer_id = invoice.get("customer", "")
     attempt_count = invoice.get("attempt_count", 0)
-    next_attempt = invoice.get("next_payment_attempt")
+    invoice.get("next_payment_attempt")
 
     result = await db.execute(
         select(User).where(User.stripe_account_id == customer_id)

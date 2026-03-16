@@ -3,10 +3,9 @@
 import asyncio
 import logging
 import uuid
-from datetime import date, timedelta
+from datetime import date
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import async_session_factory
 from app.models.contractor import Contractor

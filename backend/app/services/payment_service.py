@@ -3,12 +3,11 @@
 import logging
 import uuid
 from dataclasses import dataclass
-from datetime import date, timedelta
+from datetime import date
 
-from sqlalchemy import and_, case, func, select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.config import settings
 from app.models.lease import Lease, LeaseStatus
 from app.models.payment import Payment, PaymentMethod, PaymentStatus, PaymentType
 from app.models.property import Property
@@ -150,7 +149,7 @@ class PaymentService:
         result = await self.db.execute(
             select(Tenant).where(Tenant.id == tenant_id)
         )
-        tenant = result.scalar_one()
+        result.scalar_one()
 
         # Production: exchange token, attach bank account to Stripe customer
         # For now, return placeholder

@@ -8,7 +8,7 @@ investment score recalculation.
 import logging
 import os
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 from app.tasks.celery_app import app
 
@@ -44,7 +44,7 @@ def analyze_property(self, property_id: str) -> dict[str, Any]:
     logger.info("Analyzing property %s", property_id)
 
     try:
-        from app.ai.deal_analyzer import DealAnalyzer, MarketData, PropertyData
+        from app.ai.deal_analyzer import DealAnalyzer
 
         # Load data
         property_data = _load_property(property_id)
@@ -327,7 +327,7 @@ def _send_alert_notification(alert: dict, prop, analysis: dict) -> None:
 
     notification_svc = NotificationService()
 
-    user_id = alert.get("user_id", "")
+    alert.get("user_id", "")
     user_email = alert.get("user_email", "")
     alert_name = alert.get("name", "Deal Alert")
 
@@ -369,7 +369,6 @@ def _send_alert_notification(alert: dict, prop, analysis: dict) -> None:
 
 def _load_property(property_id: str):
     """Load property from database."""
-    from app.ai.deal_analyzer import PropertyData
     logger.debug("Loading property %s for analysis", property_id)
     return None  # Placeholder
 

@@ -2,10 +2,10 @@
 
 import enum
 import uuid
-from datetime import date, datetime
+from datetime import date
 from typing import TYPE_CHECKING, Any, List, Optional
 
-from sqlalchemy import Date, Enum, ForeignKey, Integer, Numeric, String, JSON
+from sqlalchemy import Date, Enum, ForeignKey, Integer, Numeric, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin, UUID

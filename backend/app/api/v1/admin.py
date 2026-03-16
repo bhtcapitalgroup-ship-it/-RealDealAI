@@ -5,8 +5,8 @@ from typing import Any, Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from pydantic import BaseModel, Field
-from sqlalchemy import case, cast, distinct, func, select, update, Date
+from pydantic import BaseModel
+from sqlalchemy import cast, distinct, func, select, Date
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db

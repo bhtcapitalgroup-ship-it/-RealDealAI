@@ -7,10 +7,9 @@ ownership history, assessment values, and deed information.
 
 import json
 import logging
-import re
 from dataclasses import dataclass, field
 from typing import Any, Optional
-from urllib.parse import quote, urlencode
+from urllib.parse import quote
 
 from bs4 import BeautifulSoup
 

@@ -5,8 +5,6 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from app.services.subscription import (
-    PLAN_CONFIGS,
-    PlanLimits,
     PlanTier,
     SubscriptionService,
 )

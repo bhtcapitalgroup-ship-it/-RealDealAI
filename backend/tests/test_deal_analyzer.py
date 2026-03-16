@@ -4,11 +4,9 @@ import pytest
 
 from app.ai.deal_analyzer import (
     CAPEX_RESERVE_RATE,
-    INSURANCE_ANNUAL_PER_100K,
     MAINTENANCE_RATE,
     PROPERTY_MANAGEMENT_RATE,
     VACANCY_RATE,
-    CompSale,
     DealAnalyzer,
     MarketData,
     PropertyData,

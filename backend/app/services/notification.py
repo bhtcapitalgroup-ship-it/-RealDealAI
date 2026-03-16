@@ -167,14 +167,6 @@ class NotificationService:
                 return False
 
             # Firebase / OneSignal integration would go here
-            payload = {
-                "to": push_token,
-                "notification": {
-                    "title": title,
-                    "body": body,
-                },
-                "data": data or {},
-            }
 
             logger.info(
                 "Push notification sent to user %s: %s", user_id, title

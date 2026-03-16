@@ -5,13 +5,12 @@ import logging
 import uuid
 from datetime import date, timedelta
 
-from sqlalchemy import and_, select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 from app.core.database import async_session_factory
 from app.models.lease import Lease, LeaseStatus
 from app.models.notification import Notification, NotificationType
-from app.models.payment import Payment, PaymentMethod, PaymentStatus, PaymentType
+from app.models.payment import Payment, PaymentStatus, PaymentType
 from app.models.property import Property
 from app.models.tenant import Tenant
 from app.models.unit import Unit

@@ -10,7 +10,7 @@ import csv
 import io
 import logging
 from datetime import datetime, timezone
-from typing import Any, Sequence
+from typing import Any
 from uuid import UUID
 
 from sqlalchemy import select
@@ -184,7 +184,7 @@ class ExportService:
         3. Market Data — deals grouped by market
         """
         import openpyxl
-        from openpyxl.styles import Alignment, Font, PatternFill, numbers
+        from openpyxl.styles import Alignment, Font, PatternFill
 
         rows = await self._load_deals(user_id, deal_ids)
         wb = openpyxl.Workbook()
@@ -331,7 +331,7 @@ class ExportService:
             sum(r["investment_score"] for r in rows) / len(rows) if rows else 0
         )
         total_cash_flow = sum(r["cash_flow"] for r in rows)
-        favorites = sum(1 for r in rows if r["is_favorite"] == "Yes")
+        sum(1 for r in rows if r["is_favorite"] == "Yes")
 
         # Group by market
         markets: dict[str, list[dict[str, Any]]] = {}

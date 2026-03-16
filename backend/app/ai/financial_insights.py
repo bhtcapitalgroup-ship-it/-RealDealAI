@@ -5,12 +5,12 @@ import uuid
 from dataclasses import dataclass
 from datetime import date, timedelta
 
-from sqlalchemy import and_, func, select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.expense import Expense, ExpenseCategory
+from app.models.expense import Expense
 from app.models.lease import Lease, LeaseStatus
-from app.models.payment import Payment, PaymentStatus, PaymentType
+from app.models.payment import Payment, PaymentStatus
 from app.models.property import Property
 from app.models.unit import Unit, UnitStatus
 

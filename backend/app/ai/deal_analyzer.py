@@ -6,7 +6,6 @@ rehab cost projection, cash flow modeling, and AI-powered deal summaries.
 """
 
 import logging
-import math
 from dataclasses import dataclass, field
 from typing import Any, Optional
 

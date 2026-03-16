@@ -2,13 +2,11 @@
 
 import logging
 import uuid
-from dataclasses import dataclass
 from datetime import date
 
-from sqlalchemy import and_, func, select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.config import settings
 from app.models.contractor import Contractor
 from app.models.expense import Expense, ExpenseCategory
 from app.models.maintenance import (

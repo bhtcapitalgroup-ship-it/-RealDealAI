@@ -5,7 +5,6 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 
 from app.core.database import get_db
 from app.core.security import get_current_user
@@ -85,7 +84,7 @@ async def list_leases(
 
     result = await db.execute(stmt)
     leases = result.scalars().all()
-    return [LeaseResponse.model_validate(l) for l in leases]
+    return [LeaseResponse.model_validate(lease) for lease in leases]
 
 
 @router.post(

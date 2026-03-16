@@ -3,12 +3,10 @@
 import logging
 import os
 import uuid
-from datetime import datetime
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.config import settings
 from app.models.document import Document
 
 logger = logging.getLogger(__name__)

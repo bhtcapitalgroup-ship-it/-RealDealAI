@@ -1,6 +1,6 @@
 """Payment management API endpoints."""
 
-from datetime import date, timedelta
+from datetime import date
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -11,9 +11,7 @@ from app.core.database import get_db
 from app.core.security import get_current_user
 from app.models.lease import Lease
 from app.models.payment import Payment, PaymentStatus
-from app.models.property import Property
 from app.models.tenant import Tenant
-from app.models.unit import Unit
 from app.models.user import User
 from app.schemas.payment import (
     AgingBucket,

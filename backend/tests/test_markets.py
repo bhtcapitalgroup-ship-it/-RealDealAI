@@ -1,6 +1,5 @@
 """Tests for market data endpoints (/api/v1/markets)."""
 
-import pytest
 from httpx import AsyncClient
 
 

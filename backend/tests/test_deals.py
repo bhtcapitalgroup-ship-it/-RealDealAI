@@ -2,11 +2,8 @@
 
 import uuid
 
-import pytest
 from httpx import AsyncClient
 
-from tests.conftest import TestSessionLocal
-from app.models.saved_deal import SavedDeal
 
 
 class TestSaveDeal:

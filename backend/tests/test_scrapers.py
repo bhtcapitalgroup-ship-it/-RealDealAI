@@ -1,8 +1,7 @@
 """Unit tests for scrapers (mock HTTP responses, no real network calls)."""
 
-import asyncio
 import json
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock
 
 import pytest
 

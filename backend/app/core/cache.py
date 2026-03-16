@@ -10,7 +10,7 @@ from __future__ import annotations
 import functools
 import hashlib
 import logging
-from typing import Any, Awaitable, Callable, Optional, TypeVar
+from typing import Any, Awaitable, Callable, TypeVar
 
 import orjson
 import redis.asyncio as aioredis

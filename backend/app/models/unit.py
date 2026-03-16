@@ -2,7 +2,6 @@
 
 import enum
 import uuid
-from datetime import datetime
 from typing import TYPE_CHECKING, List, Optional
 
 from sqlalchemy import Enum, Float, ForeignKey, Integer, Numeric, String

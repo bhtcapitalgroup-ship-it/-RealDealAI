@@ -2,7 +2,7 @@
 
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -23,7 +23,6 @@ from app.schemas.chat import (
     ChatMessageResponse,
     ConversationResponse,
     EscalationResponse,
-    MessageResponse,
 )
 
 router = APIRouter(prefix="/ai", tags=["ai-chat"])

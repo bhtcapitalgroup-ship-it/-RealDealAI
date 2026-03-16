@@ -1,9 +1,8 @@
 """Analytics event ORM model for tracking user actions and engagement."""
 
 import uuid
-from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, Index, String, Text, func, JSON
+from sqlalchemy import ForeignKey, Index, String, Text, JSON
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.base import Base, TimestampMixin, UUID
