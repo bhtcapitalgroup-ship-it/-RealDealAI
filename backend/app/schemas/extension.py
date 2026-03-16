@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 
 # --- Request ---
 
+
 class ExtensionAnalyzeRequest(BaseModel):
     """Property data scraped from Zillow by the Chrome extension."""
 
@@ -26,6 +27,7 @@ class ExtensionAnalyzeRequest(BaseModel):
 
 
 # --- Response sub-models ---
+
 
 class RentComp(BaseModel):
     address: str
@@ -94,6 +96,7 @@ class AIVerdict(BaseModel):
 
 
 # --- Full response ---
+
 
 class ExtensionAnalyzeResponse(BaseModel):
     property: ExtensionAnalyzeRequest

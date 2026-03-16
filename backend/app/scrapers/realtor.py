@@ -122,7 +122,11 @@ class RealtorScraper(BaseScraper):
 
                 for prop in properties:
                     fp = self._fingerprint(
-                        {"address": prop.address, "zip_code": prop.zip_code, "price": prop.price}
+                        {
+                            "address": prop.address,
+                            "zip_code": prop.zip_code,
+                            "price": prop.price,
+                        }
                     )
                     if fp not in seen:
                         seen.add(fp)
@@ -134,7 +138,10 @@ class RealtorScraper(BaseScraper):
 
                 logger.info(
                     "Realtor page %d/%d: %d properties (%d total)",
-                    page, total_pages, len(properties), len(all_properties),
+                    page,
+                    total_pages,
+                    len(properties),
+                    len(all_properties),
                 )
             except ScrapingError as exc:
                 logger.error("Failed on page %d: %s", page, exc)
@@ -163,7 +170,9 @@ class RealtorScraper(BaseScraper):
     ) -> dict:
         variables = {
             "query": {
-                "status": ["for_sale"] if status == "for-sale" else [status.replace("-", "_")],
+                "status": ["for_sale"]
+                if status == "for-sale"
+                else [status.replace("-", "_")],
                 "primary": True,
             },
             "client_data": {"device_data": {"device_type": "web"}},
@@ -261,12 +270,14 @@ class RealtorScraper(BaseScraper):
         """POST to the Realtor.com GraphQL endpoint."""
         session = await self._get_session()
         headers = self._get_headers()
-        headers.update({
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "Origin": self.BASE_URL,
-            "Referer": f"{self.BASE_URL}/",
-        })
+        headers.update(
+            {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Origin": self.BASE_URL,
+                "Referer": f"{self.BASE_URL}/",
+            }
+        )
         proxy = self._get_proxy()
 
         for attempt in range(self.MAX_RETRIES):
@@ -284,16 +295,20 @@ class RealtorScraper(BaseScraper):
 
                     if resp.status == 429:
                         import asyncio
+
                         await asyncio.sleep(int(resp.headers.get("Retry-After", 5)))
                         continue
 
                     logger.warning("GraphQL returned status %d", resp.status)
 
             except Exception as exc:
-                logger.warning("GraphQL request failed (attempt %d): %s", attempt + 1, exc)
+                logger.warning(
+                    "GraphQL request failed (attempt %d): %s", attempt + 1, exc
+                )
 
             import asyncio
-            backoff = self.BASE_BACKOFF * (2 ** attempt)
+
+            backoff = self.BASE_BACKOFF * (2**attempt)
             await asyncio.sleep(backoff)
 
         raise ScrapingError("Realtor GraphQL endpoint failed after retries")
@@ -334,7 +349,9 @@ class RealtorScraper(BaseScraper):
         tax_amount = float(tax_info.get("tax_amount", 0) or 0)
 
         href = item.get("href", "")
-        full_url = f"{self.BASE_URL}{href}" if href and not href.startswith("http") else href
+        full_url = (
+            f"{self.BASE_URL}{href}" if href and not href.startswith("http") else href
+        )
 
         return PropertyData(
             address=address.get("line", ""),
@@ -401,14 +418,15 @@ class RealtorScraper(BaseScraper):
         seen: set[str] = set()
         unique: list[PropertyData] = []
         for p in properties:
-            fp = self._fingerprint({"address": p.address, "zip_code": p.zip_code, "price": p.price})
+            fp = self._fingerprint(
+                {"address": p.address, "zip_code": p.zip_code, "price": p.price}
+            )
             if fp not in seen:
                 seen.add(fp)
                 unique.append(p)
 
         total_el = soup.select_one(
-            'div[data-testid="total-results"], '
-            'span[class*="result-count"]'
+            'div[data-testid="total-results"], span[class*="result-count"]'
         )
         total = self._clean_int(total_el.get_text()) if total_el else len(unique)
 
@@ -421,14 +439,12 @@ class RealtorScraper(BaseScraper):
 
     def _parse_listing_card(self, card) -> Optional[PropertyData]:
         price_el = card.select_one(
-            'span[data-testid="card-price"], '
-            'span[class*="card-price"]'
+            'span[data-testid="card-price"], span[class*="card-price"]'
         )
         price = self._clean_price(price_el.get_text()) if price_el else 0
 
         addr_el = card.select_one(
-            'div[data-testid="card-address"], '
-            'div[class*="card-address"]'
+            'div[data-testid="card-address"], div[class*="card-address"]'
         )
         full_address = addr_el.get_text(strip=True) if addr_el else ""
 
@@ -497,14 +513,12 @@ class RealtorScraper(BaseScraper):
 
         # HTML parsing
         price_el = soup.select_one(
-            'div[data-testid="list-price"], '
-            'span[class*="ldp-header-price"]'
+            'div[data-testid="list-price"], span[class*="ldp-header-price"]'
         )
         price = self._clean_price(price_el.get_text()) if price_el else 0
 
         addr_el = soup.select_one(
-            'h1[data-testid="address-line"], '
-            'div[class*="ldp-header-address"]'
+            'h1[data-testid="address-line"], div[class*="ldp-header-address"]'
         )
         full_address = addr_el.get_text(strip=True) if addr_el else ""
         parts = [p.strip() for p in full_address.split(",")]
@@ -517,7 +531,9 @@ class RealtorScraper(BaseScraper):
             zip_code = sz[1] if len(sz) > 1 else ""
 
         beds, baths, sqft, year_built, lot_size = 0, 0.0, 0, 0, 0
-        for item in soup.select('li[data-testid*="property-meta"], div[class*="key-fact"]'):
+        for item in soup.select(
+            'li[data-testid*="property-meta"], div[class*="key-fact"]'
+        ):
             text = item.get_text(strip=True).lower()
             if "bed" in text:
                 beds = self._clean_int(text)
@@ -533,8 +549,7 @@ class RealtorScraper(BaseScraper):
                 lot_size = self._clean_int(text.replace(",", ""))
 
         desc_el = soup.select_one(
-            'div[data-testid="listing-description"], '
-            'div[class*="ldp-description"]'
+            'div[data-testid="listing-description"], div[class*="ldp-description"]'
         )
         description = desc_el.get_text(strip=True) if desc_el else ""
 
@@ -591,7 +606,9 @@ class RealtorScraper(BaseScraper):
             "farm": "land",
             "mobile": "single_family",
         }
-        return mapping.get(raw.lower().replace("-", "_").replace(" ", "_"), "single_family")
+        return mapping.get(
+            raw.lower().replace("-", "_").replace(" ", "_"), "single_family"
+        )
 
     @staticmethod
     def _parse_json_ld_detail(ld: dict, url: str = "") -> PropertyData:

@@ -203,15 +203,27 @@ class RentometerScraper(BaseScraper):
             text = script.string or ""
             if "analysisData" in text or "rentData" in text or "median" in text:
                 # Extract JSON-like data from script
-                json_match = re.search(r"(?:analysisData|rentData|results)\s*[:=]\s*(\{[^;]+\})", text)
+                json_match = re.search(
+                    r"(?:analysisData|rentData|results)\s*[:=]\s*(\{[^;]+\})", text
+                )
                 if json_match:
                     try:
                         data = json.loads(json_match.group(1))
-                        result["median_rent"] = float(data.get("median", data.get("median_rent", 0)))
-                        result["percentile_25"] = float(data.get("percentile_25", data.get("q1", 0)))
-                        result["percentile_75"] = float(data.get("percentile_75", data.get("q3", 0)))
-                        result["mean_rent"] = float(data.get("mean", data.get("average", 0)))
-                        result["sample_size"] = int(data.get("sample_size", data.get("count", 0)))
+                        result["median_rent"] = float(
+                            data.get("median", data.get("median_rent", 0))
+                        )
+                        result["percentile_25"] = float(
+                            data.get("percentile_25", data.get("q1", 0))
+                        )
+                        result["percentile_75"] = float(
+                            data.get("percentile_75", data.get("q3", 0))
+                        )
+                        result["mean_rent"] = float(
+                            data.get("mean", data.get("average", 0))
+                        )
+                        result["sample_size"] = int(
+                            data.get("sample_size", data.get("count", 0))
+                        )
                         result["min_rent"] = float(data.get("min", 0))
                         result["max_rent"] = float(data.get("max", 0))
                         if result["median_rent"] > 0:
@@ -241,8 +253,7 @@ class RentometerScraper(BaseScraper):
 
         # Percentiles / range
         range_els = soup.select(
-            'div[class*="range"] span[class*="value"], '
-            'div[class*="quartile"] span'
+            'div[class*="range"] span[class*="value"], div[class*="quartile"] span'
         )
         if len(range_els) >= 2:
             values = sorted([self._clean_price(el.get_text()) for el in range_els])

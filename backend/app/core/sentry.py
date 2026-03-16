@@ -87,9 +87,7 @@ def init_sentry() -> None:
 _IGNORED_STATUS_CODES: frozenset[int] = frozenset({401, 403, 404, 405, 422, 429})
 
 
-def _before_send(
-    event: dict[str, Any], hint: dict[str, Any]
-) -> dict[str, Any] | None:
+def _before_send(event: dict[str, Any], hint: dict[str, Any]) -> dict[str, Any] | None:
     """Filter callback — return ``None`` to drop the event."""
     exc_info = hint.get("exc_info")
     if exc_info:
@@ -143,8 +141,7 @@ def _traces_sampler(sampling_context: dict[str, Any]) -> float:
 
     # Higher rate for expensive operations we want to profile
     if any(
-        seg in transaction_name
-        for seg in ("/analyze", "/scrape", "/ai/", "/market")
+        seg in transaction_name for seg in ("/analyze", "/scrape", "/ai/", "/market")
     ):
         return min(1.0, _traces_sample_rate() * 2)
 
@@ -156,7 +153,9 @@ def _traces_sampler(sampling_context: dict[str, Any]) -> float:
 # ---------------------------------------------------------------------------
 
 
-def set_user_context(user_id: str, email: str | None = None, tier: str | None = None) -> None:
+def set_user_context(
+    user_id: str, email: str | None = None, tier: str | None = None
+) -> None:
     """Attach authenticated user info to the current Sentry scope."""
     try:
         import sentry_sdk

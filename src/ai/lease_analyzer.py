@@ -102,10 +102,12 @@ class LeaseAnalyzer:
         response = self.client.messages.create(
             model="claude-opus-4-6-20250514",
             max_tokens=4096,
-            messages=[{
-                "role": "user",
-                "content": ANALYSIS_PROMPT.format(lease_text=lease_text[:50000]),
-            }],
+            messages=[
+                {
+                    "role": "user",
+                    "content": ANALYSIS_PROMPT.format(lease_text=lease_text[:50000]),
+                }
+            ],
         )
 
         result = json.loads(response.content[0].text)
@@ -131,7 +133,9 @@ class LeaseAnalyzer:
         ]
 
         # Calculate risk score
-        risk_score = self._calculate_risk_score(risks, result.get("missing_clauses", []))
+        risk_score = self._calculate_risk_score(
+            risks, result.get("missing_clauses", [])
+        )
 
         return LeaseAnalysis(
             fields=fields,

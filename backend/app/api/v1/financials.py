@@ -35,23 +35,29 @@ async def get_dashboard(
 ) -> DashboardSummary:
     """Portfolio overview: units, occupancy, collections, NOI, cash flow."""
     # Total properties
-    prop_count = (await db.execute(
-        select(func.count()).select_from(Property).where(
-            Property.landlord_id == current_user.id,
-            Property.is_active == True,
+    prop_count = (
+        await db.execute(
+            select(func.count())
+            .select_from(Property)
+            .where(
+                Property.landlord_id == current_user.id,
+                Property.is_active == True,
+            )
         )
-    )).scalar_one()
+    ).scalar_one()
 
     # Total and occupied units
     total_units_result = await db.execute(
-        select(func.count()).select_from(Unit)
+        select(func.count())
+        .select_from(Unit)
         .join(Property, Unit.property_id == Property.id)
         .where(Property.landlord_id == current_user.id, Property.is_active == True)
     )
     total_units = total_units_result.scalar_one()
 
     occupied_result = await db.execute(
-        select(func.count()).select_from(Unit)
+        select(func.count())
+        .select_from(Unit)
         .join(Property, Unit.property_id == Property.id)
         .where(
             Property.landlord_id == current_user.id,
@@ -138,12 +144,14 @@ async def get_income_breakdown(
         unit_ids = [row[0] for row in units_result.all()]
 
         if not unit_ids:
-            by_property.append(PropertyIncome(
-                property_id=prop.id,
-                property_name=prop.name,
-                total_income=0.0,
-                units=0,
-            ))
+            by_property.append(
+                PropertyIncome(
+                    property_id=prop.id,
+                    property_name=prop.name,
+                    total_income=0.0,
+                    units=0,
+                )
+            )
             continue
 
         income_stmt = (
@@ -162,12 +170,14 @@ async def get_income_breakdown(
         prop_income = float((await db.execute(income_stmt)).scalar_one())
         grand_total += prop_income
 
-        by_property.append(PropertyIncome(
-            property_id=prop.id,
-            property_name=prop.name,
-            total_income=prop_income,
-            units=len(unit_ids),
-        ))
+        by_property.append(
+            PropertyIncome(
+                property_id=prop.id,
+                property_name=prop.name,
+                total_income=prop_income,
+                units=len(unit_ids),
+            )
+        )
 
     return IncomeBreakdown(total=grand_total, by_property=by_property)
 
@@ -200,14 +210,16 @@ async def get_expense_breakdown(
     by_category = []
     grand_total = 0.0
     for category, total, count in rows:
-        cat_value = category.value if hasattr(category, 'value') else str(category)
+        cat_value = category.value if hasattr(category, "value") else str(category)
         total_f = float(total)
         grand_total += total_f
-        by_category.append(CategoryExpense(
-            category=cat_value,
-            total=total_f,
-            count=count,
-        ))
+        by_category.append(
+            CategoryExpense(
+                category=cat_value,
+                total=total_f,
+                count=count,
+            )
+        )
 
     return ExpenseBreakdown(total=grand_total, by_category=by_category)
 

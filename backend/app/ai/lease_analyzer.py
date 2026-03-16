@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 # Data types
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class LeaseField:
     name: str
@@ -113,6 +114,7 @@ Only respond with JSON."""
 # Service
 # ---------------------------------------------------------------------------
 
+
 class LeaseAnalyzerService:
     """
     Integrated lease analysis service that uses Claude Opus for deep
@@ -132,10 +134,12 @@ class LeaseAnalyzerService:
         response = self.client.messages.create(
             model="claude-opus-4-6-20250514",
             max_tokens=4096,
-            messages=[{
-                "role": "user",
-                "content": ANALYSIS_PROMPT.format(lease_text=lease_text[:50000]),
-            }],
+            messages=[
+                {
+                    "role": "user",
+                    "content": ANALYSIS_PROMPT.format(lease_text=lease_text[:50000]),
+                }
+            ],
         )
 
         result = json.loads(response.content[0].text)

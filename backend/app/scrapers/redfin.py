@@ -65,7 +65,12 @@ class RedfinScraper(BaseScraper):
         region_info = await self._resolve_region(city, state)
         if not region_info:
             logger.warning("Could not resolve Redfin region for %s, %s", city, state)
-            return {"properties": [], "total_results": 0, "current_page": 1, "total_pages": 1}
+            return {
+                "properties": [],
+                "total_results": 0,
+                "current_page": 1,
+                "total_pages": 1,
+            }
 
         region_id = region_info.get("id", "")
         region_type = region_info.get("type", 6)  # 6 = city
@@ -165,7 +170,9 @@ class RedfinScraper(BaseScraper):
     async def _resolve_region(self, city: str, state: str) -> Optional[dict]:
         """Use Redfin's autocomplete to resolve a city to a region ID."""
         query = f"{city} {state}"
-        url = f"{self.STINGRAY_URL}/do/location-autocomplete?location={quote(query)}&v=2"
+        url = (
+            f"{self.STINGRAY_URL}/do/location-autocomplete?location={quote(query)}&v=2"
+        )
 
         try:
             raw = await self._fetch(url)
@@ -234,23 +241,47 @@ class RedfinScraper(BaseScraper):
             price = float(hd.get("listingPrice", 0))
 
         return PropertyData(
-            address=addr_info.get("formattedStreetLine", hd.get("streetLine", {}).get("value", "")),
+            address=addr_info.get(
+                "formattedStreetLine", hd.get("streetLine", {}).get("value", "")
+            ),
             city=addr_info.get("city", ""),
             state=addr_info.get("state", ""),
             zip_code=str(addr_info.get("zip", "")),
             price=price,
             bedrooms=int(hd.get("beds", 0)),
             bathrooms=float(hd.get("baths", 0)),
-            sqft=int(hd.get("sqFt", {}).get("value", 0)) if isinstance(hd.get("sqFt"), dict) else int(hd.get("sqFt", 0)),
-            lot_size_sqft=int(hd.get("lotSize", {}).get("value", 0)) if isinstance(hd.get("lotSize"), dict) else 0,
-            year_built=int(hd.get("yearBuilt", {}).get("value", 0)) if isinstance(hd.get("yearBuilt"), dict) else int(hd.get("yearBuilt", 0)),
+            sqft=int(hd.get("sqFt", {}).get("value", 0))
+            if isinstance(hd.get("sqFt"), dict)
+            else int(hd.get("sqFt", 0)),
+            lot_size_sqft=int(hd.get("lotSize", {}).get("value", 0))
+            if isinstance(hd.get("lotSize"), dict)
+            else 0,
+            year_built=int(hd.get("yearBuilt", {}).get("value", 0))
+            if isinstance(hd.get("yearBuilt"), dict)
+            else int(hd.get("yearBuilt", 0)),
             property_type=self._map_property_type(hd.get("propertyType", 0)),
-            latitude=float(addr_info.get("centroid", {}).get("centroid", {}).get("latitude", hd.get("latitude", 0))),
-            longitude=float(addr_info.get("centroid", {}).get("centroid", {}).get("longitude", hd.get("longitude", 0))),
-            days_on_market=int(hd.get("dom", {}).get("value", 0)) if isinstance(hd.get("dom"), dict) else int(hd.get("timeOnRedfin", {}).get("value", 0) / 86400000) if isinstance(hd.get("timeOnRedfin"), dict) else 0,
-            hoa_monthly=float(hd.get("hoa", {}).get("value", 0)) if isinstance(hd.get("hoa"), dict) else 0,
+            latitude=float(
+                addr_info.get("centroid", {})
+                .get("centroid", {})
+                .get("latitude", hd.get("latitude", 0))
+            ),
+            longitude=float(
+                addr_info.get("centroid", {})
+                .get("centroid", {})
+                .get("longitude", hd.get("longitude", 0))
+            ),
+            days_on_market=int(hd.get("dom", {}).get("value", 0))
+            if isinstance(hd.get("dom"), dict)
+            else int(hd.get("timeOnRedfin", {}).get("value", 0) / 86400000)
+            if isinstance(hd.get("timeOnRedfin"), dict)
+            else 0,
+            hoa_monthly=float(hd.get("hoa", {}).get("value", 0))
+            if isinstance(hd.get("hoa"), dict)
+            else 0,
             url=f"{self.BASE_URL}{hd.get('url', '')}",
-            mls_id=str(hd.get("mlsId", {}).get("value", "")) if isinstance(hd.get("mlsId"), dict) else str(hd.get("listingId", "")),
+            mls_id=str(hd.get("mlsId", {}).get("value", ""))
+            if isinstance(hd.get("mlsId"), dict)
+            else str(hd.get("listingId", "")),
             source="redfin",
         )
 
@@ -297,7 +328,9 @@ class RedfinScraper(BaseScraper):
             except Exception as exc:
                 logger.debug("Redfin card parse error: %s", exc)
 
-        total_el = soup.select_one('span[class*="homes-count"], div[class*="resultsCount"]')
+        total_el = soup.select_one(
+            'span[class*="homes-count"], div[class*="resultsCount"]'
+        )
         total = self._clean_int(total_el.get_text()) if total_el else len(properties)
 
         return {
@@ -309,8 +342,7 @@ class RedfinScraper(BaseScraper):
 
     def _parse_html_card(self, card) -> Optional[PropertyData]:
         price_el = card.select_one(
-            'span[class*="homecardV2Price"], '
-            'span[data-rf-test-name="homecard-price"]'
+            'span[class*="homecardV2Price"], span[data-rf-test-name="homecard-price"]'
         )
         price = self._clean_price(price_el.get_text()) if price_el else 0
 
@@ -386,14 +418,12 @@ class RedfinScraper(BaseScraper):
 
         # Address
         street_el = soup.select_one(
-            'h1[class*="street-address"], '
-            'span[data-rf-test-id="abp-streetLine"]'
+            'h1[class*="street-address"], span[data-rf-test-id="abp-streetLine"]'
         )
         address = street_el.get_text(strip=True) if street_el else ""
 
         loc_el = soup.select_one(
-            'h1[class*="cityStateZip"], '
-            'span[data-rf-test-id="abp-cityStateZip"]'
+            'h1[class*="cityStateZip"], span[data-rf-test-id="abp-cityStateZip"]'
         )
         location = loc_el.get_text(strip=True) if loc_el else ""
         city, state, zip_code = "", "", ""
@@ -414,7 +444,9 @@ class RedfinScraper(BaseScraper):
         )
         for item in detail_items:
             text = item.get_text(strip=True).lower()
-            parent_text = (item.parent.get_text(strip=True) if item.parent else "").lower()
+            parent_text = (
+                item.parent.get_text(strip=True) if item.parent else ""
+            ).lower()
             combined = f"{parent_text} {text}"
             if "bed" in combined:
                 beds = self._clean_int(text)
@@ -440,8 +472,7 @@ class RedfinScraper(BaseScraper):
 
         # Description
         desc_el = soup.select_one(
-            'div[class*="remarks"] p, '
-            'div[id="marketing-remarks-scroll"] span'
+            'div[class*="remarks"] p, div[id="marketing-remarks-scroll"] span'
         )
         description = desc_el.get_text(strip=True) if desc_el else ""
 
@@ -510,11 +541,19 @@ class RedfinScraper(BaseScraper):
                     bedrooms=self._clean_int(str(normalized.get("bedrooms", "0"))),
                     bathrooms=self._clean_float(str(normalized.get("bathrooms", "0"))),
                     sqft=self._clean_int(str(normalized.get("sqft", "0"))),
-                    lot_size_sqft=self._clean_int(str(normalized.get("lot_size_sqft", "0"))),
+                    lot_size_sqft=self._clean_int(
+                        str(normalized.get("lot_size_sqft", "0"))
+                    ),
                     year_built=self._clean_int(str(normalized.get("year_built", "0"))),
-                    days_on_market=self._clean_int(str(normalized.get("days_on_market", "0"))),
-                    hoa_monthly=self._clean_float(str(normalized.get("hoa_monthly", "0"))),
-                    property_type=self._map_property_type_str(str(normalized.get("property_type", ""))),
+                    days_on_market=self._clean_int(
+                        str(normalized.get("days_on_market", "0"))
+                    ),
+                    hoa_monthly=self._clean_float(
+                        str(normalized.get("hoa_monthly", "0"))
+                    ),
+                    property_type=self._map_property_type_str(
+                        str(normalized.get("property_type", ""))
+                    ),
                     latitude=self._clean_float(str(normalized.get("latitude", "0"))),
                     longitude=self._clean_float(str(normalized.get("longitude", "0"))),
                     url=str(normalized.get("url", "")),

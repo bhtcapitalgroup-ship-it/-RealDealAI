@@ -33,6 +33,7 @@ logger = logging.getLogger(__name__)
 # Data types
 # ---------------------------------------------------------------------------
 
+
 class Intent(str, Enum):
     MAINTENANCE = "maintenance"
     PAYMENT = "payment"
@@ -115,6 +116,7 @@ Only respond with JSON, nothing else."""
 # Service
 # ---------------------------------------------------------------------------
 
+
 class TenantBotService:
     """
     Integrated tenant chatbot service that loads context from the database,
@@ -170,13 +172,24 @@ class TenantBotService:
             conversation_id=conversation.id,
             sender_type=SenderType.AI,
             content=result["response"],
-            intent=result.get("classification", {}).get("intent") if isinstance(result.get("classification"), dict) else (
-                result["classification"].intent if hasattr(result.get("classification", None), "intent") else None
+            intent=result.get("classification", {}).get("intent")
+            if isinstance(result.get("classification"), dict)
+            else (
+                result["classification"].intent
+                if hasattr(result.get("classification", None), "intent")
+                else None
             ),
-            confidence=result.get("classification", {}).get("confidence") if isinstance(result.get("classification"), dict) else (
-                result["classification"].confidence if hasattr(result.get("classification", None), "confidence") else None
+            confidence=result.get("classification", {}).get("confidence")
+            if isinstance(result.get("classification"), dict)
+            else (
+                result["classification"].confidence
+                if hasattr(result.get("classification", None), "confidence")
+                else None
             ),
-            metadata_={"escalated": result["escalated"], "side_effects": result.get("side_effects", [])},
+            metadata_={
+                "escalated": result["escalated"],
+                "side_effects": result.get("side_effects", []),
+            },
         )
         self.db.add(ai_msg)
 
@@ -313,22 +326,28 @@ class TenantBotService:
         effects: list[dict] = []
 
         if classification.intent == Intent.MAINTENANCE:
-            effects.append({
-                "action": "create_maintenance_request",
-                "category": classification.subtype,
-                "entities": classification.entities,
-            })
+            effects.append(
+                {
+                    "action": "create_maintenance_request",
+                    "category": classification.subtype,
+                    "entities": classification.entities,
+                }
+            )
         elif classification.intent == Intent.PAYMENT:
             if classification.subtype == "payment_plan":
-                effects.append({
-                    "action": "escalate_to_landlord",
-                    "reason": "Payment plan request requires landlord approval",
-                })
+                effects.append(
+                    {
+                        "action": "escalate_to_landlord",
+                        "reason": "Payment plan request requires landlord approval",
+                    }
+                )
         elif classification.intent == Intent.COMPLAINT:
-            effects.append({
-                "action": "escalate_to_landlord",
-                "reason": f"Tenant complaint: {classification.subtype}",
-            })
+            effects.append(
+                {
+                    "action": "escalate_to_landlord",
+                    "reason": f"Tenant complaint: {classification.subtype}",
+                }
+            )
 
         return effects
 
@@ -372,8 +391,7 @@ class TenantBotService:
         balance_due = 0.0
         if lease:
             result = await self.db.execute(
-                select(Payment)
-                .where(
+                select(Payment).where(
                     Payment.lease_id == lease.id,
                     Payment.status == PaymentStatus.PENDING,
                 )
@@ -381,17 +399,21 @@ class TenantBotService:
             pending_payments = result.scalars().all()
             if pending_payments:
                 balance_due = sum(float(p.amount) for p in pending_payments)
-                payment_status = "past_due" if balance_due >= float(lease.rent_amount) else "partial"
+                payment_status = (
+                    "past_due" if balance_due >= float(lease.rent_amount) else "partial"
+                )
 
         # Open maintenance requests
         result = await self.db.execute(
             select(MaintenanceRequest)
             .where(
                 MaintenanceRequest.tenant_id == tenant_id,
-                MaintenanceRequest.status.notin_([
-                    MaintenanceStatus.COMPLETED,
-                    MaintenanceStatus.CANCELLED,
-                ]),
+                MaintenanceRequest.status.notin_(
+                    [
+                        MaintenanceStatus.COMPLETED,
+                        MaintenanceStatus.CANCELLED,
+                    ]
+                ),
             )
             .order_by(MaintenanceRequest.created_at.desc())
             .limit(5)
@@ -425,10 +447,12 @@ class TenantBotService:
             )
             msgs = result.scalars().all()
             for m in reversed(msgs):
-                recent_messages.append({
-                    "sender": m.sender_type.value,
-                    "content": m.content,
-                })
+                recent_messages.append(
+                    {
+                        "sender": m.sender_type.value,
+                        "content": m.content,
+                    }
+                )
 
         return TenantContext(
             tenant_name=f"{tenant.first_name} {tenant.last_name}",

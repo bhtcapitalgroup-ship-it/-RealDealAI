@@ -10,7 +10,17 @@ import uuid
 from datetime import date, datetime
 from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import Date, DateTime, Enum, ForeignKey, Index, Integer, Numeric, String, Text
+from sqlalchemy import (
+    Date,
+    DateTime,
+    Enum,
+    ForeignKey,
+    Index,
+    Integer,
+    Numeric,
+    String,
+    Text,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin, UUID
@@ -85,9 +95,7 @@ class Payment(TimestampMixin, Base):
         nullable=False,
         index=True,
     )
-    stripe_payment_id: Mapped[Optional[str]] = mapped_column(
-        String(255), nullable=True
-    )
+    stripe_payment_id: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     due_date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
     paid_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)

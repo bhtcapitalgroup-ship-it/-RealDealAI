@@ -61,7 +61,9 @@ async def get_rent_estimate(
             return data
 
     except httpx.HTTPStatusError as e:
-        logger.error("Rentcast API error %d: %s", e.response.status_code, e.response.text)
+        logger.error(
+            "Rentcast API error %d: %s", e.response.status_code, e.response.text
+        )
     except Exception as e:
         logger.error("Rentcast API call failed: %s", e)
 

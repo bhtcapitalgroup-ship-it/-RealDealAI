@@ -85,9 +85,7 @@ class TenantBot:
     def __init__(self, api_key: str):
         self.client = anthropic.Anthropic(api_key=api_key)
 
-    async def process_message(
-        self, message: str, context: TenantContext
-    ) -> dict:
+    async def process_message(self, message: str, context: TenantContext) -> dict:
         """Process an inbound tenant message and return AI response."""
 
         # 1. Check for escalation triggers
@@ -141,6 +139,7 @@ class TenantBot:
         )
 
         import json
+
         result = json.loads(response.content[0].text)
 
         return Classification(
@@ -188,17 +187,21 @@ class TenantBot:
         effects = []
 
         if classification.intent == Intent.MAINTENANCE:
-            effects.append({
-                "action": "create_maintenance_request",
-                "category": classification.subtype,
-                "entities": classification.entities,
-            })
+            effects.append(
+                {
+                    "action": "create_maintenance_request",
+                    "category": classification.subtype,
+                    "entities": classification.entities,
+                }
+            )
 
         elif classification.intent == Intent.PAYMENT:
             if classification.subtype == "payment_plan":
-                effects.append({
-                    "action": "escalate_to_landlord",
-                    "reason": "Payment plan request requires landlord approval",
-                })
+                effects.append(
+                    {
+                        "action": "escalate_to_landlord",
+                        "reason": "Payment plan request requires landlord approval",
+                    }
+                )
 
         return effects

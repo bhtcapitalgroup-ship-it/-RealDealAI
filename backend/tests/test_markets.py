@@ -6,9 +6,7 @@ from httpx import AsyncClient
 class TestGetHeatmap:
     """Tests for GET /api/v1/markets/heatmap."""
 
-    async def test_get_heatmap(
-        self, client: AsyncClient, test_user, test_market_data
-    ):
+    async def test_get_heatmap(self, client: AsyncClient, test_user, test_market_data):
         """Should return scored zip code entries."""
         response = await client.get(
             "/api/v1/markets/heatmap",
@@ -57,9 +55,7 @@ class TestGetMarketByZip:
         assert data["state"] == "TX"
         assert data["median_price"] == 350000.0
 
-    async def test_get_market_not_found(
-        self, client: AsyncClient, test_user
-    ):
+    async def test_get_market_not_found(self, client: AsyncClient, test_user):
         """A non-existent zip should return 404."""
         response = await client.get(
             "/api/v1/markets/00000",
@@ -119,9 +115,7 @@ class TestCompareMarkets:
         assert "75201" in zip_codes
         assert "78701" in zip_codes
 
-    async def test_compare_markets_too_few(
-        self, client: AsyncClient, test_user
-    ):
+    async def test_compare_markets_too_few(self, client: AsyncClient, test_user):
         """Comparing fewer than 2 zips should return 400."""
         response = await client.get(
             "/api/v1/markets/compare?zip_codes=75201",

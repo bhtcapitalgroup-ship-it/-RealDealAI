@@ -48,9 +48,9 @@ async def _get_redis() -> aioredis.Redis:
 
 # (requests_per_hour, deal_views_per_day)  -1 means unlimited
 TIER_LIMITS: dict[str, tuple[int, int]] = {
-    "starter": (50, 5),      # Free / Starter tier
+    "starter": (50, 5),  # Free / Starter tier
     "free": (50, 5),
-    "growth": (500, -1),     # Pro tier
+    "growth": (500, -1),  # Pro tier
     "pro": (500, -1),
     "pro_plus": (2000, -1),  # Pro+ tier
     "enterprise": (2000, -1),
@@ -96,12 +96,14 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         # For unauthenticated requests, rate limit by IP
         if not user_id:
             forwarded = request.headers.get("X-Forwarded-For")
-            user_id = f"anon:{forwarded.split(',')[0].strip()}" if forwarded else f"anon:{request.client.host if request.client else 'unknown'}"
+            user_id = (
+                f"anon:{forwarded.split(',')[0].strip()}"
+                if forwarded
+                else f"anon:{request.client.host if request.client else 'unknown'}"
+            )
             user_tier = "free"
 
-        hourly_limit, daily_deal_limit = TIER_LIMITS.get(
-            user_tier, TIER_LIMITS["free"]
-        )
+        hourly_limit, daily_deal_limit = TIER_LIMITS.get(user_tier, TIER_LIMITS["free"])
 
         try:
             redis = await _get_redis()
@@ -207,13 +209,15 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
     request ID for distributed tracing.  Sensitive headers are redacted.
     """
 
-    REDACTED_HEADERS: frozenset[str] = frozenset({
-        "authorization",
-        "cookie",
-        "set-cookie",
-        "x-api-key",
-        "stripe-signature",
-    })
+    REDACTED_HEADERS: frozenset[str] = frozenset(
+        {
+            "authorization",
+            "cookie",
+            "set-cookie",
+            "x-api-key",
+            "stripe-signature",
+        }
+    )
 
     async def dispatch(
         self, request: Request, call_next: RequestResponseEndpoint
@@ -318,6 +322,7 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
             if settings.ENVIRONMENT == "production":
                 try:
                     import sentry_sdk
+
                     sentry_sdk.capture_exception(exc)
                 except ImportError:
                     pass
@@ -374,5 +379,10 @@ def install_middleware(app: FastAPI) -> None:
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
-        expose_headers=["X-Request-ID", "X-RateLimit-Limit", "X-RateLimit-Remaining", "X-RateLimit-Reset"],
+        expose_headers=[
+            "X-Request-ID",
+            "X-RateLimit-Limit",
+            "X-RateLimit-Remaining",
+            "X-RateLimit-Reset",
+        ],
     )

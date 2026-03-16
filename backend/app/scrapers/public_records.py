@@ -147,9 +147,7 @@ class PublicRecordsScraper(BaseScraper):
         """
         # Strategy 1: Direct county assessor lookup
         if county and state:
-            record = await self._search_county_assessor(
-                address, city, state, county
-            )
+            record = await self._search_county_assessor(address, city, state, county)
             if record and record.assessed_value > 0:
                 return record
 
@@ -163,9 +161,7 @@ class PublicRecordsScraper(BaseScraper):
         if record:
             return record
 
-        logger.warning(
-            "No public records found for %s, %s, %s", address, city, state
-        )
+        logger.warning("No public records found for %s, %s, %s", address, city, state)
         return None
 
     async def get_ownership_history(
@@ -215,7 +211,9 @@ class PublicRecordsScraper(BaseScraper):
             bathrooms=record.bathrooms,
             stories=record.stories,
             tax_annual=record.tax_amount,
-            price=record.last_sale_price if record.last_sale_price > 0 else record.market_value,
+            price=record.last_sale_price
+            if record.last_sale_price > 0
+            else record.market_value,
             source="public_records",
         )
         return [prop]
@@ -358,16 +356,10 @@ class PublicRecordsScraper(BaseScraper):
             'div[class*="info-row"]'
         ):
             label_el = div.select_one(
-                'span[class*="label"], '
-                'dt, '
-                'div[class*="label"], '
-                'strong'
+                'span[class*="label"], dt, div[class*="label"], strong'
             )
             value_el = div.select_one(
-                'span[class*="value"], '
-                'dd, '
-                'div[class*="value"], '
-                'span:last-child'
+                'span[class*="value"], dd, div[class*="value"], span:last-child'
             )
             if label_el and value_el:
                 label = label_el.get_text(strip=True).lower()
@@ -376,18 +368,14 @@ class PublicRecordsScraper(BaseScraper):
 
         # Parcel / property ID
         parcel_el = soup.select_one(
-            'span[class*="parcel"], '
-            'td[class*="parcel"], '
-            'div[class*="parcel-id"]'
+            'span[class*="parcel"], td[class*="parcel"], div[class*="parcel-id"]'
         )
         if parcel_el and not record.parcel_id:
             record.parcel_id = parcel_el.get_text(strip=True)
 
         # Owner name
         owner_el = soup.select_one(
-            'span[class*="owner"], '
-            'td[class*="owner"], '
-            'div[class*="owner-name"]'
+            'span[class*="owner"], td[class*="owner"], div[class*="owner-name"]'
         )
         if owner_el and not record.owner_name:
             record.owner_name = owner_el.get_text(strip=True)
@@ -457,7 +445,9 @@ class PublicRecordsScraper(BaseScraper):
                         val = cells[i]
                         if "date" in header:
                             entry["date"] = val
-                        elif "price" in header or "amount" in header or "sale" in header:
+                        elif (
+                            "price" in header or "amount" in header or "sale" in header
+                        ):
                             entry["sale_price"] = self._clean_price(val)
                         elif "grantor" in header or "seller" in header:
                             entry["seller"] = val
@@ -531,17 +521,29 @@ class PublicRecordsScraper(BaseScraper):
             record.tax_year = self._clean_int(value)
         elif "tax" in label and "rate" in label:
             record.tax_rate = self._clean_float(value)
-        elif ("last" in label or "most recent" in label) and "sale" in label and "date" in label:
+        elif (
+            ("last" in label or "most recent" in label)
+            and "sale" in label
+            and "date" in label
+        ):
             record.last_sale_date = value
-        elif ("last" in label or "most recent" in label) and "sale" in label and "price" in label:
+        elif (
+            ("last" in label or "most recent" in label)
+            and "sale" in label
+            and "price" in label
+        ):
             record.last_sale_price = self._clean_price(value)
         elif "legal" in label and "description" in label:
             record.legal_description = value
         elif "zoning" in label:
             record.zoning = value
-        elif "land" in label and ("size" in label or "area" in label or "sqft" in label):
+        elif "land" in label and (
+            "size" in label or "area" in label or "sqft" in label
+        ):
             record.land_sqft = self._clean_int(value.replace(",", ""))
-        elif ("living" in label or "building" in label) and ("area" in label or "sqft" in label):
+        elif ("living" in label or "building" in label) and (
+            "area" in label or "sqft" in label
+        ):
             record.building_sqft = self._clean_int(value.replace(",", ""))
         elif "year" in label and "built" in label:
             record.year_built = self._clean_int(value)

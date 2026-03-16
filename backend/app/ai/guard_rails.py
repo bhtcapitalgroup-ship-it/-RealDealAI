@@ -11,10 +11,13 @@ logger = logging.getLogger(__name__)
 # Data types
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class Violation:
-    category: str     # "fair_housing" | "legal_advice" | "pii_leakage" | "financial_promise"
-    severity: str     # "block" | "warn"
+    category: (
+        str  # "fair_housing" | "legal_advice" | "pii_leakage" | "financial_promise"
+    )
+    severity: str  # "block" | "warn"
     matched_text: str
     explanation: str
 
@@ -108,7 +111,9 @@ PII_PATTERNS = [
         "Response contains what appears to be a credit card number.",
     ),
     (
-        re.compile(r"\b(account|routing)\s*(number|#|no\.?)\s*:?\s*\d{6,17}\b", re.IGNORECASE),
+        re.compile(
+            r"\b(account|routing)\s*(number|#|no\.?)\s*:?\s*\d{6,17}\b", re.IGNORECASE
+        ),
         "Response contains what appears to be a bank account or routing number.",
     ),
     (
@@ -164,7 +169,9 @@ PII_REDACT_PATTERNS = [
     (re.compile(r"\b\d{3}-\d{2}-\d{4}\b"), "[SSN REDACTED]"),
     (re.compile(r"\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b"), "[CARD REDACTED]"),
     (
-        re.compile(r"\b(account|routing)\s*(number|#|no\.?)\s*:?\s*\d{6,17}\b", re.IGNORECASE),
+        re.compile(
+            r"\b(account|routing)\s*(number|#|no\.?)\s*:?\s*\d{6,17}\b", re.IGNORECASE
+        ),
         "[ACCOUNT REDACTED]",
     ),
 ]
@@ -173,6 +180,7 @@ PII_REDACT_PATTERNS = [
 # ---------------------------------------------------------------------------
 # Main checking function
 # ---------------------------------------------------------------------------
+
 
 def check_ai_response(response: str) -> GuardResult:
     """
@@ -187,13 +195,17 @@ def check_ai_response(response: str) -> GuardResult:
     for pattern, explanation in FAIR_HOUSING_PATTERNS:
         matches = pattern.findall(response)
         if matches:
-            matched_text = matches[0] if isinstance(matches[0], str) else " ".join(matches[0])
-            violations.append(Violation(
-                category="fair_housing",
-                severity="block",
-                matched_text=matched_text,
-                explanation=explanation,
-            ))
+            matched_text = (
+                matches[0] if isinstance(matches[0], str) else " ".join(matches[0])
+            )
+            violations.append(
+                Violation(
+                    category="fair_housing",
+                    severity="block",
+                    matched_text=matched_text,
+                    explanation=explanation,
+                )
+            )
 
     # 2. Legal advice detection
     for pattern, explanation in LEGAL_ADVICE_PATTERNS:
@@ -202,37 +214,49 @@ def check_ai_response(response: str) -> GuardResult:
             continue
         matches = pattern.findall(response)
         if matches:
-            matched_text = matches[0] if isinstance(matches[0], str) else " ".join(matches[0])
-            violations.append(Violation(
-                category="legal_advice",
-                severity="warn",
-                matched_text=matched_text,
-                explanation=explanation,
-            ))
+            matched_text = (
+                matches[0] if isinstance(matches[0], str) else " ".join(matches[0])
+            )
+            violations.append(
+                Violation(
+                    category="legal_advice",
+                    severity="warn",
+                    matched_text=matched_text,
+                    explanation=explanation,
+                )
+            )
 
     # 3. PII leakage prevention
     for pattern, explanation in PII_PATTERNS:
         matches = pattern.findall(response)
         if matches:
-            matched_text = matches[0] if isinstance(matches[0], str) else str(matches[0])
-            violations.append(Violation(
-                category="pii_leakage",
-                severity="block",
-                matched_text="[REDACTED]",
-                explanation=explanation,
-            ))
+            matched_text = (
+                matches[0] if isinstance(matches[0], str) else str(matches[0])
+            )
+            violations.append(
+                Violation(
+                    category="pii_leakage",
+                    severity="block",
+                    matched_text="[REDACTED]",
+                    explanation=explanation,
+                )
+            )
 
     # 4. Financial promise detection
     for pattern, explanation in FINANCIAL_PROMISE_PATTERNS:
         matches = pattern.findall(response)
         if matches:
-            matched_text = matches[0] if isinstance(matches[0], str) else " ".join(matches[0])
-            violations.append(Violation(
-                category="financial_promise",
-                severity="warn",
-                matched_text=matched_text,
-                explanation=explanation,
-            ))
+            matched_text = (
+                matches[0] if isinstance(matches[0], str) else " ".join(matches[0])
+            )
+            violations.append(
+                Violation(
+                    category="financial_promise",
+                    severity="warn",
+                    matched_text=matched_text,
+                    explanation=explanation,
+                )
+            )
 
     # Determine safety
     has_blocks = any(v.severity == "block" for v in violations)

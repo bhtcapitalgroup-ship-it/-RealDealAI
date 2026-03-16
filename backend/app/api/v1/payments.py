@@ -55,7 +55,11 @@ async def get_payment_summary(
 
     for payment_status, amount in rows:
         amount_f = float(amount)
-        by_status[payment_status.value if hasattr(payment_status, 'value') else str(payment_status)] = amount_f
+        by_status[
+            payment_status.value
+            if hasattr(payment_status, "value")
+            else str(payment_status)
+        ] = amount_f
         if payment_status == PaymentStatus.COMPLETED:
             total_collected += amount_f
         elif payment_status == PaymentStatus.PENDING:
@@ -154,7 +158,11 @@ async def list_payments(
     if end_date is not None:
         stmt = stmt.where(Payment.due_date <= end_date)
 
-    stmt = stmt.order_by(Payment.due_date.desc()).offset((page - 1) * page_size).limit(page_size)
+    stmt = (
+        stmt.order_by(Payment.due_date.desc())
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+    )
 
     result = await db.execute(stmt)
     payments = result.scalars().all()
@@ -184,9 +192,7 @@ async def create_payment(
         )
 
     # Verify lease exists and belongs to the tenant
-    lease_result = await db.execute(
-        select(Lease).where(Lease.id == payload.lease_id)
-    )
+    lease_result = await db.execute(select(Lease).where(Lease.id == payload.lease_id))
     lease = lease_result.scalar_one_or_none()
     if lease is None:
         raise HTTPException(

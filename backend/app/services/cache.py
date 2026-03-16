@@ -44,7 +44,7 @@ async def cache_set(key: str, value: Any, ttl_seconds: int = 86400) -> None:
 
 
 # TTL constants
-TTL_RENT = 7 * 86400       # 7 days — rent data changes monthly
+TTL_RENT = 7 * 86400  # 7 days — rent data changes monthly
 TTL_NEIGHBORHOOD = 30 * 86400  # 30 days — demographics are slow-moving
-TTL_COMPS = 3 * 86400      # 3 days — sales data updates frequently
-TTL_VERDICT = 86400         # 1 day — recompute daily
+TTL_COMPS = 3 * 86400  # 3 days — sales data updates frequently
+TTL_VERDICT = 86400  # 1 day — recompute daily

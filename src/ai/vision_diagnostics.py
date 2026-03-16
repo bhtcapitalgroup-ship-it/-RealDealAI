@@ -9,10 +9,10 @@ import anthropic
 
 @dataclass
 class Diagnosis:
-    category: str           # plumbing, electrical, hvac, etc.
-    severity: int           # 1-5
-    urgency: str            # emergency | urgent | routine
-    description: str        # What the AI sees
+    category: str  # plumbing, electrical, hvac, etc.
+    severity: int  # 1-5
+    urgency: str  # emergency | urgent | routine
+    description: str  # What the AI sees
     possible_causes: list[str]
     recommended_action: str
     trade_needed: str
@@ -101,21 +101,25 @@ class VisionDiagnostics:
         content = []
         for img in image_data:
             b64 = base64.standard_b64encode(img).decode("utf-8")
-            content.append({
-                "type": "image",
-                "source": {
-                    "type": "base64",
-                    "media_type": "image/jpeg",
-                    "data": b64,
-                },
-            })
+            content.append(
+                {
+                    "type": "image",
+                    "source": {
+                        "type": "base64",
+                        "media_type": "image/jpeg",
+                        "data": b64,
+                    },
+                }
+            )
 
-        content.append({
-            "type": "text",
-            "text": DIAGNOSIS_PROMPT.format(
-                description=description or "No description provided"
-            ),
-        })
+        content.append(
+            {
+                "type": "text",
+                "text": DIAGNOSIS_PROMPT.format(
+                    description=description or "No description provided"
+                ),
+            }
+        )
 
         response = self.client.messages.create(
             model="claude-sonnet-4-6-20250514",

@@ -30,12 +30,8 @@ class SavedDeal(TimestampMixin, Base):
     )
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     custom_arv: Mapped[Optional[float]] = mapped_column(Numeric(14, 2), nullable=True)
-    custom_rehab: Mapped[Optional[float]] = mapped_column(
-        Numeric(14, 2), nullable=True
-    )
-    custom_rent: Mapped[Optional[float]] = mapped_column(
-        Numeric(10, 2), nullable=True
-    )
+    custom_rehab: Mapped[Optional[float]] = mapped_column(Numeric(14, 2), nullable=True)
+    custom_rent: Mapped[Optional[float]] = mapped_column(Numeric(10, 2), nullable=True)
     is_favorite: Mapped[bool] = mapped_column(
         Boolean, default=False, server_default="false", nullable=False
     )

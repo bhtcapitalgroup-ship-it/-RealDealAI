@@ -76,14 +76,20 @@ async def analyze_property(req: ExtensionAnalyzeRequest) -> ExtensionAnalyzeResp
         beds=req.beds,
         baths=req.baths,
     )
-    hood_task = get_neighborhood_data(
-        zip_code=zip_code,
-        latitude=req.latitude,
-        longitude=req.longitude,
-    ) if zip_code else asyncio.coroutine(lambda: {})()
+    hood_task = (
+        get_neighborhood_data(
+            zip_code=zip_code,
+            latitude=req.latitude,
+            longitude=req.longitude,
+        )
+        if zip_code
+        else asyncio.coroutine(lambda: {})()
+    )
 
     rent_raw, comps_raw, hood_raw = await asyncio.gather(
-        rent_task, comps_task, hood_task,
+        rent_task,
+        comps_task,
+        hood_task,
         return_exceptions=True,
     )
 
@@ -105,14 +111,16 @@ async def analyze_property(req: ExtensionAnalyzeRequest) -> ExtensionAnalyzeResp
     comps_formatted = []
     if isinstance(comps_raw, list):
         for c in comps_raw[:5]:
-            comps_formatted.append(RentComp(
-                address=c.get("formattedAddress", c.get("address", "Unknown")),
-                rent=c.get("price", c.get("rent", 0)),
-                beds=c.get("bedrooms", 0),
-                baths=c.get("bathrooms", 0),
-                sqft=c.get("squareFootage", 0),
-                distance_miles=c.get("distance", 0),
-            ))
+            comps_formatted.append(
+                RentComp(
+                    address=c.get("formattedAddress", c.get("address", "Unknown")),
+                    rent=c.get("price", c.get("rent", 0)),
+                    beds=c.get("bedrooms", 0),
+                    baths=c.get("bathrooms", 0),
+                    sqft=c.get("squareFootage", 0),
+                    distance_miles=c.get("distance", 0),
+                )
+            )
 
     rent_estimate = RentEstimateResponse(
         amount=rent_amount,
@@ -123,7 +131,9 @@ async def analyze_property(req: ExtensionAnalyzeRequest) -> ExtensionAnalyzeResp
 
     # --- Step 3: Calculate investment metrics ---
     prop_data = _to_property_data(req, rent_amount)
-    market_data = _to_market_data(hood_raw if isinstance(hood_raw, dict) else {}, zip_code)
+    market_data = _to_market_data(
+        hood_raw if isinstance(hood_raw, dict) else {}, zip_code
+    )
 
     cap_rate = analyzer.calculate_cap_rate(prop_data)
     cash_flow = analyzer.calculate_cash_flow(prop_data)
@@ -138,9 +148,11 @@ async def analyze_property(req: ExtensionAnalyzeRequest) -> ExtensionAnalyzeResp
     monthly_rate = 0.07 / 12
     num_payments = 360
     if monthly_rate > 0:
-        monthly_mortgage = loan_amount * (
-            monthly_rate * (1 + monthly_rate) ** num_payments
-        ) / ((1 + monthly_rate) ** num_payments - 1)
+        monthly_mortgage = (
+            loan_amount
+            * (monthly_rate * (1 + monthly_rate) ** num_payments)
+            / ((1 + monthly_rate) ** num_payments - 1)
+        )
     else:
         monthly_mortgage = loan_amount / num_payments
 
@@ -149,8 +161,11 @@ async def analyze_property(req: ExtensionAnalyzeRequest) -> ExtensionAnalyzeResp
     vacancy = annual_rent * 0.08
     egi = annual_rent - vacancy
     opex = egi * 0.20  # mgmt + maint + capex
-    tax_ins = (prop_data.tax_annual + analyzer._annual_insurance(prop_data)
-               + prop_data.hoa_monthly * 12)
+    tax_ins = (
+        prop_data.tax_annual
+        + analyzer._annual_insurance(prop_data)
+        + prop_data.hoa_monthly * 12
+    )
     noi = egi - opex - tax_ins
 
     total_cash_invested = req.price * 0.25 + req.price * 0.03
@@ -192,12 +207,20 @@ async def analyze_property(req: ExtensionAnalyzeRequest) -> ExtensionAnalyzeResp
     )
 
     # Flip
-    holding_costs = (monthly_mortgage + prop_data.tax_annual / 12
-                     + analyzer._annual_insurance(prop_data) / 12 + 200) * 6
+    holding_costs = (
+        monthly_mortgage
+        + prop_data.tax_annual / 12
+        + analyzer._annual_insurance(prop_data) / 12
+        + 200
+    ) * 6
     selling_costs = arv * 0.08
     avg_rehab = (rehab_low + rehab_high) / 2
     flip_profit = arv - req.price - avg_rehab - holding_costs - selling_costs
-    flip_roi = (flip_profit / (req.price + avg_rehab)) * 100 if (req.price + avg_rehab) > 0 else 0
+    flip_roi = (
+        (flip_profit / (req.price + avg_rehab)) * 100
+        if (req.price + avg_rehab) > 0
+        else 0
+    )
 
     if flip_roi > 25:
         flip_rating = "Excellent"
@@ -222,9 +245,9 @@ async def analyze_property(req: ExtensionAnalyzeRequest) -> ExtensionAnalyzeResp
     # --- Step 4: Neighborhood ---
     neighborhood = None
     if isinstance(hood_raw, dict) and hood_raw:
-        neighborhood = NeighborhoodData(**{
-            k: hood_raw[k] for k in NeighborhoodData.model_fields if k in hood_raw
-        })
+        neighborhood = NeighborhoodData(
+            **{k: hood_raw[k] for k in NeighborhoodData.model_fields if k in hood_raw}
+        )
 
     # --- Step 5: AI Verdict ---
     verdict_dict = await generate_verdict(
@@ -262,6 +285,7 @@ async def analyze_property(req: ExtensionAnalyzeRequest) -> ExtensionAnalyzeResp
 
 
 # --- Helpers ---
+
 
 def _resolve_rent(
     rent_raw: dict | None,
@@ -342,5 +366,6 @@ def _to_market_data(hood: dict, zip_code: str) -> MarketData:
 def _extract_zip(address: str) -> str:
     """Try to extract a 5-digit zip code from an address string."""
     import re
+
     match = re.search(r"\b(\d{5})\b", address)
     return match.group(1) if match else ""

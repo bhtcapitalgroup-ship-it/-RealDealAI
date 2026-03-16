@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 # Data types
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class AgingBucket:
     label: str
@@ -52,6 +53,7 @@ class CollectionSummary:
 # ---------------------------------------------------------------------------
 # Service
 # ---------------------------------------------------------------------------
+
 
 class PaymentService:
     """
@@ -146,9 +148,7 @@ class PaymentService:
         )
 
         # Update tenant's stripe customer with bank info in production
-        result = await self.db.execute(
-            select(Tenant).where(Tenant.id == tenant_id)
-        )
+        result = await self.db.execute(select(Tenant).where(Tenant.id == tenant_id))
         result.scalar_one()
 
         # Production: exchange token, attach bank account to Stripe customer
@@ -181,9 +181,7 @@ class PaymentService:
         as completed, or creates a new payment record if no pending
         record exists.
         """
-        result = await self.db.execute(
-            select(Lease).where(Lease.id == lease_id)
-        )
+        result = await self.db.execute(select(Lease).where(Lease.id == lease_id))
         lease = result.scalar_one()
 
         today = date.today()
@@ -230,6 +228,7 @@ class PaymentService:
 
         # Trigger receipt generation
         from app.tasks.payment_tasks import generate_receipt
+
         generate_receipt.delay(str(payment.id))
 
         logger.info(
@@ -299,11 +298,21 @@ class PaymentService:
         grand_total = sum(b["total"] for b in buckets.values())
 
         return AgingReport(
-            current=AgingBucket("Current", buckets["current"]["count"], buckets["current"]["total"]),
-            days_1_30=AgingBucket("1-30 Days", buckets["1-30"]["count"], buckets["1-30"]["total"]),
-            days_31_60=AgingBucket("31-60 Days", buckets["31-60"]["count"], buckets["31-60"]["total"]),
-            days_61_90=AgingBucket("61-90 Days", buckets["61-90"]["count"], buckets["61-90"]["total"]),
-            days_over_90=AgingBucket("90+ Days", buckets["90+"]["count"], buckets["90+"]["total"]),
+            current=AgingBucket(
+                "Current", buckets["current"]["count"], buckets["current"]["total"]
+            ),
+            days_1_30=AgingBucket(
+                "1-30 Days", buckets["1-30"]["count"], buckets["1-30"]["total"]
+            ),
+            days_31_60=AgingBucket(
+                "31-60 Days", buckets["31-60"]["count"], buckets["31-60"]["total"]
+            ),
+            days_61_90=AgingBucket(
+                "61-90 Days", buckets["61-90"]["count"], buckets["61-90"]["total"]
+            ),
+            days_over_90=AgingBucket(
+                "90+ Days", buckets["90+"]["count"], buckets["90+"]["total"]
+            ),
             grand_total=grand_total,
         )
 

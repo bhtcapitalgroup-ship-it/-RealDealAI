@@ -56,7 +56,9 @@ class MarketAnalyzer:
             scores["rent_ratio"] = 0
 
         # Population growth: 2 %+ = excellent
-        scores["pop_growth"] = max(0, min(1, market_data.population_growth_pct / 2.0)) * 15
+        scores["pop_growth"] = (
+            max(0, min(1, market_data.population_growth_pct / 2.0)) * 15
+        )
 
         # Job growth: 3 %+ = excellent
         scores["job_growth"] = max(0, min(1, market_data.job_growth_pct / 3.0)) * 15
@@ -101,7 +103,9 @@ class MarketAnalyzer:
     # Trending Markets
     # ------------------------------------------------------------------
 
-    def identify_trending_markets(self, markets: list[MarketData]) -> list[dict[str, Any]]:
+    def identify_trending_markets(
+        self, markets: list[MarketData]
+    ) -> list[dict[str, Any]]:
         """
         Identify and rank trending markets by momentum signals.
 
@@ -245,12 +249,18 @@ Write the report in this format:
                 messages=[{"role": "user", "content": prompt}],
             )
             report = message.content[0].text
-            logger.info("Market report generated for %s, %s", market_data.city, market_data.state)
+            logger.info(
+                "Market report generated for %s, %s",
+                market_data.city,
+                market_data.state,
+            )
             return report
 
         except Exception as exc:
             logger.error("Claude API failed for market report: %s", exc)
-            return self._fallback_market_report(market_data, overall_score, migration_score)
+            return self._fallback_market_report(
+                market_data, overall_score, migration_score
+            )
 
     # ------------------------------------------------------------------
     # Private helpers
@@ -296,9 +306,13 @@ Write the report in this format:
         if score >= 70:
             verdict = "This is a strong market for real estate investors."
         elif score >= 50:
-            verdict = "This market shows moderate potential with selective opportunities."
+            verdict = (
+                "This market shows moderate potential with selective opportunities."
+            )
         else:
-            verdict = "Proceed with caution; fundamentals are below average for investors."
+            verdict = (
+                "Proceed with caution; fundamentals are below average for investors."
+            )
 
         return f"""## Market Overview
 {m.city}, {m.state} has a median home price of ${m.median_home_price:,.0f} and \

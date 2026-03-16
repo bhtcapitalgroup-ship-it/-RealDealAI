@@ -95,26 +95,146 @@ def is_within_radius(
 
 # Partial mapping of major city zip code ranges for fast lookup
 MAJOR_CITY_ZIPS: dict[str, dict[str, Any]] = {
-    "75201": {"city": "Dallas", "state": "TX", "lat": 32.789, "lon": -96.798, "county": "Dallas"},
-    "75202": {"city": "Dallas", "state": "TX", "lat": 32.782, "lon": -96.800, "county": "Dallas"},
-    "77001": {"city": "Houston", "state": "TX", "lat": 29.752, "lon": -95.358, "county": "Harris"},
-    "78201": {"city": "San Antonio", "state": "TX", "lat": 29.468, "lon": -98.525, "county": "Bexar"},
-    "73301": {"city": "Austin", "state": "TX", "lat": 30.326, "lon": -97.771, "county": "Travis"},
-    "32099": {"city": "Jacksonville", "state": "FL", "lat": 30.332, "lon": -81.656, "county": "Duval"},
-    "33601": {"city": "Tampa", "state": "FL", "lat": 27.950, "lon": -82.457, "county": "Hillsborough"},
-    "32801": {"city": "Orlando", "state": "FL", "lat": 28.538, "lon": -81.379, "county": "Orange"},
-    "30301": {"city": "Atlanta", "state": "GA", "lat": 33.749, "lon": -84.388, "county": "Fulton"},
-    "28201": {"city": "Charlotte", "state": "NC", "lat": 35.227, "lon": -80.843, "county": "Mecklenburg"},
-    "27601": {"city": "Raleigh", "state": "NC", "lat": 35.780, "lon": -78.638, "county": "Wake"},
-    "37201": {"city": "Nashville", "state": "TN", "lat": 36.163, "lon": -86.782, "county": "Davidson"},
-    "38101": {"city": "Memphis", "state": "TN", "lat": 35.149, "lon": -90.049, "county": "Shelby"},
-    "46201": {"city": "Indianapolis", "state": "IN", "lat": 39.768, "lon": -86.158, "county": "Marion"},
-    "43201": {"city": "Columbus", "state": "OH", "lat": 39.961, "lon": -82.999, "county": "Franklin"},
-    "44101": {"city": "Cleveland", "state": "OH", "lat": 41.499, "lon": -81.694, "county": "Cuyahoga"},
-    "85001": {"city": "Phoenix", "state": "AZ", "lat": 33.448, "lon": -112.074, "county": "Maricopa"},
-    "89101": {"city": "Las Vegas", "state": "NV", "lat": 36.171, "lon": -115.144, "county": "Clark"},
-    "90001": {"city": "Los Angeles", "state": "CA", "lat": 33.941, "lon": -118.249, "county": "Los Angeles"},
-    "10001": {"city": "New York", "state": "NY", "lat": 40.750, "lon": -73.997, "county": "New York"},
+    "75201": {
+        "city": "Dallas",
+        "state": "TX",
+        "lat": 32.789,
+        "lon": -96.798,
+        "county": "Dallas",
+    },
+    "75202": {
+        "city": "Dallas",
+        "state": "TX",
+        "lat": 32.782,
+        "lon": -96.800,
+        "county": "Dallas",
+    },
+    "77001": {
+        "city": "Houston",
+        "state": "TX",
+        "lat": 29.752,
+        "lon": -95.358,
+        "county": "Harris",
+    },
+    "78201": {
+        "city": "San Antonio",
+        "state": "TX",
+        "lat": 29.468,
+        "lon": -98.525,
+        "county": "Bexar",
+    },
+    "73301": {
+        "city": "Austin",
+        "state": "TX",
+        "lat": 30.326,
+        "lon": -97.771,
+        "county": "Travis",
+    },
+    "32099": {
+        "city": "Jacksonville",
+        "state": "FL",
+        "lat": 30.332,
+        "lon": -81.656,
+        "county": "Duval",
+    },
+    "33601": {
+        "city": "Tampa",
+        "state": "FL",
+        "lat": 27.950,
+        "lon": -82.457,
+        "county": "Hillsborough",
+    },
+    "32801": {
+        "city": "Orlando",
+        "state": "FL",
+        "lat": 28.538,
+        "lon": -81.379,
+        "county": "Orange",
+    },
+    "30301": {
+        "city": "Atlanta",
+        "state": "GA",
+        "lat": 33.749,
+        "lon": -84.388,
+        "county": "Fulton",
+    },
+    "28201": {
+        "city": "Charlotte",
+        "state": "NC",
+        "lat": 35.227,
+        "lon": -80.843,
+        "county": "Mecklenburg",
+    },
+    "27601": {
+        "city": "Raleigh",
+        "state": "NC",
+        "lat": 35.780,
+        "lon": -78.638,
+        "county": "Wake",
+    },
+    "37201": {
+        "city": "Nashville",
+        "state": "TN",
+        "lat": 36.163,
+        "lon": -86.782,
+        "county": "Davidson",
+    },
+    "38101": {
+        "city": "Memphis",
+        "state": "TN",
+        "lat": 35.149,
+        "lon": -90.049,
+        "county": "Shelby",
+    },
+    "46201": {
+        "city": "Indianapolis",
+        "state": "IN",
+        "lat": 39.768,
+        "lon": -86.158,
+        "county": "Marion",
+    },
+    "43201": {
+        "city": "Columbus",
+        "state": "OH",
+        "lat": 39.961,
+        "lon": -82.999,
+        "county": "Franklin",
+    },
+    "44101": {
+        "city": "Cleveland",
+        "state": "OH",
+        "lat": 41.499,
+        "lon": -81.694,
+        "county": "Cuyahoga",
+    },
+    "85001": {
+        "city": "Phoenix",
+        "state": "AZ",
+        "lat": 33.448,
+        "lon": -112.074,
+        "county": "Maricopa",
+    },
+    "89101": {
+        "city": "Las Vegas",
+        "state": "NV",
+        "lat": 36.171,
+        "lon": -115.144,
+        "county": "Clark",
+    },
+    "90001": {
+        "city": "Los Angeles",
+        "state": "CA",
+        "lat": 33.941,
+        "lon": -118.249,
+        "county": "Los Angeles",
+    },
+    "10001": {
+        "city": "New York",
+        "state": "NY",
+        "lat": 40.750,
+        "lon": -73.997,
+        "county": "New York",
+    },
 }
 
 
@@ -273,7 +393,9 @@ async def reverse_geocode(
                 return {
                     "formatted_address": result.get("formatted_address", ""),
                     "street": f"{components.get('street_number', '')} {components.get('route', '')}".strip(),
-                    "city": components.get("locality", components.get("sublocality", "")),
+                    "city": components.get(
+                        "locality", components.get("sublocality", "")
+                    ),
                     "state": components.get("administrative_area_level_1_short", ""),
                     "zip_code": components.get("postal_code", ""),
                     "county": components.get("administrative_area_level_2", ""),
@@ -318,7 +440,7 @@ def midpoint(lat1: float, lon1: float, lat2: float, lon2: float) -> tuple[float,
 
     lat_mid = math.atan2(
         math.sin(lat1_r) + math.sin(lat2_r),
-        math.sqrt((math.cos(lat1_r) + bx) ** 2 + by ** 2),
+        math.sqrt((math.cos(lat1_r) + bx) ** 2 + by**2),
     )
     lon_mid = lon1_r + math.atan2(by, math.cos(lat1_r) + bx)
 
@@ -337,8 +459,7 @@ def destination_point(
     d = distance_miles / EARTH_RADIUS_MILES
 
     lat2 = math.asin(
-        math.sin(lat_r) * math.cos(d)
-        + math.cos(lat_r) * math.sin(d) * math.cos(brng)
+        math.sin(lat_r) * math.cos(d) + math.cos(lat_r) * math.sin(d) * math.cos(brng)
     )
     lon2 = lon_r + math.atan2(
         math.sin(brng) * math.sin(d) * math.cos(lat_r),

@@ -168,9 +168,7 @@ class NotificationService:
 
             # Firebase / OneSignal integration would go here
 
-            logger.info(
-                "Push notification sent to user %s: %s", user_id, title
-            )
+            logger.info("Push notification sent to user %s: %s", user_id, title)
             return True
 
         except Exception as exc:
@@ -207,7 +205,9 @@ class NotificationService:
         alert_name: str,
     ) -> str:
         score = analysis.get("investment_score", 0)
-        score_color = "#16a34a" if score >= 70 else "#ca8a04" if score >= 50 else "#dc2626"
+        score_color = (
+            "#16a34a" if score >= 70 else "#ca8a04" if score >= 50 else "#dc2626"
+        )
 
         cap_rate = analysis.get("cap_rate", 0)
         cash_flow = analysis.get("cash_flow", 0)
@@ -266,7 +266,7 @@ class NotificationService:
                     <tr style="border-bottom: 1px solid #e5e7eb;">
                         <td style="padding: 8px 0; color: #6b7280;">Monthly Cash Flow</td>
                         <td style="padding: 8px 0; text-align: right; font-weight: bold;
-                        color: {'#16a34a' if cash_flow > 0 else '#dc2626'};">${cash_flow:,.0f}</td>
+                        color: {"#16a34a" if cash_flow > 0 else "#dc2626"};">${cash_flow:,.0f}</td>
                     </tr>
                     <tr style="border-bottom: 1px solid #e5e7eb;">
                         <td style="padding: 8px 0; color: #6b7280;">Cash-on-Cash</td>
@@ -279,7 +279,7 @@ class NotificationService:
                 </table>
 
                 <!-- AI Summary -->
-                {"<div style='background: #eff6ff; border-left: 4px solid #1a56db; padding: 12px; margin: 16px 0; border-radius: 0 8px 8px 0;'><strong>AI Analysis:</strong> " + analysis.get('ai_summary', '')[:300] + "...</div>" if analysis.get('ai_summary') else ""}
+                {"<div style='background: #eff6ff; border-left: 4px solid #1a56db; padding: 12px; margin: 16px 0; border-radius: 0 8px 8px 0;'><strong>AI Analysis:</strong> " + analysis.get("ai_summary", "")[:300] + "...</div>" if analysis.get("ai_summary") else ""}
 
                 <!-- CTA -->
                 <div style="text-align: center; margin: 24px 0;">
@@ -313,15 +313,15 @@ class NotificationService:
             <div style="padding: 24px; background: #ffffff;">
                 <div style="display: flex; gap: 12px; margin-bottom: 20px;">
                     <div style="flex: 1; background: #f3f4f6; padding: 12px; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 18px; font-weight: bold;">${stats.get('median_home_price', 0):,.0f}</div>
+                        <div style="font-size: 18px; font-weight: bold;">${stats.get("median_home_price", 0):,.0f}</div>
                         <div style="font-size: 11px; color: #6b7280;">Median Price</div>
                     </div>
                     <div style="flex: 1; background: #f3f4f6; padding: 12px; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 18px; font-weight: bold;">${stats.get('median_rent', 0):,.0f}</div>
+                        <div style="font-size: 18px; font-weight: bold;">${stats.get("median_rent", 0):,.0f}</div>
                         <div style="font-size: 11px; color: #6b7280;">Median Rent</div>
                     </div>
                     <div style="flex: 1; background: #f3f4f6; padding: 12px; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 18px; font-weight: bold;">{stats.get('active_listings', 0):,}</div>
+                        <div style="font-size: 18px; font-weight: bold;">{stats.get("active_listings", 0):,}</div>
                         <div style="font-size: 11px; color: #6b7280;">Listings</div>
                     </div>
                 </div>
@@ -341,7 +341,9 @@ class NotificationService:
     def _send_email(self, to_email: str, subject: str, html_content: str) -> bool:
         """Send an email via SendGrid."""
         if not self._api_key:
-            logger.warning("SendGrid API key not configured; email not sent to %s", to_email)
+            logger.warning(
+                "SendGrid API key not configured; email not sent to %s", to_email
+            )
             return False
 
         try:
@@ -355,7 +357,12 @@ class NotificationService:
             response = self.client.send(message)
 
             if response.status_code in (200, 201, 202):
-                logger.info("Email sent to %s: %s (status %d)", to_email, subject, response.status_code)
+                logger.info(
+                    "Email sent to %s: %s (status %d)",
+                    to_email,
+                    subject,
+                    response.status_code,
+                )
                 return True
             else:
                 logger.error(

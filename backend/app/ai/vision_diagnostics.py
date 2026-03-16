@@ -25,6 +25,7 @@ logger = logging.getLogger(__name__)
 # Data types
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class Diagnosis:
     category: str
@@ -129,6 +130,7 @@ URGENCY_MAP = {
 # Service
 # ---------------------------------------------------------------------------
 
+
 class VisionDiagnosticsService:
     """
     Integrated vision diagnostics service that analyzes maintenance photos
@@ -152,21 +154,25 @@ class VisionDiagnosticsService:
         content: list[dict] = []
         for img in image_data:
             b64 = base64.standard_b64encode(img).decode("utf-8")
-            content.append({
-                "type": "image",
-                "source": {
-                    "type": "base64",
-                    "media_type": "image/jpeg",
-                    "data": b64,
-                },
-            })
+            content.append(
+                {
+                    "type": "image",
+                    "source": {
+                        "type": "base64",
+                        "media_type": "image/jpeg",
+                        "data": b64,
+                    },
+                }
+            )
 
-        content.append({
-            "type": "text",
-            "text": DIAGNOSIS_PROMPT.format(
-                description=description or "No description provided"
-            ),
-        })
+        content.append(
+            {
+                "type": "text",
+                "text": DIAGNOSIS_PROMPT.format(
+                    description=description or "No description provided"
+                ),
+            }
+        )
 
         response = self.client.messages.create(
             model="claude-sonnet-4-6-20250514",
@@ -228,9 +234,7 @@ class VisionDiagnosticsService:
         request.category = CATEGORY_MAP.get(
             diagnosis.category, MaintenanceCategory.OTHER
         )
-        request.urgency = URGENCY_MAP.get(
-            diagnosis.urgency, MaintenanceUrgency.ROUTINE
-        )
+        request.urgency = URGENCY_MAP.get(diagnosis.urgency, MaintenanceUrgency.ROUTINE)
 
         # Advance status to diagnosed
         if request.status == MaintenanceStatus.NEW:

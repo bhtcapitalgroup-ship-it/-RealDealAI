@@ -21,7 +21,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             await conn.run_sync(Base.metadata.create_all)
     except Exception as e:
         import logging
-        logging.getLogger(__name__).warning("DB init failed (will retry on first request): %s", e)
+
+        logging.getLogger(__name__).warning(
+            "DB init failed (will retry on first request): %s", e
+        )
     yield
     await engine.dispose()
 
@@ -59,9 +62,18 @@ from app.api.v1.webhooks import router as webhooks_router
 from app.api.v1.extension import router as extension_router
 
 for r in [
-    auth_router, properties_router, units_router, tenants_router,
-    leases_router, payments_router, maintenance_router, contractors_router,
-    documents_router, chat_router, financials_router, webhooks_router,
+    auth_router,
+    properties_router,
+    units_router,
+    tenants_router,
+    leases_router,
+    payments_router,
+    maintenance_router,
+    contractors_router,
+    documents_router,
+    chat_router,
+    financials_router,
+    webhooks_router,
     extension_router,
 ]:
     app.include_router(r, prefix="/api/v1")

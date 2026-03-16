@@ -1,6 +1,5 @@
 """Tests for the rule-based verdict fallback."""
 
-
 from app.services.verdict import _rule_based_verdict, _parse_verdict_response
 
 

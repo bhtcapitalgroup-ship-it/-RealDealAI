@@ -27,7 +27,9 @@ from app.schemas.property import PropertyResponse
 router = APIRouter(prefix="/deals", tags=["deals"])
 
 
-@router.post("/save", response_model=SavedDealResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/save", response_model=SavedDealResponse, status_code=status.HTTP_201_CREATED
+)
 async def save_deal(
     payload: SavedDealCreate,
     current_user: User = Depends(get_current_user),
@@ -176,9 +178,7 @@ async def compare_deals(
             detail="Maximum 10 properties can be compared at once",
         )
 
-    result = await db.execute(
-        select(Property).where(Property.id.in_(property_ids))
-    )
+    result = await db.execute(select(Property).where(Property.id.in_(property_ids)))
     properties = {p.id: p for p in result.scalars().all()}
 
     if len(properties) != len(property_ids):
@@ -206,9 +206,21 @@ async def compare_deals(
         prop = properties[pid]
         sd = saved_map.get(pid)
 
-        eff_arv = float(sd.custom_arv) if sd and sd.custom_arv else (float(prop.arv_estimate) if prop.arv_estimate else None)
-        eff_rehab = float(sd.custom_rehab) if sd and sd.custom_rehab else (float(prop.rehab_cost_low) if prop.rehab_cost_low else None)
-        eff_rent = float(sd.custom_rent) if sd and sd.custom_rent else (float(prop.rent_estimate) if prop.rent_estimate else None)
+        eff_arv = (
+            float(sd.custom_arv)
+            if sd and sd.custom_arv
+            else (float(prop.arv_estimate) if prop.arv_estimate else None)
+        )
+        eff_rehab = (
+            float(sd.custom_rehab)
+            if sd and sd.custom_rehab
+            else (float(prop.rehab_cost_low) if prop.rehab_cost_low else None)
+        )
+        eff_rent = (
+            float(sd.custom_rent)
+            if sd and sd.custom_rent
+            else (float(prop.rent_estimate) if prop.rent_estimate else None)
+        )
 
         eff_cap = prop.cap_rate
         eff_cf = float(prop.cash_flow_monthly) if prop.cash_flow_monthly else None
@@ -216,10 +228,20 @@ async def compare_deals(
         # Recompute cap rate and cash flow if custom rent is provided
         if eff_rent and prop.list_price and float(prop.list_price) > 0:
             annual_rent = eff_rent * 12
-            expenses = (float(prop.monthly_taxes or 0) + float(prop.monthly_insurance or 0) + float(prop.hoa_monthly or 0)) * 12
+            expenses = (
+                float(prop.monthly_taxes or 0)
+                + float(prop.monthly_insurance or 0)
+                + float(prop.hoa_monthly or 0)
+            ) * 12
             noi = annual_rent - expenses
             eff_cap = round(noi / float(prop.list_price) * 100, 2)
-            eff_cf = round(eff_rent - float(prop.monthly_taxes or 0) - float(prop.monthly_insurance or 0) - float(prop.hoa_monthly or 0), 2)
+            eff_cf = round(
+                eff_rent
+                - float(prop.monthly_taxes or 0)
+                - float(prop.monthly_insurance or 0)
+                - float(prop.hoa_monthly or 0),
+                2,
+            )
 
         item = DealComparisonItem(
             property=PropertyResponse.model_validate(prop),
@@ -265,39 +287,59 @@ async def export_deals(
 
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow([
-        "address", "city", "state", "zip_code", "list_price",
-        "bedrooms", "bathrooms", "sqft", "property_type",
-        "cap_rate", "cash_flow_monthly", "investment_score",
-        "arv_estimate", "rent_estimate",
-        "custom_arv", "custom_rehab", "custom_rent",
-        "notes", "is_favorite", "saved_at",
-    ])
+    writer.writerow(
+        [
+            "address",
+            "city",
+            "state",
+            "zip_code",
+            "list_price",
+            "bedrooms",
+            "bathrooms",
+            "sqft",
+            "property_type",
+            "cap_rate",
+            "cash_flow_monthly",
+            "investment_score",
+            "arv_estimate",
+            "rent_estimate",
+            "custom_arv",
+            "custom_rehab",
+            "custom_rent",
+            "notes",
+            "is_favorite",
+            "saved_at",
+        ]
+    )
 
     for deal in deals:
         prop = deal.property
-        writer.writerow([
-            prop.address if prop else "",
-            prop.city if prop else "",
-            prop.state if prop else "",
-            prop.zip_code if prop else "",
-            float(prop.list_price) if prop and prop.list_price else "",
-            prop.bedrooms if prop else "",
-            prop.bathrooms if prop else "",
-            prop.sqft if prop else "",
-            prop.property_type.value if prop and prop.property_type else "",
-            prop.cap_rate if prop else "",
-            float(prop.cash_flow_monthly) if prop and prop.cash_flow_monthly else "",
-            prop.investment_score if prop else "",
-            float(prop.arv_estimate) if prop and prop.arv_estimate else "",
-            float(prop.rent_estimate) if prop and prop.rent_estimate else "",
-            float(deal.custom_arv) if deal.custom_arv else "",
-            float(deal.custom_rehab) if deal.custom_rehab else "",
-            float(deal.custom_rent) if deal.custom_rent else "",
-            deal.notes or "",
-            deal.is_favorite,
-            deal.created_at.isoformat(),
-        ])
+        writer.writerow(
+            [
+                prop.address if prop else "",
+                prop.city if prop else "",
+                prop.state if prop else "",
+                prop.zip_code if prop else "",
+                float(prop.list_price) if prop and prop.list_price else "",
+                prop.bedrooms if prop else "",
+                prop.bathrooms if prop else "",
+                prop.sqft if prop else "",
+                prop.property_type.value if prop and prop.property_type else "",
+                prop.cap_rate if prop else "",
+                float(prop.cash_flow_monthly)
+                if prop and prop.cash_flow_monthly
+                else "",
+                prop.investment_score if prop else "",
+                float(prop.arv_estimate) if prop and prop.arv_estimate else "",
+                float(prop.rent_estimate) if prop and prop.rent_estimate else "",
+                float(deal.custom_arv) if deal.custom_arv else "",
+                float(deal.custom_rehab) if deal.custom_rehab else "",
+                float(deal.custom_rent) if deal.custom_rent else "",
+                deal.notes or "",
+                deal.is_favorite,
+                deal.created_at.isoformat(),
+            ]
+        )
 
     output.seek(0)
     return StreamingResponse(

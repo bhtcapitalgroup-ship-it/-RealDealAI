@@ -75,8 +75,12 @@ PLAN_CONFIGS: dict[PlanTier, PlanLimits] = {
         priority_support=False,
         price_monthly=29.0,
         price_yearly=290.0,
-        stripe_price_id_monthly=os.getenv("STRIPE_STARTER_MONTHLY", "price_starter_monthly"),
-        stripe_price_id_yearly=os.getenv("STRIPE_STARTER_YEARLY", "price_starter_yearly"),
+        stripe_price_id_monthly=os.getenv(
+            "STRIPE_STARTER_MONTHLY", "price_starter_monthly"
+        ),
+        stripe_price_id_yearly=os.getenv(
+            "STRIPE_STARTER_YEARLY", "price_starter_yearly"
+        ),
     ),
     PlanTier.PRO: PlanLimits(
         markets=10,
@@ -101,8 +105,12 @@ PLAN_CONFIGS: dict[PlanTier, PlanLimits] = {
         priority_support=True,
         price_monthly=199.0,
         price_yearly=1990.0,
-        stripe_price_id_monthly=os.getenv("STRIPE_ENTERPRISE_MONTHLY", "price_enterprise_monthly"),
-        stripe_price_id_yearly=os.getenv("STRIPE_ENTERPRISE_YEARLY", "price_enterprise_yearly"),
+        stripe_price_id_monthly=os.getenv(
+            "STRIPE_ENTERPRISE_MONTHLY", "price_enterprise_monthly"
+        ),
+        stripe_price_id_yearly=os.getenv(
+            "STRIPE_ENTERPRISE_YEARLY", "price_enterprise_yearly"
+        ),
     ),
 }
 
@@ -132,7 +140,9 @@ class SubscriptionService:
                     "name": tier.value.title(),
                     "price_monthly": limits.price_monthly,
                     "price_yearly": limits.price_yearly,
-                    "price_yearly_monthly": round(limits.price_yearly / 12, 2) if limits.price_yearly > 0 else 0,
+                    "price_yearly_monthly": round(limits.price_yearly / 12, 2)
+                    if limits.price_yearly > 0
+                    else 0,
                     "markets": limits.markets,
                     "alerts": limits.alerts,
                     "daily_property_views": limits.daily_property_views,
@@ -220,7 +230,9 @@ class SubscriptionService:
         )
 
         if not price_id:
-            raise ValueError(f"No Stripe price configured for {tier.value} {billing_period}")
+            raise ValueError(
+                f"No Stripe price configured for {tier.value} {billing_period}"
+            )
 
         customer_id = self._get_or_create_stripe_customer(user_id)
 
@@ -235,7 +247,8 @@ class SubscriptionService:
                     }
                 ],
                 mode="subscription",
-                success_url=success_url or f"{APP_URL}/settings/billing?session_id={{CHECKOUT_SESSION_ID}}",
+                success_url=success_url
+                or f"{APP_URL}/settings/billing?session_id={{CHECKOUT_SESSION_ID}}",
                 cancel_url=cancel_url or f"{APP_URL}/pricing",
                 metadata={
                     "user_id": user_id,
@@ -255,7 +268,9 @@ class SubscriptionService:
 
             logger.info(
                 "Checkout session created for user %s, tier %s: %s",
-                user_id, tier.value, session.id,
+                user_id,
+                tier.value,
+                session.id,
             )
 
             return {
@@ -306,7 +321,9 @@ class SubscriptionService:
 
         return sub_data
 
-    def cancel_subscription(self, user_id: str, at_period_end: bool = True) -> dict[str, Any]:
+    def cancel_subscription(
+        self, user_id: str, at_period_end: bool = True
+    ) -> dict[str, Any]:
         """Cancel a user's subscription. By default cancels at period end."""
         sub_data = self._get_user_subscription(user_id)
         if not sub_data or not sub_data.get("stripe_subscription_id"):
@@ -318,7 +335,9 @@ class SubscriptionService:
                     sub_data["stripe_subscription_id"],
                     cancel_at_period_end=True,
                 )
-                logger.info("Subscription set to cancel at period end for user %s", user_id)
+                logger.info(
+                    "Subscription set to cancel at period end for user %s", user_id
+                )
             else:
                 subscription = stripe.Subscription.delete(
                     sub_data["stripe_subscription_id"],
@@ -379,7 +398,9 @@ class SubscriptionService:
 
             logger.info(
                 "Plan changed for user %s: %s -> %s",
-                user_id, sub_data.get("tier"), new_tier.value,
+                user_id,
+                sub_data.get("tier"),
+                new_tier.value,
             )
 
             return {
@@ -462,6 +483,7 @@ class SubscriptionService:
 
         # Send confirmation email
         from app.services.notification import NotificationService
+
         notification_svc = NotificationService()
         user_email = self._get_user_email(user_id)
         limits = PLAN_CONFIGS[tier]
@@ -521,7 +543,9 @@ class SubscriptionService:
             user_id = self._get_user_by_customer(customer_id)
             if user_id:
                 self._update_user_tier(user_id, PlanTier.FREE)
-                logger.warning("User %s downgraded to free after payment failures", user_id)
+                logger.warning(
+                    "User %s downgraded to free after payment failures", user_id
+                )
 
         return {"status": "payment_failed", "attempt": attempt}
 

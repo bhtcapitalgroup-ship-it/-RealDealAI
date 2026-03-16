@@ -120,9 +120,7 @@ async def twilio_inbound(
         else from_number.lstrip("+")
     )
 
-    result = await db.execute(
-        select(Tenant).where(Tenant.phone.contains(clean_phone))
-    )
+    result = await db.execute(select(Tenant).where(Tenant.phone.contains(clean_phone)))
     tenant = result.scalar_one_or_none()
 
     if tenant is None:
@@ -273,9 +271,7 @@ async def stripe_webhook(
 # ---------------------------------------------------------------------------
 
 
-async def _handle_checkout_completed(
-    session: dict, db: AsyncSession
-) -> None:
+async def _handle_checkout_completed(session: dict, db: AsyncSession) -> None:
     """checkout.session.completed — Activate subscription, update user tier."""
     metadata = session.get("metadata", {})
     user_id_str = metadata.get("user_id")
@@ -334,9 +330,7 @@ async def _handle_checkout_completed(
         logger.warning("Failed to send welcome email: %s", exc)
 
 
-async def _handle_subscription_updated(
-    subscription: dict, db: AsyncSession
-) -> None:
+async def _handle_subscription_updated(subscription: dict, db: AsyncSession) -> None:
     """customer.subscription.updated — Update tier on plan change."""
     metadata = subscription.get("metadata", {})
     user_id_str = metadata.get("user_id")
@@ -365,12 +359,12 @@ async def _handle_subscription_updated(
             sub_status,
         )
     else:
-        logger.info("Subscription updated for user %s, status=%s", user_id_str, sub_status)
+        logger.info(
+            "Subscription updated for user %s, status=%s", user_id_str, sub_status
+        )
 
 
-async def _handle_subscription_deleted(
-    subscription: dict, db: AsyncSession
-) -> None:
+async def _handle_subscription_deleted(subscription: dict, db: AsyncSession) -> None:
     """customer.subscription.deleted — Downgrade to free (starter) tier."""
     metadata = subscription.get("metadata", {})
     user_id_str = metadata.get("user_id")
@@ -396,9 +390,7 @@ async def _handle_subscription_deleted(
         return
 
     await db.execute(
-        update(User)
-        .where(User.id == user_uuid)
-        .values(plan_tier=PlanTier.STARTER)
+        update(User).where(User.id == user_uuid).values(plan_tier=PlanTier.STARTER)
     )
     await db.flush()
 
@@ -425,9 +417,7 @@ async def _handle_subscription_deleted(
         logger.warning("Failed to send cancellation email: %s", exc)
 
 
-async def _handle_invoice_payment_succeeded(
-    invoice: dict, db: AsyncSession
-) -> None:
+async def _handle_invoice_payment_succeeded(invoice: dict, db: AsyncSession) -> None:
     """invoice.payment_succeeded — Record payment and extend access."""
     customer_id = invoice.get("customer", "")
     amount_cents = invoice.get("amount_paid", 0)
@@ -437,15 +427,11 @@ async def _handle_invoice_payment_succeeded(
     period_end = invoice.get("period_end")
 
     # Look up user by Stripe customer ID
-    result = await db.execute(
-        select(User).where(User.stripe_account_id == customer_id)
-    )
+    result = await db.execute(select(User).where(User.stripe_account_id == customer_id))
     user = result.scalar_one_or_none()
 
     if not user:
-        logger.info(
-            "invoice.payment_succeeded for unknown customer %s", customer_id
-        )
+        logger.info("invoice.payment_succeeded for unknown customer %s", customer_id)
         return
 
     # Record in subscription_payments table via Celery
@@ -477,23 +463,17 @@ async def _handle_invoice_payment_succeeded(
     )
 
 
-async def _handle_invoice_payment_failed(
-    invoice: dict, db: AsyncSession
-) -> None:
+async def _handle_invoice_payment_failed(invoice: dict, db: AsyncSession) -> None:
     """invoice.payment_failed — Send warning email and apply grace period logic."""
     customer_id = invoice.get("customer", "")
     attempt_count = invoice.get("attempt_count", 0)
     invoice.get("next_payment_attempt")
 
-    result = await db.execute(
-        select(User).where(User.stripe_account_id == customer_id)
-    )
+    result = await db.execute(select(User).where(User.stripe_account_id == customer_id))
     user = result.scalar_one_or_none()
 
     if not user:
-        logger.warning(
-            "invoice.payment_failed for unknown customer %s", customer_id
-        )
+        logger.warning("invoice.payment_failed for unknown customer %s", customer_id)
         return
 
     logger.warning(
@@ -541,9 +521,7 @@ async def _handle_invoice_payment_failed(
     # After 3 failed attempts, downgrade to free tier
     if attempt_count >= 3:
         await db.execute(
-            update(User)
-            .where(User.id == user.id)
-            .values(plan_tier=PlanTier.STARTER)
+            update(User).where(User.id == user.id).values(plan_tier=PlanTier.STARTER)
         )
         await db.flush()
         logger.warning(
@@ -553,9 +531,7 @@ async def _handle_invoice_payment_failed(
         )
 
 
-async def _handle_trial_will_end(
-    subscription: dict, db: AsyncSession
-) -> None:
+async def _handle_trial_will_end(subscription: dict, db: AsyncSession) -> None:
     """customer.subscription.trial_will_end — Send trial ending reminder."""
     metadata = subscription.get("metadata", {})
     user_id_str = metadata.get("user_id")

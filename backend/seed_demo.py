@@ -6,6 +6,7 @@ from datetime import date, datetime, timedelta, timezone
 
 # Must set env before imports
 import os
+
 os.environ.setdefault("DATABASE_URL", "sqlite+aiosqlite:///./realdeal_dev.db")
 os.environ.setdefault("JWT_SECRET", "dev-secret")
 
@@ -43,27 +44,51 @@ async def seed():
         # ---- Properties ----
         p1 = Property(
             id=uuid.UUID("aaaa1111-1111-1111-1111-111111111111"),
-            landlord_id=lid, name="Maple Street Apartments",
-            address_line1="742 Maple St", city="Portland", state="OR", zip_code="97201",
-            property_type="multi", total_units=12,
-            purchase_price=2400000, current_value=2800000,
-            mortgage_payment=9800, insurance_cost=850, tax_annual=28000,
+            landlord_id=lid,
+            name="Maple Street Apartments",
+            address_line1="742 Maple St",
+            city="Portland",
+            state="OR",
+            zip_code="97201",
+            property_type="multi",
+            total_units=12,
+            purchase_price=2400000,
+            current_value=2800000,
+            mortgage_payment=9800,
+            insurance_cost=850,
+            tax_annual=28000,
         )
         p2 = Property(
             id=uuid.UUID("aaaa2222-2222-2222-2222-222222222222"),
-            landlord_id=lid, name="Oak Park Townhomes",
-            address_line1="1200 Oak Park Dr", city="Portland", state="OR", zip_code="97205",
-            property_type="townhouse", total_units=8,
-            purchase_price=1600000, current_value=1900000,
-            mortgage_payment=6500, insurance_cost=600, tax_annual=19000,
+            landlord_id=lid,
+            name="Oak Park Townhomes",
+            address_line1="1200 Oak Park Dr",
+            city="Portland",
+            state="OR",
+            zip_code="97205",
+            property_type="townhouse",
+            total_units=8,
+            purchase_price=1600000,
+            current_value=1900000,
+            mortgage_payment=6500,
+            insurance_cost=600,
+            tax_annual=19000,
         )
         p3 = Property(
             id=uuid.UUID("aaaa3333-3333-3333-3333-333333333333"),
-            landlord_id=lid, name="Cedar Heights Condo",
-            address_line1="890 Cedar Heights Way", city="Lake Oswego", state="OR", zip_code="97034",
-            property_type="condo", total_units=4,
-            purchase_price=850000, current_value=980000,
-            mortgage_payment=3400, insurance_cost=350, tax_annual=10500,
+            landlord_id=lid,
+            name="Cedar Heights Condo",
+            address_line1="890 Cedar Heights Way",
+            city="Lake Oswego",
+            state="OR",
+            zip_code="97034",
+            property_type="condo",
+            total_units=4,
+            purchase_price=850000,
+            current_value=980000,
+            mortgage_payment=3400,
+            insurance_cost=350,
+            tax_annual=10500,
         )
         db.add_all([p1, p2, p3])
         await db.flush()
@@ -128,9 +153,13 @@ async def seed():
 
         for prop, unum, beds, baths, sqft, rent, occupied in units_config:
             unit = Unit(
-                property_id=prop.id, unit_number=unum,
-                bedrooms=beds, bathrooms=baths, sqft=sqft,
-                market_rent=rent, status="occupied" if occupied else "vacant",
+                property_id=prop.id,
+                unit_number=unum,
+                bedrooms=beds,
+                bathrooms=baths,
+                sqft=sqft,
+                market_rent=rent,
+                status="occupied" if occupied else "vacant",
             )
             db.add(unit)
             await db.flush()
@@ -139,30 +168,42 @@ async def seed():
                 td = tenants_data[tenant_idx]
                 tenant = Tenant(
                     landlord_id=lid,
-                    first_name=td[0], last_name=td[1],
-                    email=td[2], phone=td[3],
-                    is_active=True, portal_enabled=True,
+                    first_name=td[0],
+                    last_name=td[1],
+                    email=td[2],
+                    phone=td[3],
+                    is_active=True,
+                    portal_enabled=True,
                 )
                 db.add(tenant)
                 await db.flush()
 
                 lease = Lease(
-                    unit_id=unit.id, tenant_id=tenant.id,
-                    rent_amount=rent, deposit_amount=rent,
+                    unit_id=unit.id,
+                    tenant_id=tenant.id,
+                    rent_amount=rent,
+                    deposit_amount=rent,
                     start_date=today - timedelta(days=180),
                     end_date=today + timedelta(days=185),
-                    rent_due_day=1, late_fee_amount=50,
+                    rent_due_day=1,
+                    late_fee_amount=50,
                     late_fee_grace_days=5,
-                    lease_type=LeaseType.FIXED, status=LeaseStatus.ACTIVE,
+                    lease_type=LeaseType.FIXED,
+                    status=LeaseStatus.ACTIVE,
                 )
                 db.add(lease)
                 await db.flush()
 
                 # Create payment for this month (most paid, some outstanding)
-                paid = tenant_idx not in [3, 7]  # Sarah Williams and Lisa Wilson are late
+                paid = tenant_idx not in [
+                    3,
+                    7,
+                ]  # Sarah Williams and Lisa Wilson are late
                 payment = Payment(
-                    lease_id=lease.id, tenant_id=tenant.id,
-                    amount=rent, payment_type=PaymentType.RENT,
+                    lease_id=lease.id,
+                    tenant_id=tenant.id,
+                    amount=rent,
+                    payment_type=PaymentType.RENT,
                     payment_method=PaymentMethod.ACH if paid else None,
                     status=PaymentStatus.COMPLETED if paid else PaymentStatus.PENDING,
                     due_date=today.replace(day=1),
@@ -174,21 +215,61 @@ async def seed():
 
         # ---- Contractors ----
         contractors = [
-            Contractor(landlord_id=lid, company_name="ABC Plumbing", contact_name="Mike Chen",
-                       phone="(503) 555-0301", email="mike@abcplumbing.com", trades="plumbing",
-                       avg_rating=4.8, total_jobs=23, is_active=True),
-            Contractor(landlord_id=lid, company_name="QuickFix Plumbing", contact_name="Tom Reed",
-                       phone="(503) 555-0302", email="tom@quickfix.com", trades="plumbing",
-                       avg_rating=4.5, total_jobs=15, is_active=True),
-            Contractor(landlord_id=lid, company_name="Portland Electric Co", contact_name="Dave Park",
-                       phone="(503) 555-0303", email="dave@pdxelectric.com", trades="electrical",
-                       avg_rating=4.9, total_jobs=31, is_active=True),
-            Contractor(landlord_id=lid, company_name="Rose City HVAC", contact_name="Sandra Kim",
-                       phone="(503) 555-0304", email="sandra@rosecityhvac.com", trades="hvac",
-                       avg_rating=4.7, total_jobs=18, is_active=True),
-            Contractor(landlord_id=lid, company_name="All-Around Handyman", contact_name="Jake Torres",
-                       phone="(503) 555-0305", email="jake@allroundhandyman.com", trades="general",
-                       avg_rating=4.6, total_jobs=42, is_active=True),
+            Contractor(
+                landlord_id=lid,
+                company_name="ABC Plumbing",
+                contact_name="Mike Chen",
+                phone="(503) 555-0301",
+                email="mike@abcplumbing.com",
+                trades="plumbing",
+                avg_rating=4.8,
+                total_jobs=23,
+                is_active=True,
+            ),
+            Contractor(
+                landlord_id=lid,
+                company_name="QuickFix Plumbing",
+                contact_name="Tom Reed",
+                phone="(503) 555-0302",
+                email="tom@quickfix.com",
+                trades="plumbing",
+                avg_rating=4.5,
+                total_jobs=15,
+                is_active=True,
+            ),
+            Contractor(
+                landlord_id=lid,
+                company_name="Portland Electric Co",
+                contact_name="Dave Park",
+                phone="(503) 555-0303",
+                email="dave@pdxelectric.com",
+                trades="electrical",
+                avg_rating=4.9,
+                total_jobs=31,
+                is_active=True,
+            ),
+            Contractor(
+                landlord_id=lid,
+                company_name="Rose City HVAC",
+                contact_name="Sandra Kim",
+                phone="(503) 555-0304",
+                email="sandra@rosecityhvac.com",
+                trades="hvac",
+                avg_rating=4.7,
+                total_jobs=18,
+                is_active=True,
+            ),
+            Contractor(
+                landlord_id=lid,
+                company_name="All-Around Handyman",
+                contact_name="Jake Torres",
+                phone="(503) 555-0305",
+                email="jake@allroundhandyman.com",
+                trades="general",
+                avg_rating=4.6,
+                total_jobs=42,
+                is_active=True,
+            ),
         ]
         db.add_all(contractors)
 

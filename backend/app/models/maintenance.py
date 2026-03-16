@@ -60,16 +60,22 @@ class MaintenanceRequest(TimestampMixin, Base):
     __tablename__ = "maintenance_requests"
 
     unit_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(), ForeignKey("units.id", ondelete="CASCADE"),
-        nullable=False, index=True,
+        UUID(),
+        ForeignKey("units.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
     tenant_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(), ForeignKey("tenants.id", ondelete="CASCADE"),
-        nullable=False, index=True,
+        UUID(),
+        ForeignKey("tenants.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
     landlord_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(), ForeignKey("users.id", ondelete="CASCADE"),
-        nullable=False, index=True,
+        UUID(),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
     title: Mapped[str] = mapped_column(String(500), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False)
@@ -90,9 +96,7 @@ class MaintenanceRequest(TimestampMixin, Base):
         nullable=False,
         index=True,
     )
-    ai_diagnosis: Mapped[Optional[dict[str, Any]]] = mapped_column(
-        JSON, nullable=True
-    )
+    ai_diagnosis: Mapped[Optional[dict[str, Any]]] = mapped_column(JSON, nullable=True)
     ai_confidence: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     estimated_cost_low: Mapped[Optional[float]] = mapped_column(
         Numeric(10, 2), nullable=True
@@ -100,9 +104,7 @@ class MaintenanceRequest(TimestampMixin, Base):
     estimated_cost_high: Mapped[Optional[float]] = mapped_column(
         Numeric(10, 2), nullable=True
     )
-    actual_cost: Mapped[Optional[float]] = mapped_column(
-        Numeric(10, 2), nullable=True
-    )
+    actual_cost: Mapped[Optional[float]] = mapped_column(Numeric(10, 2), nullable=True)
     scheduled_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
     completed_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
     tenant_rating: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
@@ -113,12 +115,16 @@ class MaintenanceRequest(TimestampMixin, Base):
     tenant: Mapped["Tenant"] = relationship("Tenant")
     landlord: Mapped["User"] = relationship("User")
     photos: Mapped[List["MaintenancePhoto"]] = relationship(
-        "MaintenancePhoto", back_populates="request",
-        cascade="all, delete-orphan", lazy="selectin",
+        "MaintenancePhoto",
+        back_populates="request",
+        cascade="all, delete-orphan",
+        lazy="selectin",
     )
     quotes: Mapped[List["Quote"]] = relationship(
-        "Quote", back_populates="request",
-        cascade="all, delete-orphan", lazy="selectin",
+        "Quote",
+        back_populates="request",
+        cascade="all, delete-orphan",
+        lazy="selectin",
     )
 
     def __repr__(self) -> str:
@@ -129,13 +135,13 @@ class MaintenancePhoto(TimestampMixin, Base):
     __tablename__ = "maintenance_photos"
 
     request_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(), ForeignKey("maintenance_requests.id", ondelete="CASCADE"),
-        nullable=False, index=True,
+        UUID(),
+        ForeignKey("maintenance_requests.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
     s3_key: Mapped[str] = mapped_column(String(1000), nullable=False)
-    ai_analysis: Mapped[Optional[dict[str, Any]]] = mapped_column(
-        JSON, nullable=True
-    )
+    ai_analysis: Mapped[Optional[dict[str, Any]]] = mapped_column(JSON, nullable=True)
     uploaded_by: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
 
     # Relationships

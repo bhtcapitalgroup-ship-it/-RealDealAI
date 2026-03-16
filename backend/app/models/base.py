@@ -13,6 +13,7 @@ class UUID(TypeDecorator):
     """Platform-independent UUID type.
     Uses PostgreSQL UUID when available, otherwise CHAR(36).
     """
+
     impl = CHAR
     cache_ok = True
 
@@ -38,6 +39,7 @@ class UUID(TypeDecorator):
 
 class Base(DeclarativeBase):
     """Declarative base for all ORM models."""
+
     pass
 
 

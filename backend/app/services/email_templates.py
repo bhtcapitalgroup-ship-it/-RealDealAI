@@ -151,7 +151,9 @@ DEAL_ALERT_TEMPLATE = (
   </table>
 
   """
-    + _CTA_BUTTON.format(btn_color="#1e3a5f", btn_url="{deal_url}", btn_text="View Deal")
+    + _CTA_BUTTON.format(
+        btn_color="#1e3a5f", btn_url="{deal_url}", btn_text="View Deal"
+    )
     + """
 </td>
 </tr>
@@ -228,7 +230,9 @@ WELCOME_TEMPLATE = (
   </table>
 
   """
-    + _CTA_BUTTON.format(btn_color="#1e3a5f", btn_url="{dashboard_url}", btn_text="Explore Deals")
+    + _CTA_BUTTON.format(
+        btn_color="#1e3a5f", btn_url="{dashboard_url}", btn_text="Explore Deals"
+    )
     + """
 </td>
 </tr>
@@ -268,7 +272,9 @@ SUBSCRIPTION_CONFIRMATION_TEMPLATE = (
   </div>
 
   """
-    + _CTA_BUTTON.format(btn_color="#1e3a5f", btn_url="{dashboard_url}", btn_text="Go to Dashboard")
+    + _CTA_BUTTON.format(
+        btn_color="#1e3a5f", btn_url="{dashboard_url}", btn_text="Go to Dashboard"
+    )
     + """
 </td>
 </tr>
@@ -313,7 +319,9 @@ MARKET_REPORT_TEMPLATE = (
   {best_deals_html}
 
   """
-    + _CTA_BUTTON.format(btn_color="#1e3a5f", btn_url="{all_deals_url}", btn_text="See All Deals")
+    + _CTA_BUTTON.format(
+        btn_color="#1e3a5f", btn_url="{all_deals_url}", btn_text="See All Deals"
+    )
     + """
 </td>
 </tr>
@@ -386,6 +394,7 @@ PAYMENT_FAILED_TEMPLATE = (
 # Helper: generate feature list HTML for subscription confirmation
 # -------------------------------------------------------------------
 
+
 def build_features_html(features: list[str]) -> str:
     """Return an HTML string with checkmark list items for the subscription email."""
     rows = []
@@ -411,7 +420,13 @@ def build_market_rows_html(markets: list[dict]) -> str:
     """
     rows = []
     for m in markets:
-        score_color = "#059669" if m["score"] >= 70 else "#d97706" if m["score"] >= 50 else "#dc2626"
+        score_color = (
+            "#059669"
+            if m["score"] >= 70
+            else "#d97706"
+            if m["score"] >= 50
+            else "#dc2626"
+        )
         rows.append(
             f'<tr style="border-bottom:1px solid #f3f4f6;">'
             f'<td style="padding:10px 0;font-size:14px;color:#9ca3af;font-weight:600;">{m["rank"]}</td>'
@@ -432,7 +447,13 @@ def build_best_deals_html(deals: list[dict]) -> str:
     """
     cards = []
     for d in deals:
-        score_color = "#059669" if d["score"] >= 70 else "#d97706" if d["score"] >= 50 else "#dc2626"
+        score_color = (
+            "#059669"
+            if d["score"] >= 70
+            else "#d97706"
+            if d["score"] >= 50
+            else "#dc2626"
+        )
         cards.append(
             '<table role="presentation" width="100%" cellpadding="0" cellspacing="0"'
             ' style="margin-bottom:12px;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">'

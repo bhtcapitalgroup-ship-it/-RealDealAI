@@ -16,16 +16,16 @@ class Contractor(TimestampMixin, Base):
     __tablename__ = "contractors"
 
     landlord_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(), ForeignKey("users.id", ondelete="CASCADE"),
-        nullable=False, index=True,
+        UUID(),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
     company_name: Mapped[str] = mapped_column(String(255), nullable=False)
     contact_name: Mapped[str] = mapped_column(String(255), nullable=False)
     phone: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     email: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    trades: Mapped[Optional[list[str]]] = mapped_column(
-        String, nullable=True
-    )
+    trades: Mapped[Optional[list[str]]] = mapped_column(String, nullable=True)
     avg_rating: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     total_jobs: Mapped[int] = mapped_column(
         Integer, default=0, server_default="0", nullable=False

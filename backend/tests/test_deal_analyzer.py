@@ -300,12 +300,8 @@ class TestRentEstimation:
         self, analyzer: DealAnalyzer, sample_market
     ):
         """More bedrooms should generally produce a higher rent estimate."""
-        prop_2bd = PropertyData(
-            bedrooms=2, bathrooms=1.0, sqft=1000, year_built=2000
-        )
-        prop_4bd = PropertyData(
-            bedrooms=4, bathrooms=2.5, sqft=2000, year_built=2000
-        )
+        prop_2bd = PropertyData(bedrooms=2, bathrooms=1.0, sqft=1000, year_built=2000)
+        prop_4bd = PropertyData(bedrooms=4, bathrooms=2.5, sqft=2000, year_built=2000)
 
         rent_2bd = analyzer.estimate_rent(prop_2bd, sample_market)
         rent_4bd = analyzer.estimate_rent(prop_4bd, sample_market)
@@ -315,9 +311,7 @@ class TestRentEstimation:
 
     def test_estimate_rent_floor(self, analyzer: DealAnalyzer):
         """Rent should never be below the $400 floor."""
-        tiny_prop = PropertyData(
-            bedrooms=0, bathrooms=1.0, sqft=200, year_built=2020
-        )
+        tiny_prop = PropertyData(bedrooms=0, bathrooms=1.0, sqft=200, year_built=2020)
         market = MarketData(
             median_rent=0,
             rent_per_sqft=0,

@@ -32,15 +32,20 @@ class Expense(TimestampMixin, Base):
     __tablename__ = "expenses"
 
     landlord_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(), ForeignKey("users.id", ondelete="CASCADE"),
-        nullable=False, index=True,
+        UUID(),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
     property_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(), ForeignKey("properties.id", ondelete="SET NULL"),
-        nullable=True, index=True,
+        UUID(),
+        ForeignKey("properties.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
     )
     maintenance_request_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(), ForeignKey("maintenance_requests.id", ondelete="SET NULL"),
+        UUID(),
+        ForeignKey("maintenance_requests.id", ondelete="SET NULL"),
         nullable=True,
     )
     category: Mapped[ExpenseCategory] = mapped_column(

@@ -18,9 +18,7 @@ from app.schemas.lease import LeaseCreate, LeaseResponse, LeaseUpdate
 router = APIRouter(prefix="/leases", tags=["leases"])
 
 
-async def _verify_unit_ownership(
-    unit_id: UUID, user: User, db: AsyncSession
-) -> Unit:
+async def _verify_unit_ownership(unit_id: UUID, user: User, db: AsyncSession) -> Unit:
     """Verify that the landlord owns the property containing the unit."""
     result = await db.execute(select(Unit).where(Unit.id == unit_id))
     unit = result.scalar_one_or_none()
@@ -80,7 +78,11 @@ async def list_leases(
     if lease_status is not None:
         stmt = stmt.where(Lease.status == lease_status)
 
-    stmt = stmt.order_by(Lease.start_date.desc()).offset((page - 1) * page_size).limit(page_size)
+    stmt = (
+        stmt.order_by(Lease.start_date.desc())
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+    )
 
     result = await db.execute(stmt)
     leases = result.scalars().all()

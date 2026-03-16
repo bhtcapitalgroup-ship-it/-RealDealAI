@@ -86,9 +86,7 @@ class TestSendDealAlertEmail:
 class TestDealAlertEmailContent:
     """Tests for deal alert email HTML rendering."""
 
-    def test_deal_alert_email_content(
-        self, svc, sample_property_data, sample_analysis
-    ):
+    def test_deal_alert_email_content(self, svc, sample_property_data, sample_analysis):
         """The rendered HTML should contain property details and metrics."""
         html = svc._render_deal_alert_html(
             prop=sample_property_data,

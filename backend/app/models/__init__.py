@@ -36,7 +36,12 @@ from app.models.saved_deal import SavedDeal
 from app.models.tenant import Tenant
 from app.models.unit import Unit, UnitStatus
 from app.models.api_key import APIKey
-from app.models.scraper_run import ScraperRun, ScraperSource, ScraperStatus, ScraperTrigger
+from app.models.scraper_run import (
+    ScraperRun,
+    ScraperSource,
+    ScraperStatus,
+    ScraperTrigger,
+)
 from app.models.user import PlanTier, User
 from app.models.user_preferences import ExperienceLevel, UserPreferences
 

@@ -61,7 +61,9 @@ class PropertyData:
     sqft: int = 0
     lot_size_sqft: int = 0
     year_built: int = 2000
-    property_type: str = "single_family"  # single_family, multi_family, condo, townhouse
+    property_type: str = (
+        "single_family"  # single_family, multi_family, condo, townhouse
+    )
     condition: str = "fair"  # excellent, good, fair, poor, distressed
     stories: int = 1
     garage: bool = False
@@ -172,7 +174,13 @@ class DealAnalyzer:
             age_adj = (property.year_built - comp.year_built) * 500
 
             # --- Condition adjustment ---
-            cond_order = {"excellent": 4, "good": 3, "fair": 2, "poor": 1, "distressed": 0}
+            cond_order = {
+                "excellent": 4,
+                "good": 3,
+                "fair": 2,
+                "poor": 1,
+                "distressed": 0,
+            }
             # ARV assumes *repaired* condition = "good"
             cond_diff = cond_order.get("good", 3) - cond_order.get(comp.condition, 2)
             cond_adj = cond_diff * 8_000
@@ -301,7 +309,11 @@ class DealAnalyzer:
         bath_premium = max(0, (property.bathrooms - 1)) * 75
 
         # Blend methods (50 % sqft, 35 % bed-based, 15 % bath bump)
-        blended = rent_by_sqft * 0.50 + rent_by_beds * 0.35 + (rent_by_sqft + bath_premium) * 0.15
+        blended = (
+            rent_by_sqft * 0.50
+            + rent_by_beds * 0.35
+            + (rent_by_sqft + bath_premium) * 0.15
+        )
 
         # Adjustments
         # School rating adjustment: +/- up to 8 %
@@ -345,9 +357,11 @@ class DealAnalyzer:
         if monthly_rate == 0:
             monthly_pi = loan_amount / num_payments
         else:
-            monthly_pi = loan_amount * (
-                monthly_rate * (1 + monthly_rate) ** num_payments
-            ) / ((1 + monthly_rate) ** num_payments - 1)
+            monthly_pi = (
+                loan_amount
+                * (monthly_rate * (1 + monthly_rate) ** num_payments)
+                / ((1 + monthly_rate) ** num_payments - 1)
+            )
 
         monthly_tax = property.tax_annual / 12
         monthly_insurance = self._annual_insurance(property) / 12
@@ -367,7 +381,11 @@ class DealAnalyzer:
         operating_expenses = egi * (
             PROPERTY_MANAGEMENT_RATE + MAINTENANCE_RATE + CAPEX_RESERVE_RATE
         )
-        tax_insurance = property.tax_annual + self._annual_insurance(property) + property.hoa_monthly * 12
+        tax_insurance = (
+            property.tax_annual
+            + self._annual_insurance(property)
+            + property.hoa_monthly * 12
+        )
         noi = egi - operating_expenses - tax_insurance
 
         cap_rate = noi / property.price
@@ -422,10 +440,19 @@ class DealAnalyzer:
         egi = gross_rent_annual - vacancy
 
         opex = egi * (PROPERTY_MANAGEMENT_RATE + MAINTENANCE_RATE + CAPEX_RESERVE_RATE)
-        tax_insurance = property.tax_annual + self._annual_insurance(property) + property.hoa_monthly * 12
+        tax_insurance = (
+            property.tax_annual
+            + self._annual_insurance(property)
+            + property.hoa_monthly * 12
+        )
         noi = egi - opex - tax_insurance
 
-        annual_debt_service = self._monthly_piti(property) * 12 - property.tax_annual - self._annual_insurance(property) - property.hoa_monthly * 12
+        annual_debt_service = (
+            self._monthly_piti(property) * 12
+            - property.tax_annual
+            - self._annual_insurance(property)
+            - property.hoa_monthly * 12
+        )
         # debt service is P&I only for DSCR
         if annual_debt_service <= 0:
             return 0.0
@@ -454,7 +481,13 @@ class DealAnalyzer:
         all_in = property.price + avg_rehab
 
         # Rough ARV proxy when no comps: price / condition discount
-        cond_discounts = {"excellent": 1.0, "good": 1.05, "fair": 1.15, "poor": 1.30, "distressed": 1.50}
+        cond_discounts = {
+            "excellent": 1.0,
+            "good": 1.05,
+            "fair": 1.15,
+            "poor": 1.30,
+            "distressed": 1.50,
+        }
         arv_est = property.price * cond_discounts.get(property.condition, 1.15)
 
         # Equity capture: target > 25 % equity after rehab
@@ -503,7 +536,13 @@ class DealAnalyzer:
         scores: dict[str, float] = {}
 
         # 1. Price vs ARV (25 %)  -- use condition-based ARV proxy
-        cond_discounts = {"excellent": 1.0, "good": 1.05, "fair": 1.15, "poor": 1.30, "distressed": 1.50}
+        cond_discounts = {
+            "excellent": 1.0,
+            "good": 1.05,
+            "fair": 1.15,
+            "poor": 1.30,
+            "distressed": 1.50,
+        }
         arv_proxy = property.price * cond_discounts.get(property.condition, 1.15)
         price_to_arv = property.price / max(arv_proxy, 1)
         # Best deal = buying at 70 % of ARV ("70 % rule")
@@ -522,7 +561,9 @@ class DealAnalyzer:
 
         # 4. Population growth (10 %)
         # 2 %+ growth is excellent
-        scores["pop_growth"] = max(0, min(1, market_data.population_growth_pct / 2.0)) * 10
+        scores["pop_growth"] = (
+            max(0, min(1, market_data.population_growth_pct / 2.0)) * 10
+        )
 
         # 5. School ratings (10 %)
         scores["schools"] = max(0, min(1, market_data.school_rating / 10)) * 10
@@ -537,7 +578,13 @@ class DealAnalyzer:
         scores["market_trend"] = max(0, min(1, trend / 5.0)) * 10
 
         # 8. Property condition proxy (5 %)
-        cond_scores = {"excellent": 1.0, "good": 0.8, "fair": 0.5, "poor": 0.25, "distressed": 0.1}
+        cond_scores = {
+            "excellent": 1.0,
+            "good": 0.8,
+            "fair": 0.5,
+            "poor": 0.25,
+            "distressed": 0.1,
+        }
         scores["condition"] = cond_scores.get(property.condition, 0.5) * 5
 
         total = sum(scores.values())
@@ -599,14 +646,14 @@ Condition: {prop.condition}
 Estimated Rent: ${prop.estimated_rent:,.0f}/mo
 
 Analysis Results:
-- Investment Score: {analysis.get('investment_score', 'N/A')}/100
-- Cap Rate: {analysis.get('cap_rate', 0) * 100:.1f}%
-- Monthly Cash Flow: ${analysis.get('cash_flow', 0):,.0f}
-- Cash-on-Cash Return: {analysis.get('cash_on_cash', 0) * 100:.1f}%
-- DSCR: {analysis.get('dscr', 0):.2f}
-- BRRRR Score: {analysis.get('brrrr_score', 0):.0f}/100
-- Estimated Rehab: ${analysis.get('rehab_low', 0):,.0f} - ${analysis.get('rehab_high', 0):,.0f}
-- ARV: ${analysis.get('arv', 0):,.0f}
+- Investment Score: {analysis.get("investment_score", "N/A")}/100
+- Cap Rate: {analysis.get("cap_rate", 0) * 100:.1f}%
+- Monthly Cash Flow: ${analysis.get("cash_flow", 0):,.0f}
+- Cash-on-Cash Return: {analysis.get("cash_on_cash", 0) * 100:.1f}%
+- DSCR: {analysis.get("dscr", 0):.2f}
+- BRRRR Score: {analysis.get("brrrr_score", 0):.0f}/100
+- Estimated Rehab: ${analysis.get("rehab_low", 0):,.0f} - ${analysis.get("rehab_high", 0):,.0f}
+- ARV: ${analysis.get("arv", 0):,.0f}
 
 Provide your analysis in this exact format:
 ## Deal Summary

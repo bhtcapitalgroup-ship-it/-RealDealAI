@@ -18,42 +18,44 @@ from app.scrapers.zillow import ZillowScraper
 # Sample responses
 # ---------------------------------------------------------------------------
 
-ZILLOW_NEXT_DATA = json.dumps({
-    "props": {
-        "pageProps": {
-            "searchPageState": {
-                "cat1": {
-                    "searchResults": {
-                        "listResults": [
-                            {
-                                "hdpData": {
-                                    "homeInfo": {
-                                        "streetAddress": "123 Zillow St",
-                                        "city": "Dallas",
-                                        "state": "TX",
-                                        "zipcode": "75201",
-                                        "price": 350000,
-                                        "bedrooms": 3,
-                                        "bathrooms": 2.0,
-                                        "livingArea": 1800,
-                                        "yearBuilt": 2005,
-                                        "homeType": "SINGLE_FAMILY",
-                                        "daysOnZillow": 12,
-                                        "zpid": "12345678",
-                                        "latitude": 32.78,
-                                        "longitude": -96.80,
-                                    }
-                                },
-                                "detailUrl": "/homedetails/123-Zillow-St/12345678_zpid/",
-                            }
-                        ],
-                        "totalResultCount": 1,
+ZILLOW_NEXT_DATA = json.dumps(
+    {
+        "props": {
+            "pageProps": {
+                "searchPageState": {
+                    "cat1": {
+                        "searchResults": {
+                            "listResults": [
+                                {
+                                    "hdpData": {
+                                        "homeInfo": {
+                                            "streetAddress": "123 Zillow St",
+                                            "city": "Dallas",
+                                            "state": "TX",
+                                            "zipcode": "75201",
+                                            "price": 350000,
+                                            "bedrooms": 3,
+                                            "bathrooms": 2.0,
+                                            "livingArea": 1800,
+                                            "yearBuilt": 2005,
+                                            "homeType": "SINGLE_FAMILY",
+                                            "daysOnZillow": 12,
+                                            "zpid": "12345678",
+                                            "latitude": 32.78,
+                                            "longitude": -96.80,
+                                        }
+                                    },
+                                    "detailUrl": "/homedetails/123-Zillow-St/12345678_zpid/",
+                                }
+                            ],
+                            "totalResultCount": 1,
+                        }
                     }
                 }
             }
         }
     }
-})
+)
 
 ZILLOW_SEARCH_HTML = f"""
 <html>
@@ -143,6 +145,7 @@ PUBLIC_RECORDS_HTML = """
 # Zillow
 # ---------------------------------------------------------------------------
 
+
 class TestZillowScraper:
     """Tests for ZillowScraper parsing."""
 
@@ -188,6 +191,7 @@ class TestZillowScraper:
 # Redfin
 # ---------------------------------------------------------------------------
 
+
 class TestRedfinScraper:
     """Tests for RedfinScraper CSV parsing."""
 
@@ -218,6 +222,7 @@ class TestRedfinScraper:
 # ---------------------------------------------------------------------------
 # Realtor
 # ---------------------------------------------------------------------------
+
 
 class TestRealtorScraper:
     """Tests for RealtorScraper GraphQL parsing."""
@@ -250,6 +255,7 @@ class TestRealtorScraper:
 # Rentometer
 # ---------------------------------------------------------------------------
 
+
 class TestRentometerScraper:
     """Tests for RentometerScraper response parsing."""
 
@@ -270,6 +276,7 @@ class TestRentometerScraper:
 # ---------------------------------------------------------------------------
 # Public Records
 # ---------------------------------------------------------------------------
+
 
 class TestPublicRecordsScraper:
     """Tests for PublicRecordsScraper parsing."""
@@ -295,6 +302,7 @@ class TestPublicRecordsScraper:
 # ---------------------------------------------------------------------------
 # Base Scraper: retry and rate limiting
 # ---------------------------------------------------------------------------
+
 
 class TestBaseScraperRetry:
     """Tests for BaseScraper retry logic."""

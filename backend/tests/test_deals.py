@@ -5,13 +5,10 @@ import uuid
 from httpx import AsyncClient
 
 
-
 class TestSaveDeal:
     """Tests for POST /api/v1/deals/save."""
 
-    async def test_save_deal(
-        self, client: AsyncClient, test_user, test_property
-    ):
+    async def test_save_deal(self, client: AsyncClient, test_user, test_property):
         """Saving a deal should return 201 with deal details."""
         response = await client.post(
             "/api/v1/deals/save",
@@ -52,9 +49,7 @@ class TestSaveDeal:
         )
         assert response.status_code == 409
 
-    async def test_save_deal_nonexistent_property(
-        self, client: AsyncClient, test_user
-    ):
+    async def test_save_deal_nonexistent_property(self, client: AsyncClient, test_user):
         """Saving a deal for a non-existent property should return 404."""
         response = await client.post(
             "/api/v1/deals/save",
@@ -87,9 +82,7 @@ class TestListSavedDeals:
         assert isinstance(data, list)
         assert len(data) >= 1
 
-    async def test_list_saved_deals_empty(
-        self, client: AsyncClient, test_user
-    ):
+    async def test_list_saved_deals_empty(self, client: AsyncClient, test_user):
         """A user with no saved deals should see an empty list."""
         response = await client.get(
             "/api/v1/deals/saved",
@@ -125,9 +118,7 @@ class TestUpdateDeal:
 class TestDeleteDeal:
     """Tests for DELETE /api/v1/deals/{deal_id}."""
 
-    async def test_delete_deal(
-        self, client: AsyncClient, test_user, test_property
-    ):
+    async def test_delete_deal(self, client: AsyncClient, test_user, test_property):
         """Deleting a saved deal should return 204."""
         save_resp = await client.post(
             "/api/v1/deals/save",
@@ -150,9 +141,7 @@ class TestDeleteDeal:
         ids = [d["id"] for d in list_resp.json()]
         assert deal_id not in ids
 
-    async def test_delete_deal_not_found(
-        self, client: AsyncClient, test_user
-    ):
+    async def test_delete_deal_not_found(self, client: AsyncClient, test_user):
         """Deleting a non-existent deal should return 404."""
         response = await client.delete(
             f"/api/v1/deals/{uuid.uuid4()}",
@@ -179,9 +168,7 @@ class TestCompareDeals:
 class TestExportCSV:
     """Tests for GET /api/v1/deals/export."""
 
-    async def test_export_csv(
-        self, client: AsyncClient, test_user, test_property
-    ):
+    async def test_export_csv(self, client: AsyncClient, test_user, test_property):
         """Exporting deals should return a CSV file."""
         # Save a deal
         await client.post(

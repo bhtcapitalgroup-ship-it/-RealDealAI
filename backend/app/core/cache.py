@@ -25,15 +25,15 @@ F = TypeVar("F", bound=Callable[..., Awaitable[Any]])
 # TTL strategy constants (seconds)
 # ---------------------------------------------------------------------------
 
-TTL_PROPERTY_LIST = 300          # 5 minutes
-TTL_PROPERTY_DETAIL = 900        # 15 minutes
-TTL_MARKET_DATA = 3600           # 1 hour
-TTL_HEATMAP = 1800               # 30 minutes
-TTL_USER_SPECIFIC = 60           # 1 minute (short)
-TTL_RENT_ESTIMATE = 7 * 86400   # 7 days
-TTL_NEIGHBORHOOD = 30 * 86400   # 30 days
-TTL_COMPS = 3 * 86400           # 3 days
-TTL_VERDICT = 86400              # 1 day
+TTL_PROPERTY_LIST = 300  # 5 minutes
+TTL_PROPERTY_DETAIL = 900  # 15 minutes
+TTL_MARKET_DATA = 3600  # 1 hour
+TTL_HEATMAP = 1800  # 30 minutes
+TTL_USER_SPECIFIC = 60  # 1 minute (short)
+TTL_RENT_ESTIMATE = 7 * 86400  # 7 days
+TTL_NEIGHBORHOOD = 30 * 86400  # 30 days
+TTL_COMPS = 3 * 86400  # 3 days
+TTL_VERDICT = 86400  # 1 day
 
 
 class CacheService:
@@ -52,7 +52,7 @@ class CacheService:
         if self._pool is None:
             self._pool = aioredis.from_url(
                 self._redis_url,
-                decode_responses=False,   # orjson produces bytes
+                decode_responses=False,  # orjson produces bytes
                 max_connections=20,
             )
         return self._pool
@@ -226,7 +226,9 @@ def _build_cache_key(
 
     if serializable_args:
         args_hash = hashlib.md5(
-            orjson.dumps(serializable_args, option=orjson.OPT_NON_STR_KEYS | orjson.OPT_SORT_KEYS)
+            orjson.dumps(
+                serializable_args, option=orjson.OPT_NON_STR_KEYS | orjson.OPT_SORT_KEYS
+            )
         ).hexdigest()[:12]
         raw_parts.append(args_hash)
 
@@ -240,7 +242,9 @@ def _build_cache_key(
             except (TypeError, orjson.JSONEncodeError):
                 sorted_kwargs.append((k, str(v)))
         kwargs_hash = hashlib.md5(
-            orjson.dumps(sorted_kwargs, option=orjson.OPT_NON_STR_KEYS | orjson.OPT_SORT_KEYS)
+            orjson.dumps(
+                sorted_kwargs, option=orjson.OPT_NON_STR_KEYS | orjson.OPT_SORT_KEYS
+            )
         ).hexdigest()[:12]
         raw_parts.append(kwargs_hash)
 

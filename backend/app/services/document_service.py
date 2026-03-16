@@ -50,10 +50,7 @@ class DocumentService:
         """
         # Generate a unique S3 key
         ext = os.path.splitext(filename)[1] or ".pdf"
-        s3_key = (
-            f"documents/{landlord_id}/{doc_type}/"
-            f"{uuid.uuid4().hex}{ext}"
-        )
+        s3_key = f"documents/{landlord_id}/{doc_type}/{uuid.uuid4().hex}{ext}"
 
         # Placeholder: upload to S3
         # In production:

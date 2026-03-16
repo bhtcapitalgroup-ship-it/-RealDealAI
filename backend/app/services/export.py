@@ -98,11 +98,11 @@ class ExportService:
             cash_flow = rent - monthly_expenses
             total_investment = price + rehab
             coc_return = (
-                (cash_flow * 12 / total_investment * 100)
-                if total_investment > 0
-                else 0
+                (cash_flow * 12 / total_investment * 100) if total_investment > 0 else 0
             )
-            dscr = rent / float(prop.mortgage_payment or 1) if prop.mortgage_payment else 0
+            dscr = (
+                rent / float(prop.mortgage_payment or 1) if prop.mortgage_payment else 0
+            )
             brrrr_score = _compute_brrrr_score(price, arv, rehab, rent)
             investment_score = _compute_investment_score(
                 cap_rate, cash_flow, coc_return, dscr
@@ -131,7 +131,9 @@ class ExportService:
                     "investment_score": investment_score,
                     "notes": sd.notes or "",
                     "is_favorite": "Yes" if sd.is_favorite else "No",
-                    "saved_at": sd.created_at.strftime("%Y-%m-%d") if sd.created_at else "",
+                    "saved_at": sd.created_at.strftime("%Y-%m-%d")
+                    if sd.created_at
+                    else "",
                 }
             )
 
@@ -196,7 +198,9 @@ class ExportService:
         summary_header_font = Font(bold=True, size=14)
         ws_summary["A1"] = "RealDeal AI — Deal Export"
         ws_summary["A1"].font = summary_header_font
-        ws_summary["A2"] = f"Generated: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}"
+        ws_summary["A2"] = (
+            f"Generated: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}"
+        )
         ws_summary["A3"] = f"Total Deals: {len(rows)}"
 
         if rows:
@@ -207,9 +211,20 @@ class ExportService:
             summary_data = [
                 ("Metric", "Value"),
                 ("Total Deals", len(rows)),
-                ("Average Price", f"${sum(prices) / len(prices):,.0f}" if prices else "N/A"),
-                ("Average Cap Rate", f"{sum(cap_rates) / len(cap_rates):.2f}%" if cap_rates else "N/A"),
-                ("Average Cash Flow", f"${sum(cash_flows) / len(cash_flows):,.0f}" if cash_flows else "N/A"),
+                (
+                    "Average Price",
+                    f"${sum(prices) / len(prices):,.0f}" if prices else "N/A",
+                ),
+                (
+                    "Average Cap Rate",
+                    f"{sum(cap_rates) / len(cap_rates):.2f}%" if cap_rates else "N/A",
+                ),
+                (
+                    "Average Cash Flow",
+                    f"${sum(cash_flows) / len(cash_flows):,.0f}"
+                    if cash_flows
+                    else "N/A",
+                ),
                 ("Favorites", sum(1 for r in rows if r["is_favorite"] == "Yes")),
             ]
 
@@ -223,7 +238,9 @@ class ExportService:
         # ---- Sheet 2: Financial Analysis ----
         ws_finance = wb.create_sheet("Financial Analysis")
 
-        header_fill = PatternFill(start_color="1F4E79", end_color="1F4E79", fill_type="solid")
+        header_fill = PatternFill(
+            start_color="1F4E79", end_color="1F4E79", fill_type="solid"
+        )
         header_font = Font(bold=True, color="FFFFFF", size=11)
 
         for col_idx, (_, col_label) in enumerate(DEAL_COLUMNS, start=1):
@@ -232,10 +249,17 @@ class ExportService:
             cell.fill = header_fill
             cell.alignment = Alignment(horizontal="center")
 
-        money_format = '#,##0.00'
+        money_format = "#,##0.00"
         pct_format = '0.00"%"'
 
-        money_cols = {"price", "arv", "rehab_cost", "monthly_rent", "annual_rent", "cash_flow"}
+        money_cols = {
+            "price",
+            "arv",
+            "rehab_cost",
+            "monthly_rent",
+            "annual_rent",
+            "cash_flow",
+        }
         pct_cols = {"cap_rate", "coc_return"}
 
         for r_idx, row in enumerate(rows, start=2):
@@ -279,11 +303,23 @@ class ExportService:
 
             stats = [
                 ("Deals", len(market_rows)),
-                ("Avg Price", f"${sum(market_prices) / len(market_prices):,.0f}" if market_prices else "N/A"),
-                ("Avg Cap Rate", f"{sum(market_caps) / len(market_caps):.2f}%" if market_caps else "N/A"),
+                (
+                    "Avg Price",
+                    f"${sum(market_prices) / len(market_prices):,.0f}"
+                    if market_prices
+                    else "N/A",
+                ),
+                (
+                    "Avg Cap Rate",
+                    f"{sum(market_caps) / len(market_caps):.2f}%"
+                    if market_caps
+                    else "N/A",
+                ),
             ]
             for label, value in stats:
-                ws_market.cell(row=current_row, column=1, value=label).font = Font(bold=True)
+                ws_market.cell(row=current_row, column=1, value=label).font = Font(
+                    bold=True
+                )
                 ws_market.cell(row=current_row, column=2, value=value)
                 current_row += 1
 
@@ -324,12 +360,8 @@ class ExportService:
         # Aggregate stats
         total_value = sum(r["price"] for r in rows)
         total_rent = sum(r["monthly_rent"] for r in rows)
-        avg_cap_rate = (
-            sum(r["cap_rate"] for r in rows) / len(rows) if rows else 0
-        )
-        avg_score = (
-            sum(r["investment_score"] for r in rows) / len(rows) if rows else 0
-        )
+        avg_cap_rate = sum(r["cap_rate"] for r in rows) / len(rows) if rows else 0
+        avg_score = sum(r["investment_score"] for r in rows) / len(rows) if rows else 0
         total_cash_flow = sum(r["cash_flow"] for r in rows)
         sum(1 for r in rows if r["is_favorite"] == "Yes")
 
@@ -345,22 +377,24 @@ class ExportService:
         deal_rows_html = ""
         for i, row in enumerate(rows, 1):
             score_color = (
-                "#27ae60" if row["investment_score"] >= 70
-                else "#f39c12" if row["investment_score"] >= 40
+                "#27ae60"
+                if row["investment_score"] >= 70
+                else "#f39c12"
+                if row["investment_score"] >= 40
                 else "#e74c3c"
             )
             deal_rows_html += f"""
             <tr>
                 <td>{i}</td>
-                <td>{row['address']}<br><small>{row['city']}, {row['state']} {row['zip_code']}</small></td>
-                <td>${row['price']:,.0f}</td>
-                <td>${row['arv']:,.0f}</td>
-                <td>${row['monthly_rent']:,.0f}</td>
-                <td>{row['cap_rate']:.1f}%</td>
-                <td>${row['cash_flow']:,.0f}</td>
-                <td>{row['coc_return']:.1f}%</td>
-                <td>{row['dscr']:.2f}</td>
-                <td style="color:{score_color};font-weight:bold">{row['investment_score']}</td>
+                <td>{row["address"]}<br><small>{row["city"]}, {row["state"]} {row["zip_code"]}</small></td>
+                <td>${row["price"]:,.0f}</td>
+                <td>${row["arv"]:,.0f}</td>
+                <td>${row["monthly_rent"]:,.0f}</td>
+                <td>{row["cap_rate"]:.1f}%</td>
+                <td>${row["cash_flow"]:,.0f}</td>
+                <td>{row["coc_return"]:.1f}%</td>
+                <td>{row["dscr"]:.2f}</td>
+                <td style="color:{score_color};font-weight:bold">{row["investment_score"]}</td>
             </tr>"""
 
         # Market summary rows

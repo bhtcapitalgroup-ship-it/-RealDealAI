@@ -32,8 +32,10 @@ class Property(TimestampMixin, Base):
     __tablename__ = "properties"
 
     landlord_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(), ForeignKey("users.id", ondelete="CASCADE"),
-        nullable=False, index=True,
+        UUID(),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     address_line1: Mapped[str] = mapped_column(String(500), nullable=False)
@@ -62,9 +64,7 @@ class Property(TimestampMixin, Base):
     insurance_cost: Mapped[Optional[float]] = mapped_column(
         Numeric(10, 2), nullable=True
     )
-    tax_annual: Mapped[Optional[float]] = mapped_column(
-        Numeric(10, 2), nullable=True
-    )
+    tax_annual: Mapped[Optional[float]] = mapped_column(Numeric(10, 2), nullable=True)
     is_active: Mapped[bool] = mapped_column(
         Boolean, default=True, server_default="true", nullable=False
     )

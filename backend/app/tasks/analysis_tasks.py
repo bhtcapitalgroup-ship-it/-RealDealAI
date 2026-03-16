@@ -108,7 +108,9 @@ def analyze_property(self, property_id: str) -> dict[str, Any]:
         _store_analysis(property_id, analysis)
 
         # Update the property's investment score in the main table
-        _update_property_score(property_id, investment_score, property_data.estimated_rent)
+        _update_property_score(
+            property_id, investment_score, property_data.estimated_rent
+        )
 
         logger.info(
             "Analysis complete for %s: score=%d, cap=%.1f%%, cf=$%,.0f",
@@ -299,9 +301,7 @@ def _match_alert(alert: dict, properties: list) -> list:
         # Market filter
         if alert.get("markets"):
             prop_market = (prop.city.lower(), prop.state.lower())
-            alert_markets = [
-                (m[0].lower(), m[1].lower()) for m in alert["markets"]
-            ]
+            alert_markets = [(m[0].lower(), m[1].lower()) for m in alert["markets"]]
             if prop_market not in alert_markets:
                 continue
 
@@ -376,6 +376,7 @@ def _load_property(property_id: str):
 def _load_market_data(city: str, state: str):
     """Load market data for a city/state."""
     from app.ai.deal_analyzer import MarketData
+
     logger.debug("Loading market data for %s, %s", city, state)
     return MarketData(city=city, state=state)  # Placeholder
 

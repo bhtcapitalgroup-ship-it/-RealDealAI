@@ -88,14 +88,18 @@ class ZillowScraper(BaseScraper):
         if min_price:
             search_query_state["filterState"]["price"] = {"min": min_price}
         if max_price:
-            search_query_state["filterState"]["price"] = search_query_state["filterState"].get("price", {})
+            search_query_state["filterState"]["price"] = search_query_state[
+                "filterState"
+            ].get("price", {})
             search_query_state["filterState"]["price"]["max"] = max_price
         if beds_min:
             search_query_state["filterState"]["beds"] = {"min": beds_min}
 
         params = {
             "searchQueryState": json.dumps(search_query_state),
-            "wants": json.dumps({"cat1": ["listResults", "mapResults"], "cat2": ["total"]}),
+            "wants": json.dumps(
+                {"cat1": ["listResults", "mapResults"], "cat2": ["total"]}
+            ),
             "requestId": page,
         }
 
@@ -135,7 +139,11 @@ class ZillowScraper(BaseScraper):
 
                 for prop in properties:
                     fp = self._fingerprint(
-                        {"address": prop.address, "zip_code": prop.zip_code, "price": prop.price}
+                        {
+                            "address": prop.address,
+                            "zip_code": prop.zip_code,
+                            "price": prop.price,
+                        }
                     )
                     if fp not in seen_fingerprints:
                         seen_fingerprints.add(fp)
@@ -186,7 +194,9 @@ class ZillowScraper(BaseScraper):
         return {
             "properties": properties,
             "total_results": total_results,
-            "current_page": data.get("categoryTotals", {}).get("cat1", {}).get("totalPages", 1),
+            "current_page": data.get("categoryTotals", {})
+            .get("cat1", {})
+            .get("totalPages", 1),
             "total_pages": total_pages,
         }
 
@@ -207,9 +217,14 @@ class ZillowScraper(BaseScraper):
             lot_size_sqft=int(hd.get("lotSize", 0)),
             year_built=int(hd.get("yearBuilt", 0)),
             property_type=self._map_property_type(hd.get("homeType", "")),
-            latitude=float(hd.get("latitude", item.get("latLong", {}).get("latitude", 0))),
-            longitude=float(hd.get("longitude", item.get("latLong", {}).get("longitude", 0))),
-            tax_annual=float(hd.get("taxAssessedValue", 0)) * 0.012,  # ~1.2 % tax rate estimate
+            latitude=float(
+                hd.get("latitude", item.get("latLong", {}).get("latitude", 0))
+            ),
+            longitude=float(
+                hd.get("longitude", item.get("latLong", {}).get("longitude", 0))
+            ),
+            tax_annual=float(hd.get("taxAssessedValue", 0))
+            * 0.012,  # ~1.2 % tax rate estimate
             days_on_market=int(hd.get("daysOnZillow", 0)),
             url=f"{self.BASE_URL}{item.get('detailUrl', '')}",
             mls_id=str(hd.get("zpid", "")),
@@ -296,12 +311,16 @@ class ZillowScraper(BaseScraper):
         seen: set[str] = set()
         unique: list[PropertyData] = []
         for p in properties:
-            fp = self._fingerprint({"address": p.address, "zip_code": p.zip_code, "price": p.price})
+            fp = self._fingerprint(
+                {"address": p.address, "zip_code": p.zip_code, "price": p.price}
+            )
             if fp not in seen:
                 seen.add(fp)
                 unique.append(p)
 
-        total_text = soup.select_one('span[class*="result-count"], div[class*="total-text"]')
+        total_text = soup.select_one(
+            'span[class*="result-count"], div[class*="total-text"]'
+        )
         total = self._clean_int(total_text.get_text()) if total_text else len(unique)
 
         return {
@@ -325,7 +344,7 @@ class ZillowScraper(BaseScraper):
         addr_el = card.select_one(
             'address[data-test="property-card-addr"], '
             'a[data-test="property-card-link"] address, '
-            'address'
+            "address"
         )
         full_address = addr_el.get_text(strip=True) if addr_el else ""
 
@@ -416,9 +435,7 @@ class ZillowScraper(BaseScraper):
 
         # Fallback: parse key elements
         price_el = soup.select_one(
-            'span[data-testid="price"], '
-            'span[class*="ds-value"], '
-            'span[class*="Price"]'
+            'span[data-testid="price"], span[class*="ds-value"], span[class*="Price"]'
         )
         price = self._clean_price(price_el.get_text()) if price_el else 0
 

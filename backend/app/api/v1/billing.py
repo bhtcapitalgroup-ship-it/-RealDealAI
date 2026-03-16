@@ -92,7 +92,9 @@ class ReactivateResponse(BaseModel):
 # Helpers
 # ---------------------------------------------------------------------------
 
-APP_URL = settings.CORS_ORIGINS[0] if settings.CORS_ORIGINS else "https://app.realdeal.ai"
+APP_URL = (
+    settings.CORS_ORIGINS[0] if settings.CORS_ORIGINS else "https://app.realdeal.ai"
+)
 
 _TIER_PRICE_MAP: dict[str, dict[str, str]] = {
     "starter": {
@@ -173,7 +175,10 @@ async def create_checkout_session(
             )
             await db.flush()
 
-        success = payload.success_url or f"{APP_URL}/settings/billing?session_id={{CHECKOUT_SESSION_ID}}"
+        success = (
+            payload.success_url
+            or f"{APP_URL}/settings/billing?session_id={{CHECKOUT_SESSION_ID}}"
+        )
         cancel = payload.cancel_url or f"{APP_URL}/pricing"
 
         session = stripe.checkout.Session.create(
@@ -448,9 +453,7 @@ async def reactivate_subscription(
 
         tier = updated_sub.metadata.get("tier", current_user.plan_tier.value)
 
-        logger.info(
-            "Subscription %s reactivated for user %s", sub.id, current_user.id
-        )
+        logger.info("Subscription %s reactivated for user %s", sub.id, current_user.id)
 
         return ReactivateResponse(
             status=updated_sub.status,

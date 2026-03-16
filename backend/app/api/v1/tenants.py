@@ -69,9 +69,7 @@ async def get_tenant(
     db: AsyncSession = Depends(get_db),
 ) -> TenantResponse:
     """Get tenant detail."""
-    result = await db.execute(
-        select(Tenant).where(Tenant.id == tenant_id)
-    )
+    result = await db.execute(select(Tenant).where(Tenant.id == tenant_id))
     tenant = result.scalar_one_or_none()
 
     if tenant is None:
@@ -94,9 +92,7 @@ async def update_tenant(
     db: AsyncSession = Depends(get_db),
 ) -> TenantResponse:
     """Update a tenant."""
-    result = await db.execute(
-        select(Tenant).where(Tenant.id == tenant_id)
-    )
+    result = await db.execute(select(Tenant).where(Tenant.id == tenant_id))
     tenant = result.scalar_one_or_none()
 
     if tenant is None:
@@ -128,9 +124,7 @@ async def get_tenant_payments(
 ) -> list[PaymentResponse]:
     """Get payment history for a tenant."""
     # Verify tenant belongs to landlord
-    result = await db.execute(
-        select(Tenant).where(Tenant.id == tenant_id)
-    )
+    result = await db.execute(select(Tenant).where(Tenant.id == tenant_id))
     tenant = result.scalar_one_or_none()
 
     if tenant is None:

@@ -36,6 +36,7 @@ def _run_async(coro):
 # Tasks
 # ---------------------------------------------------------------------------
 
+
 @celery_app.task(name="app.tasks.maintenance_tasks.contact_contractors")
 def contact_contractors(request_id: str, contractor_ids: list[str]) -> dict:
     """Send request-for-quote (RFQ) emails to selected contractors."""
@@ -104,6 +105,7 @@ async def _contact_contractors(
             # Send via email
             if contractor.email:
                 from app.tasks.notification_tasks import send_email
+
                 send_email.delay(
                     contractor.email,
                     f"RFQ: {request.title} at {prop.name}",
@@ -130,9 +132,7 @@ async def _contact_contractors(
 
         await db.commit()
 
-        logger.info(
-            "Contacted %d contractors for request %s", contacted, request_id
-        )
+        logger.info("Contacted %d contractors for request %s", contacted, request_id)
         return {"contacted": contacted, "request_id": str(request_id)}
 
 
@@ -163,9 +163,7 @@ async def _follow_up_quote(request_id: uuid.UUID) -> dict:
         followed_up = 0
         for quote in pending_quotes:
             # Check if quote was created more than 48 hours ago
-            if quote.created_at and (
-                date.today() - quote.created_at.date()
-            ).days < 2:
+            if quote.created_at and (date.today() - quote.created_at.date()).days < 2:
                 continue
 
             result = await db.execute(
@@ -175,6 +173,7 @@ async def _follow_up_quote(request_id: uuid.UUID) -> dict:
 
             if contractor.email:
                 from app.tasks.notification_tasks import send_email
+
                 send_email.delay(
                     contractor.email,
                     f"Follow-Up: Quote Request for {request.title}",
@@ -226,13 +225,9 @@ async def _follow_up_quote(request_id: uuid.UUID) -> dict:
 def process_photo_diagnosis(self, request_id: str, image_keys: list[str]) -> dict:
     """Run AI vision diagnostics on maintenance request photos."""
     try:
-        return _run_async(
-            _process_photo_diagnosis(uuid.UUID(request_id), image_keys)
-        )
+        return _run_async(_process_photo_diagnosis(uuid.UUID(request_id), image_keys))
     except Exception as exc:
-        logger.error(
-            "Photo diagnosis failed for request %s: %s", request_id, exc
-        )
+        logger.error("Photo diagnosis failed for request %s: %s", request_id, exc)
         raise self.retry(exc=exc)
 
 
@@ -316,6 +311,7 @@ async def _process_photo_diagnosis(
         # If emergency, send immediate notification
         if diagnosis.urgency == "emergency":
             from app.tasks.notification_tasks import create_notification
+
             create_notification.delay(
                 "landlord",
                 str(request.landlord_id),

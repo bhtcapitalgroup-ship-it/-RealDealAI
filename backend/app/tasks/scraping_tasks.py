@@ -123,7 +123,9 @@ def scrape_market(self, state: str, city: str) -> dict[str, Any]:
             async with RealtorScraper(**scraper_kwargs) as scraper:
                 props = await scraper.scrape_all_pages(city, state, max_pages=10)
                 all_properties.extend(props)
-                logger.info("Realtor: %d properties for %s, %s", len(props), city, state)
+                logger.info(
+                    "Realtor: %d properties for %s, %s", len(props), city, state
+                )
         except Exception as exc:
             errors.append(f"Realtor: {exc}")
             logger.error("Realtor scrape failed for %s, %s: %s", city, state, exc)
@@ -163,7 +165,9 @@ def scrape_market(self, state: str, city: str) -> dict[str, Any]:
         }
         logger.info(
             "Market scrape complete for %s, %s: %d unique properties",
-            city, state, len(unique),
+            city,
+            state,
+            len(unique),
         )
         return result
 
@@ -201,7 +205,9 @@ def scrape_property_details(self, property_id: str) -> dict[str, Any]:
 
         # Rent estimate
         try:
-            async with RentometerScraper(api_key=RENTOMETER_API_KEY, **scraper_kwargs) as scraper:
+            async with RentometerScraper(
+                api_key=RENTOMETER_API_KEY, **scraper_kwargs
+            ) as scraper:
                 rent_data = await scraper.get_rent_for_property(property_data)
                 results["rent_estimate"] = rent_data
                 if rent_data.get("median_rent", 0) > 0:
@@ -238,6 +244,7 @@ def scrape_property_details(self, property_id: str) -> dict[str, Any]:
                 source = property_data.source
                 if source == "zillow":
                     from app.scrapers import ZillowScraper
+
                     async with ZillowScraper(**scraper_kwargs) as scraper:
                         detail = await scraper.scrape(property_data.url)
                         if detail.get("properties"):
@@ -245,6 +252,7 @@ def scrape_property_details(self, property_id: str) -> dict[str, Any]:
                             _merge_property_data(property_data, detailed)
                 elif source == "redfin":
                     from app.scrapers import RedfinScraper
+
                     async with RedfinScraper(**scraper_kwargs) as scraper:
                         detail = await scraper.scrape(property_data.url)
                         if detail.get("properties"):
@@ -252,6 +260,7 @@ def scrape_property_details(self, property_id: str) -> dict[str, Any]:
                             _merge_property_data(property_data, detailed)
                 elif source == "realtor":
                     from app.scrapers import RealtorScraper
+
                     async with RealtorScraper(**scraper_kwargs) as scraper:
                         detail = await scraper.scrape(property_data.url)
                         if detail.get("properties"):
@@ -271,6 +280,7 @@ def scrape_property_details(self, property_id: str) -> dict[str, Any]:
 
         # Trigger re-analysis
         from app.tasks.analysis_tasks import analyze_property
+
         analyze_property.delay(property_id)
 
         results["scraped_at"] = datetime.utcnow().isoformat()
@@ -302,7 +312,9 @@ def update_rent_estimates() -> dict[str, Any]:
         nonlocal updated, errors
         from app.scrapers import RentometerScraper
 
-        async with RentometerScraper(api_key=RENTOMETER_API_KEY, **scraper_kwargs) as scraper:
+        async with RentometerScraper(
+            api_key=RENTOMETER_API_KEY, **scraper_kwargs
+        ) as scraper:
             for prop_id, prop in batch:
                 try:
                     rent_data = await scraper.get_rent_for_property(prop)
@@ -360,17 +372,13 @@ def refresh_market_data() -> dict[str, Any]:
                 "state": state,
                 "median_home_price": _median(prices) if prices else 0,
                 "median_rent": _median(rents) if rents else 0,
-                "price_per_sqft": (
-                    sum(prices) / sum(sqfts) if prices and sqfts else 0
-                ),
+                "price_per_sqft": (sum(prices) / sum(sqfts) if prices and sqfts else 0),
                 "rent_per_sqft": (
                     sum(r / s for r, s in zip(rents, sqfts) if s > 0) / len(rents)
                     if rents and sqfts
                     else 0
                 ),
-                "avg_days_on_market": (
-                    sum(doms) / len(doms) if doms else 0
-                ),
+                "avg_days_on_market": (sum(doms) / len(doms) if doms else 0),
                 "active_listings": len(properties),
                 "updated_at": datetime.utcnow().isoformat(),
             }
@@ -410,10 +418,7 @@ def daily_scrape_pipeline() -> dict[str, Any]:
     # Launch scrape tasks for each market
     from celery import chord
 
-    scrape_tasks = [
-        scrape_market.s(state, city)
-        for city, state in markets
-    ]
+    scrape_tasks = [scrape_market.s(state, city) for city, state in markets]
 
     # After all scrapes complete, refresh market data and check alerts
     callback = refresh_market_data.si()
@@ -455,6 +460,7 @@ def _update_property(property_id: str, property_data) -> None:
 def _get_property_id(prop) -> str:
     """Generate or retrieve the database ID for a property."""
     import hashlib
+
     key = f"{prop.address}-{prop.zip_code}".lower()
     return hashlib.md5(key.encode()).hexdigest()
 
@@ -477,15 +483,27 @@ def _load_market_properties(city: str, state: str) -> list:
 
 def _store_market_data(stats: dict) -> None:
     """Store aggregated market statistics."""
-    logger.debug("Storing market data for %s, %s", stats.get("city"), stats.get("state"))
+    logger.debug(
+        "Storing market data for %s, %s", stats.get("city"), stats.get("state")
+    )
 
 
 def _merge_property_data(target, source) -> None:
     """Merge non-empty fields from source into target."""
     for field_name in (
-        "sqft", "lot_size_sqft", "year_built", "bedrooms", "bathrooms",
-        "stories", "property_type", "latitude", "longitude", "tax_annual",
-        "hoa_monthly", "description", "days_on_market",
+        "sqft",
+        "lot_size_sqft",
+        "year_built",
+        "bedrooms",
+        "bathrooms",
+        "stories",
+        "property_type",
+        "latitude",
+        "longitude",
+        "tax_annual",
+        "hoa_monthly",
+        "description",
+        "days_on_market",
     ):
         source_val = getattr(source, field_name, None)
         target_val = getattr(target, field_name, None)

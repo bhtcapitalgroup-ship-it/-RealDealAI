@@ -36,9 +36,7 @@ async def _get_property_for_user(
     return prop
 
 
-async def _get_unit_for_user(
-    unit_id: UUID, user: User, db: AsyncSession
-) -> Unit:
+async def _get_unit_for_user(unit_id: UUID, user: User, db: AsyncSession) -> Unit:
     """Fetch a unit and verify the landlord owns the parent property."""
     result = await db.execute(select(Unit).where(Unit.id == unit_id))
     unit = result.scalar_one_or_none()
@@ -64,9 +62,7 @@ async def list_units(
     await _get_property_for_user(property_id, current_user, db)
 
     result = await db.execute(
-        select(Unit)
-        .where(Unit.property_id == property_id)
-        .order_by(Unit.unit_number)
+        select(Unit).where(Unit.property_id == property_id).order_by(Unit.unit_number)
     )
     units = result.scalars().all()
     return [UnitResponse.model_validate(u) for u in units]

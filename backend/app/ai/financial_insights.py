@@ -21,17 +21,19 @@ logger = logging.getLogger(__name__)
 # Data types
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class Insight:
-    type: str       # "warning" | "alert" | "info" | "opportunity"
+    type: str  # "warning" | "alert" | "info" | "opportunity"
     title: str
     body: str
-    action: str     # Suggested next step
+    action: str  # Suggested next step
 
 
 # ---------------------------------------------------------------------------
 # Service
 # ---------------------------------------------------------------------------
+
 
 class FinancialInsightsService:
     """
@@ -95,8 +97,7 @@ class FinancialInsightsService:
 
             # Sum completed payments for last month
             result = await self.db.execute(
-                select(func.coalesce(func.sum(Payment.amount), 0))
-                .where(
+                select(func.coalesce(func.sum(Payment.amount), 0)).where(
                     Payment.lease_id == lease.id,
                     Payment.status == PaymentStatus.COMPLETED,
                     Payment.due_date >= last_month_start,
@@ -109,26 +110,30 @@ class FinancialInsightsService:
         if total_expected > 0:
             collection_rate = total_collected / total_expected
             if collection_rate < 0.85:
-                insights.append(Insight(
-                    type="warning",
-                    title="Low Collection Rate",
-                    body=(
-                        f"Last month's collection rate was {collection_rate:.0%}. "
-                        f"Collected ${total_collected:,.2f} of ${total_expected:,.2f} expected. "
-                        f"This is below the 85% threshold."
-                    ),
-                    action="Review overdue payments and consider sending reminders or initiating late fee processing.",
-                ))
+                insights.append(
+                    Insight(
+                        type="warning",
+                        title="Low Collection Rate",
+                        body=(
+                            f"Last month's collection rate was {collection_rate:.0%}. "
+                            f"Collected ${total_collected:,.2f} of ${total_expected:,.2f} expected. "
+                            f"This is below the 85% threshold."
+                        ),
+                        action="Review overdue payments and consider sending reminders or initiating late fee processing.",
+                    )
+                )
             elif collection_rate < 0.95:
-                insights.append(Insight(
-                    type="info",
-                    title="Collection Rate Below Target",
-                    body=(
-                        f"Last month's collection rate was {collection_rate:.0%}. "
-                        f"Target is 95% or higher."
-                    ),
-                    action="Follow up with tenants who have outstanding balances.",
-                ))
+                insights.append(
+                    Insight(
+                        type="info",
+                        title="Collection Rate Below Target",
+                        body=(
+                            f"Last month's collection rate was {collection_rate:.0%}. "
+                            f"Target is 95% or higher."
+                        ),
+                        action="Follow up with tenants who have outstanding balances.",
+                    )
+                )
 
         # Check for individual tenants with overdue payments
         result = await self.db.execute(
@@ -151,15 +156,17 @@ class FinancialInsightsService:
 
         for row in overdue_tenants:
             if row.overdue_count >= 2:
-                insights.append(Insight(
-                    type="alert",
-                    title="Tenant With Multiple Overdue Payments",
-                    body=(
-                        f"Tenant has {row.overdue_count} overdue payments "
-                        f"totaling ${float(row.overdue_total):,.2f}."
-                    ),
-                    action="Review tenant account and consider sending a formal notice.",
-                ))
+                insights.append(
+                    Insight(
+                        type="alert",
+                        title="Tenant With Multiple Overdue Payments",
+                        body=(
+                            f"Tenant has {row.overdue_count} overdue payments "
+                            f"totaling ${float(row.overdue_total):,.2f}."
+                        ),
+                        action="Review tenant account and consider sending a formal notice.",
+                    )
+                )
 
         return insights
 
@@ -207,20 +214,21 @@ class FinancialInsightsService:
             avg = historical.get(category, 0)
             if avg > 0 and current_total > avg * 1.5:
                 pct_increase = ((current_total - avg) / avg) * 100
-                insights.append(Insight(
-                    type="warning",
-                    title=f"High {category.value.title()} Expenses",
-                    body=(
-                        f"This month's {category.value} expenses are ${current_total:,.2f}, "
-                        f"which is {pct_increase:.0f}% above your 3-month average of ${avg:,.2f}."
-                    ),
-                    action=f"Review recent {category.value} expenses to identify the cause of the increase.",
-                ))
+                insights.append(
+                    Insight(
+                        type="warning",
+                        title=f"High {category.value.title()} Expenses",
+                        body=(
+                            f"This month's {category.value} expenses are ${current_total:,.2f}, "
+                            f"which is {pct_increase:.0f}% above your 3-month average of ${avg:,.2f}."
+                        ),
+                        action=f"Review recent {category.value} expenses to identify the cause of the increase.",
+                    )
+                )
 
         # Check total expenses vs total income
         result = await self.db.execute(
-            select(func.coalesce(func.sum(Expense.amount), 0))
-            .where(
+            select(func.coalesce(func.sum(Expense.amount), 0)).where(
                 Expense.landlord_id == self.landlord_id,
                 Expense.expense_date >= current_month_start,
             )
@@ -242,15 +250,17 @@ class FinancialInsightsService:
 
         if total_income > 0 and total_expenses > total_income * 0.7:
             ratio = total_expenses / total_income
-            insights.append(Insight(
-                type="warning",
-                title="High Expense Ratio",
-                body=(
-                    f"Expenses (${total_expenses:,.2f}) are {ratio:.0%} of income "
-                    f"(${total_income:,.2f}) this month. A healthy ratio is below 50%."
-                ),
-                action="Review expenses and look for cost reduction opportunities.",
-            ))
+            insights.append(
+                Insight(
+                    type="warning",
+                    title="High Expense Ratio",
+                    body=(
+                        f"Expenses (${total_expenses:,.2f}) are {ratio:.0%} of income "
+                        f"(${total_income:,.2f}) this month. A healthy ratio is below 50%."
+                    ),
+                    action="Review expenses and look for cost reduction opportunities.",
+                )
+            )
 
         return insights
 
@@ -288,12 +298,14 @@ class FinancialInsightsService:
             count = result.scalar_one()
 
             if count > 0:
-                insights.append(Insight(
-                    type=insight_type,
-                    title=title,
-                    body=f"{count} lease{'s' if count != 1 else ''} expiring within {days} days.",
-                    action="Contact tenants about renewal or begin listing units for new tenants.",
-                ))
+                insights.append(
+                    Insight(
+                        type=insight_type,
+                        title=title,
+                        body=f"{count} lease{'s' if count != 1 else ''} expiring within {days} days.",
+                        action="Contact tenants about renewal or begin listing units for new tenants.",
+                    )
+                )
 
         return insights
 
@@ -326,22 +338,26 @@ class FinancialInsightsService:
 
         if total_monthly_loss > 0:
             annual_loss = total_monthly_loss * 12
-            insights.append(Insight(
-                type="opportunity",
-                title="Vacancy Revenue Loss",
-                body=(
-                    f"You have {len(vacant_units)} vacant unit{'s' if len(vacant_units) != 1 else ''} "
-                    f"costing an estimated ${total_monthly_loss:,.2f}/month "
-                    f"(${annual_loss:,.2f}/year) in lost rent."
-                ),
-                action="Prioritize filling vacant units by listing them or adjusting rent prices.",
-            ))
+            insights.append(
+                Insight(
+                    type="opportunity",
+                    title="Vacancy Revenue Loss",
+                    body=(
+                        f"You have {len(vacant_units)} vacant unit{'s' if len(vacant_units) != 1 else ''} "
+                        f"costing an estimated ${total_monthly_loss:,.2f}/month "
+                        f"(${annual_loss:,.2f}/year) in lost rent."
+                    ),
+                    action="Prioritize filling vacant units by listing them or adjusting rent prices.",
+                )
+            )
         elif len(vacant_units) > 0:
-            insights.append(Insight(
-                type="info",
-                title="Vacant Units",
-                body=f"You have {len(vacant_units)} vacant unit{'s' if len(vacant_units) != 1 else ''} without market rent estimates.",
-                action="Set market rent values for vacant units to track vacancy costs.",
-            ))
+            insights.append(
+                Insight(
+                    type="info",
+                    title="Vacant Units",
+                    body=f"You have {len(vacant_units)} vacant unit{'s' if len(vacant_units) != 1 else ''} without market rent estimates.",
+                    action="Set market rent values for vacant units to track vacancy costs.",
+                )
+            )
 
         return insights

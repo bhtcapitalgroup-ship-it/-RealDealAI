@@ -37,12 +37,16 @@ class Conversation(TimestampMixin, Base):
     __tablename__ = "conversations"
 
     tenant_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(), ForeignKey("tenants.id", ondelete="CASCADE"),
-        nullable=False, index=True,
+        UUID(),
+        ForeignKey("tenants.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
     landlord_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(), ForeignKey("users.id", ondelete="CASCADE"),
-        nullable=False, index=True,
+        UUID(),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
     channel: Mapped[ChannelType] = mapped_column(
         Enum(ChannelType, name="channel_type"),
@@ -61,8 +65,10 @@ class Conversation(TimestampMixin, Base):
     tenant: Mapped["Tenant"] = relationship("Tenant")
     landlord: Mapped["User"] = relationship("User")
     messages: Mapped[List["Message"]] = relationship(
-        "Message", back_populates="conversation",
-        cascade="all, delete-orphan", lazy="selectin",
+        "Message",
+        back_populates="conversation",
+        cascade="all, delete-orphan",
+        lazy="selectin",
     )
 
     def __repr__(self) -> str:
@@ -73,8 +79,10 @@ class Message(TimestampMixin, Base):
     __tablename__ = "messages"
 
     conversation_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(), ForeignKey("conversations.id", ondelete="CASCADE"),
-        nullable=False, index=True,
+        UUID(),
+        ForeignKey("conversations.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
     sender_type: Mapped[SenderType] = mapped_column(
         Enum(SenderType, name="sender_type"),

@@ -21,6 +21,7 @@ router = APIRouter(prefix="/onboarding", tags=["onboarding"])
 # Schemas
 # ---------------------------------------------------------------------------
 
+
 class PreferencesPayload(BaseModel):
     investment_types: Optional[List[str]] = Field(
         None, description='e.g. ["rental", "brrrr", "flip", "wholesale"]'
@@ -90,6 +91,7 @@ class AutoCreateAlertsResponse(BaseModel):
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 async def _get_or_create_preferences(
     user_id: UUID, db: AsyncSession
@@ -208,13 +210,19 @@ def _recommend_markets(prefs: UserPreferences) -> list[dict[str, Any]]:
 
     # Filter by budget if set
     if prefs.budget_max:
-        candidates = [m for m in candidates if m["median_price"] <= float(prefs.budget_max)]
+        candidates = [
+            m for m in candidates if m["median_price"] <= float(prefs.budget_max)
+        ]
     if prefs.budget_min:
-        candidates = [m for m in candidates if m["median_price"] >= float(prefs.budget_min)]
+        candidates = [
+            m for m in candidates if m["median_price"] >= float(prefs.budget_min)
+        ]
 
     # Filter by minimum cap rate
     if prefs.min_cap_rate:
-        candidates = [m for m in candidates if m["cap_rate"] >= float(prefs.min_cap_rate)]
+        candidates = [
+            m for m in candidates if m["cap_rate"] >= float(prefs.min_cap_rate)
+        ]
 
     # Sort by market_score descending
     candidates.sort(key=lambda m: m["market_score"], reverse=True)
@@ -229,6 +237,7 @@ def _recommend_markets(prefs: UserPreferences) -> list[dict[str, Any]]:
 # ---------------------------------------------------------------------------
 # POST /onboarding/preferences
 # ---------------------------------------------------------------------------
+
 
 @router.post("/preferences", response_model=PreferencesOut)
 async def save_preferences(
@@ -275,6 +284,7 @@ async def save_preferences(
 # GET /onboarding/recommended-markets
 # ---------------------------------------------------------------------------
 
+
 @router.get("/recommended-markets", response_model=list[RecommendedMarket])
 async def get_recommended_markets(
     db: AsyncSession = Depends(get_db),
@@ -289,6 +299,7 @@ async def get_recommended_markets(
 # ---------------------------------------------------------------------------
 # POST /onboarding/create-alerts
 # ---------------------------------------------------------------------------
+
 
 @router.post("/create-alerts", response_model=AutoCreateAlertsResponse)
 async def auto_create_alerts(
@@ -317,7 +328,11 @@ async def auto_create_alerts(
     if isinstance(target_markets, list) and len(target_markets) > 0:
         # Create one alert per target market
         for market in target_markets[:5]:  # cap at 5 auto-alerts
-            city = market.get("city", "Unknown") if isinstance(market, dict) else str(market)
+            city = (
+                market.get("city", "Unknown")
+                if isinstance(market, dict)
+                else str(market)
+            )
             state = market.get("state", "") if isinstance(market, dict) else ""
             market_label = f"{city}, {state}" if state else city
 
@@ -365,6 +380,7 @@ async def auto_create_alerts(
 # GET /onboarding/status
 # ---------------------------------------------------------------------------
 
+
 @router.get("/status", response_model=OnboardingStatus)
 async def get_onboarding_status(
     db: AsyncSession = Depends(get_db),
@@ -374,7 +390,9 @@ async def get_onboarding_status(
     prefs = await _get_or_create_preferences(current_user.id, db)
 
     steps_detail = {
-        "investment_types": bool(prefs.investment_types and len(prefs.investment_types) > 0),
+        "investment_types": bool(
+            prefs.investment_types and len(prefs.investment_types) > 0
+        ),
         "target_markets": bool(prefs.target_markets and len(prefs.target_markets) > 0),
         "budget": prefs.budget_min is not None or prefs.budget_max is not None,
         "criteria": prefs.min_cap_rate is not None or prefs.min_cash_flow is not None,

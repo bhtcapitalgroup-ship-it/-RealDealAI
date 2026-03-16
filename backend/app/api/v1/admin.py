@@ -14,7 +14,12 @@ from app.core.security import get_current_user
 from app.models.analytics import AnalyticsEvent
 from app.models.payment import SubscriptionPayment, SubscriptionPaymentStatus
 from app.models.property import Property
-from app.models.scraper_run import ScraperRun, ScraperSource, ScraperStatus, ScraperTrigger
+from app.models.scraper_run import (
+    ScraperRun,
+    ScraperSource,
+    ScraperStatus,
+    ScraperTrigger,
+)
 from app.models.user import PlanTier, User
 
 router = APIRouter(prefix="/admin", tags=["admin"])
@@ -23,6 +28,7 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 # ---------------------------------------------------------------------------
 # Dependency: admin-only access
 # ---------------------------------------------------------------------------
+
 
 async def admin_required(
     current_user: User = Depends(get_current_user),
@@ -39,6 +45,7 @@ async def admin_required(
 # ---------------------------------------------------------------------------
 # Schemas
 # ---------------------------------------------------------------------------
+
 
 class AdminStats(BaseModel):
     total_users: int
@@ -140,6 +147,7 @@ class ReanalyzeResponse(BaseModel):
 # GET /admin/stats
 # ---------------------------------------------------------------------------
 
+
 @router.get("/stats", response_model=AdminStats)
 async def get_admin_stats(
     db: AsyncSession = Depends(get_db),
@@ -192,7 +200,11 @@ async def get_admin_stats(
                 "properties_found": latest.properties_found,
             }
         else:
-            scraper_status[source.value] = {"status": "never_run", "last_run": None, "properties_found": 0}
+            scraper_status[source.value] = {
+                "status": "never_run",
+                "last_run": None,
+                "properties_found": 0,
+            }
 
     return AdminStats(
         total_users=total_users,
@@ -207,13 +219,16 @@ async def get_admin_stats(
 # GET /admin/users
 # ---------------------------------------------------------------------------
 
+
 @router.get("/users", response_model=PaginatedUsers)
 async def list_users(
     page: int = Query(1, ge=1),
     per_page: int = Query(25, ge=1, le=100),
     search: Optional[str] = Query(None, max_length=255),
     tier: Optional[str] = Query(None),
-    sort_by: str = Query("created_at", pattern="^(created_at|updated_at|email|full_name)$"),
+    sort_by: str = Query(
+        "created_at", pattern="^(created_at|updated_at|email|full_name)$"
+    ),
     sort_dir: str = Query("desc", pattern="^(asc|desc)$"),
     db: AsyncSession = Depends(get_db),
     _admin: User = Depends(admin_required),
@@ -268,6 +283,7 @@ async def list_users(
 # PUT /admin/users/{id}
 # ---------------------------------------------------------------------------
 
+
 @router.put("/users/{user_id}", response_model=AdminUserOut)
 async def update_user(
     user_id: UUID,
@@ -285,7 +301,9 @@ async def update_user(
         try:
             user.plan_tier = PlanTier(payload.plan_tier)
         except ValueError:
-            raise HTTPException(status_code=422, detail=f"Invalid plan tier: {payload.plan_tier}")
+            raise HTTPException(
+                status_code=422, detail=f"Invalid plan tier: {payload.plan_tier}"
+            )
 
     if payload.is_active is not None:
         user.is_active = payload.is_active
@@ -301,6 +319,7 @@ async def update_user(
 # ---------------------------------------------------------------------------
 # GET /admin/users/{id}/activity
 # ---------------------------------------------------------------------------
+
 
 @router.get("/users/{user_id}/activity")
 async def get_user_activity(
@@ -332,6 +351,7 @@ async def get_user_activity(
 # ---------------------------------------------------------------------------
 # GET /admin/scrapers/status
 # ---------------------------------------------------------------------------
+
 
 @router.get("/scrapers/status", response_model=list[ScraperStatusOut])
 async def get_scrapers_status(
@@ -404,6 +424,7 @@ async def get_scrapers_status(
 # POST /admin/scrapers/{source}/run
 # ---------------------------------------------------------------------------
 
+
 @router.post("/scrapers/{source}/run", response_model=TriggerResponse)
 async def trigger_scraper(
     source: str,
@@ -440,6 +461,7 @@ async def trigger_scraper(
 # GET /admin/scrapers/logs
 # ---------------------------------------------------------------------------
 
+
 @router.get("/scrapers/logs", response_model=list[ScraperLogOut])
 async def get_scraper_logs(
     source: Optional[str] = Query(None),
@@ -463,6 +485,7 @@ async def get_scraper_logs(
 # ---------------------------------------------------------------------------
 # GET /admin/analytics/engagement
 # ---------------------------------------------------------------------------
+
 
 @router.get("/analytics/engagement", response_model=EngagementData)
 async def get_engagement(
@@ -518,6 +541,7 @@ async def get_engagement(
 # GET /admin/analytics/conversion
 # ---------------------------------------------------------------------------
 
+
 @router.get("/analytics/conversion", response_model=ConversionData)
 async def get_conversion(
     db: AsyncSession = Depends(get_db),
@@ -537,7 +561,9 @@ async def get_conversion(
     first_search = (
         await db.execute(
             select(func.count(distinct(AnalyticsEvent.user_id))).where(
-                AnalyticsEvent.event_name.in_(["property_search", "deal_search", "market_search"])
+                AnalyticsEvent.event_name.in_(
+                    ["property_search", "deal_search", "market_search"]
+                )
             )
         )
     ).scalar() or 0
@@ -575,6 +601,7 @@ async def get_conversion(
 # GET /admin/analytics/popular-markets
 # ---------------------------------------------------------------------------
 
+
 @router.get("/analytics/popular-markets", response_model=list[PopularMarket])
 async def get_popular_markets(
     limit: int = Query(20, ge=1, le=100),
@@ -586,15 +613,15 @@ async def get_popular_markets(
     result = await db.execute(
         select(
             AnalyticsEvent.event_properties["market"].astext.label("market"),
-            func.count().filter(
-                AnalyticsEvent.event_name.in_(["property_viewed", "deal_viewed"])
-            ).label("views"),
-            func.count().filter(
-                AnalyticsEvent.event_name.in_(["property_search", "market_search"])
-            ).label("searches"),
-            func.count().filter(
-                AnalyticsEvent.event_name == "deal_saved"
-            ).label("saves"),
+            func.count()
+            .filter(AnalyticsEvent.event_name.in_(["property_viewed", "deal_viewed"]))
+            .label("views"),
+            func.count()
+            .filter(AnalyticsEvent.event_name.in_(["property_search", "market_search"]))
+            .label("searches"),
+            func.count()
+            .filter(AnalyticsEvent.event_name == "deal_saved")
+            .label("saves"),
         )
         .where(AnalyticsEvent.event_properties["market"].astext.isnot(None))
         .group_by("market")
@@ -603,7 +630,9 @@ async def get_popular_markets(
     )
 
     return [
-        PopularMarket(market=row.market, views=row.views, searches=row.searches, saves=row.saves)
+        PopularMarket(
+            market=row.market, views=row.views, searches=row.searches, saves=row.saves
+        )
         for row in result
         if row.market
     ]
@@ -612,6 +641,7 @@ async def get_popular_markets(
 # ---------------------------------------------------------------------------
 # POST /admin/properties/reanalyze
 # ---------------------------------------------------------------------------
+
 
 @router.post("/properties/reanalyze", response_model=ReanalyzeResponse)
 async def reanalyze_properties(

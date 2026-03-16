@@ -22,35 +22,47 @@ def upgrade() -> None:
     # ENUM types
     # -------------------------------------------------------------------------
     scraper_source_enum = postgresql.ENUM(
-        "zillow", "redfin", "realtor", "rentometer", "public_records",
+        "zillow",
+        "redfin",
+        "realtor",
+        "rentometer",
+        "public_records",
         name="scraper_source",
         create_type=True,
     )
     scraper_source_enum.create(op.get_bind(), checkfirst=True)
 
     scraper_status_enum = postgresql.ENUM(
-        "running", "completed", "failed",
+        "running",
+        "completed",
+        "failed",
         name="scraper_status",
         create_type=True,
     )
     scraper_status_enum.create(op.get_bind(), checkfirst=True)
 
     scraper_trigger_enum = postgresql.ENUM(
-        "schedule", "manual", "api",
+        "schedule",
+        "manual",
+        "api",
         name="scraper_trigger",
         create_type=True,
     )
     scraper_trigger_enum.create(op.get_bind(), checkfirst=True)
 
     experience_level_enum = postgresql.ENUM(
-        "beginner", "intermediate", "advanced",
+        "beginner",
+        "intermediate",
+        "advanced",
         name="experience_level",
         create_type=True,
     )
     experience_level_enum.create(op.get_bind(), checkfirst=True)
 
     subscription_payment_status_enum = postgresql.ENUM(
-        "succeeded", "failed", "refunded",
+        "succeeded",
+        "failed",
+        "refunded",
         name="subscription_payment_status",
         create_type=True,
     )
@@ -150,18 +162,12 @@ def upgrade() -> None:
         ),
         sa.Column("started_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("completed_at", sa.DateTime(timezone=True), nullable=True),
-        sa.Column(
-            "properties_found", sa.Integer(), nullable=False, server_default="0"
-        ),
-        sa.Column(
-            "properties_new", sa.Integer(), nullable=False, server_default="0"
-        ),
+        sa.Column("properties_found", sa.Integer(), nullable=False, server_default="0"),
+        sa.Column("properties_new", sa.Integer(), nullable=False, server_default="0"),
         sa.Column(
             "properties_updated", sa.Integer(), nullable=False, server_default="0"
         ),
-        sa.Column(
-            "errors_count", sa.Integer(), nullable=False, server_default="0"
-        ),
+        sa.Column("errors_count", sa.Integer(), nullable=False, server_default="0"),
         sa.Column("error_log", sa.Text(), nullable=True),
         sa.Column("target_market", sa.String(255), nullable=True),
         sa.Column(
@@ -262,7 +268,9 @@ def upgrade() -> None:
         ),
     )
 
-    op.create_index("ix_user_preferences_user_id", "user_preferences", ["user_id"], unique=True)
+    op.create_index(
+        "ix_user_preferences_user_id", "user_preferences", ["user_id"], unique=True
+    )
 
     # -------------------------------------------------------------------------
     # Table: analytics_events (if not created in 001)
@@ -336,7 +344,13 @@ def upgrade() -> None:
     # -------------------------------------------------------------------------
     # Triggers: auto-update updated_at for new tables
     # -------------------------------------------------------------------------
-    for table in ("api_keys", "scraper_runs", "user_preferences", "analytics_events", "subscription_payments"):
+    for table in (
+        "api_keys",
+        "scraper_runs",
+        "user_preferences",
+        "analytics_events",
+        "subscription_payments",
+    ):
         op.execute(f"""
             CREATE TRIGGER IF NOT EXISTS trigger_{table}_updated_at
             BEFORE UPDATE ON {table}
@@ -347,7 +361,13 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     # Drop triggers
-    for table in ("api_keys", "scraper_runs", "user_preferences", "analytics_events", "subscription_payments"):
+    for table in (
+        "api_keys",
+        "scraper_runs",
+        "user_preferences",
+        "analytics_events",
+        "subscription_payments",
+    ):
         op.execute(f"DROP TRIGGER IF EXISTS trigger_{table}_updated_at ON {table}")
 
     # Drop tables

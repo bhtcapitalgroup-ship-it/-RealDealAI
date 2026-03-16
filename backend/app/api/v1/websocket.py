@@ -140,9 +140,7 @@ async def _authenticate_ws_token(token: str | None) -> User | None:
 DEAL_ALERTS_CHANNEL = "realdeal:deal_alerts"
 
 
-async def _subscribe_to_deal_alerts(
-    user_id: str, websocket: WebSocket
-) -> None:
+async def _subscribe_to_deal_alerts(user_id: str, websocket: WebSocket) -> None:
     """Listen to Redis pub/sub and forward matching alerts to the WebSocket.
 
     This runs as a background task for the lifetime of the connection.
@@ -166,8 +164,7 @@ async def _subscribe_to_deal_alerts(
             )
             alerts = result.scalars().all()
             alert_filters = [
-                {"id": str(a.id), "name": a.name, "filters": a.filters}
-                for a in alerts
+                {"id": str(a.id), "name": a.name, "filters": a.filters} for a in alerts
             ]
 
         async for message in pubsub.listen():
@@ -242,15 +239,11 @@ def _deal_matches_alert(deal: dict[str, Any], filters: dict[str, Any]) -> bool:
             return False
 
     if "states" in filters and filters["states"]:
-        if deal.get("state", "").upper() not in [
-            s.upper() for s in filters["states"]
-        ]:
+        if deal.get("state", "").upper() not in [s.upper() for s in filters["states"]]:
             return False
 
     if "cities" in filters and filters["cities"]:
-        if deal.get("city", "").lower() not in [
-            c.lower() for c in filters["cities"]
-        ]:
+        if deal.get("city", "").lower() not in [c.lower() for c in filters["cities"]]:
             return False
 
     return True
@@ -283,9 +276,7 @@ async def ws_alerts(
     await alert_manager.connect(user_id, websocket)
 
     # Start the Redis subscriber in the background
-    subscriber_task = asyncio.create_task(
-        _subscribe_to_deal_alerts(user_id, websocket)
-    )
+    subscriber_task = asyncio.create_task(_subscribe_to_deal_alerts(user_id, websocket))
 
     try:
         while True:
@@ -392,9 +383,7 @@ async def ws_analysis(
             try:
                 msg = json.loads(raw)
             except json.JSONDecodeError:
-                await websocket.send_json(
-                    {"type": "error", "message": "Invalid JSON"}
-                )
+                await websocket.send_json({"type": "error", "message": "Invalid JSON"})
                 continue
 
             msg_type = msg.get("type", "")
@@ -471,7 +460,9 @@ async def _run_analysis_with_progress(
         try:
             property_data = await _step_fetch_data(property_url, property_id)
             results["property"] = property_data
-            await _send_progress("fetching_data", 0, data={"address": property_data.get("address", "")})
+            await _send_progress(
+                "fetching_data", 0, data={"address": property_data.get("address", "")}
+            )
         except Exception as exc:
             await _send_progress("fetching_data", 0, error=str(exc))
             return
@@ -513,7 +504,9 @@ async def _run_analysis_with_progress(
         logger.error(
             "Analysis pipeline error for user %s: %s", user_id, exc, exc_info=True
         )
-        await _send_progress("complete", total_steps - 1, error=f"Analysis failed: {exc}")
+        await _send_progress(
+            "complete", total_steps - 1, error=f"Analysis failed: {exc}"
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -526,6 +519,7 @@ async def _step_fetch_data(property_url: str, property_id: str) -> dict[str, Any
     if property_id:
         async with async_session_factory() as db:
             from app.models.property import Property
+
             result = await db.execute(
                 select(Property).where(Property.id == property_id)
             )
@@ -537,14 +531,19 @@ async def _step_fetch_data(property_url: str, property_id: str) -> dict[str, Any
                     "city": prop.city,
                     "state": prop.state,
                     "zip_code": prop.zip_code,
-                    "property_type": prop.property_type.value if prop.property_type else "sfh",
-                    "price": float(prop.purchase_price) if prop.purchase_price else None,
+                    "property_type": prop.property_type.value
+                    if prop.property_type
+                    else "sfh",
+                    "price": float(prop.purchase_price)
+                    if prop.purchase_price
+                    else None,
                 }
 
     if property_url:
         # Delegate to the scraping service
         try:
             from app.tasks.scraping_tasks import scrape_property_sync
+
             data = scrape_property_sync(property_url)
             if data:
                 return data
@@ -636,7 +635,11 @@ async def _step_run_ai(
         "investment_score": min(100, max(0, int(cap_rate * 10 + roi / 5))),
         "cap_rate": round(cap_rate, 2),
         "estimated_roi": round(roi, 2),
-        "recommendation": "good" if cap_rate > 8 else "fair" if cap_rate > 5 else "poor",
+        "recommendation": "good"
+        if cap_rate > 8
+        else "fair"
+        if cap_rate > 5
+        else "poor",
         "method": "basic_calculation",
     }
 

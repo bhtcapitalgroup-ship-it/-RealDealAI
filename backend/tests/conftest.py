@@ -101,6 +101,7 @@ app.dependency_overrides[get_db] = override_get_db
 # Async HTTP client
 # ---------------------------------------------------------------------------
 
+
 @pytest_asyncio.fixture
 async def client() -> AsyncGenerator[AsyncClient, None]:
     """Async HTTP test client connected to the FastAPI app."""
@@ -112,6 +113,7 @@ async def client() -> AsyncGenerator[AsyncClient, None]:
 # ---------------------------------------------------------------------------
 # Test user
 # ---------------------------------------------------------------------------
+
 
 @pytest_asyncio.fixture
 async def test_user() -> dict[str, Any]:
@@ -171,6 +173,7 @@ async def test_user_pro() -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 # Test property
 # ---------------------------------------------------------------------------
+
 
 @pytest_asyncio.fixture
 async def test_property(test_user: dict[str, Any]) -> dict[str, Any]:
@@ -248,6 +251,7 @@ async def second_property(test_user: dict[str, Any]) -> dict[str, Any]:
 # Test market data
 # ---------------------------------------------------------------------------
 
+
 @pytest_asyncio.fixture
 async def test_market_data() -> list[dict[str, Any]]:
     """Insert sample market data for two zip codes."""
@@ -311,6 +315,7 @@ async def test_market_data() -> list[dict[str, Any]]:
 # Mock Redis
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def mock_redis():
     """Provide a mock Redis client."""
@@ -330,6 +335,7 @@ def mock_redis():
 # ---------------------------------------------------------------------------
 # Mock Celery
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture
 def mock_celery():

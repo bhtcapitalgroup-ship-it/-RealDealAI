@@ -31,6 +31,7 @@ MAX_KEYS_PER_USER = 10
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _generate_api_key() -> str:
     """Generate a new API key: rdai_live_<32 hex chars>."""
     random_part = secrets.token_hex(KEY_RANDOM_LENGTH // 2)  # 16 bytes -> 32 hex chars
@@ -46,6 +47,7 @@ def _hash_key(raw_key: str) -> str:
 # Schemas
 # ---------------------------------------------------------------------------
 
+
 class APIKeyCreate(BaseModel):
     name: str = Field("Default", max_length=255)
     rate_limit_per_hour: int = Field(100, ge=1, le=10000)
@@ -54,6 +56,7 @@ class APIKeyCreate(BaseModel):
 
 class APIKeyCreated(BaseModel):
     """Returned only on creation — contains the unhashed key."""
+
     id: UUID
     name: str
     key: str  # full unhashed key — shown once
@@ -66,6 +69,7 @@ class APIKeyCreated(BaseModel):
 
 class APIKeyOut(BaseModel):
     """Masked representation for listing."""
+
     id: UUID
     name: str
     key_prefix: str
@@ -94,6 +98,7 @@ class APIKeyUsage(BaseModel):
 # Dependency: require Pro+ tier
 # ---------------------------------------------------------------------------
 
+
 async def require_pro_tier(
     current_user: User = Depends(get_current_user),
 ) -> User:
@@ -109,6 +114,7 @@ async def require_pro_tier(
 # ---------------------------------------------------------------------------
 # POST /api-keys — create a new key
 # ---------------------------------------------------------------------------
+
 
 @router.post("", response_model=APIKeyCreated, status_code=status.HTTP_201_CREATED)
 async def create_api_key(
@@ -165,6 +171,7 @@ async def create_api_key(
 # GET /api-keys — list keys (masked)
 # ---------------------------------------------------------------------------
 
+
 @router.get("", response_model=list[APIKeyOut])
 async def list_api_keys(
     db: AsyncSession = Depends(get_db),
@@ -183,6 +190,7 @@ async def list_api_keys(
 # ---------------------------------------------------------------------------
 # DELETE /api-keys/{id} — revoke a key
 # ---------------------------------------------------------------------------
+
 
 @router.delete("/{key_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def revoke_api_key(
@@ -206,6 +214,7 @@ async def revoke_api_key(
 # GET /api-keys/{id}/usage — usage stats
 # ---------------------------------------------------------------------------
 
+
 @router.get("/{key_id}/usage", response_model=APIKeyUsage)
 async def get_api_key_usage(
     key_id: UUID,
@@ -225,10 +234,16 @@ async def get_api_key_usage(
     # from the database usage_count and last_used_at.
     remaining = api_key.rate_limit_per_hour
     if api_key.last_used_at:
-        one_hour_ago = datetime.now(timezone.utc) - __import__("datetime").timedelta(hours=1)
+        one_hour_ago = datetime.now(timezone.utc) - __import__("datetime").timedelta(
+            hours=1
+        )
         if api_key.last_used_at >= one_hour_ago:
             # Rough estimate — real implementation uses a sliding window in Redis
-            remaining = max(0, api_key.rate_limit_per_hour - min(api_key.usage_count, api_key.rate_limit_per_hour))
+            remaining = max(
+                0,
+                api_key.rate_limit_per_hour
+                - min(api_key.usage_count, api_key.rate_limit_per_hour),
+            )
 
     return APIKeyUsage(
         id=api_key.id,

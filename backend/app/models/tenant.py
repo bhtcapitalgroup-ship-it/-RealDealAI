@@ -18,8 +18,10 @@ class Tenant(TimestampMixin, Base):
     __tablename__ = "tenants"
 
     landlord_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(), ForeignKey("users.id", ondelete="CASCADE"),
-        nullable=False, index=True,
+        UUID(),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
     first_name: Mapped[str] = mapped_column(String(255), nullable=False)
     last_name: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -45,7 +47,10 @@ class Tenant(TimestampMixin, Base):
         "Lease", back_populates="tenant", cascade="all, delete-orphan", lazy="selectin"
     )
     payments: Mapped[List["Payment"]] = relationship(
-        "Payment", back_populates="tenant", cascade="all, delete-orphan", lazy="selectin"
+        "Payment",
+        back_populates="tenant",
+        cascade="all, delete-orphan",
+        lazy="selectin",
     )
 
     def __repr__(self) -> str:

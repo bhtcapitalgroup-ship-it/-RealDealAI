@@ -8,9 +8,7 @@ from httpx import AsyncClient
 class TestListProperties:
     """Tests for GET /api/v1/properties."""
 
-    async def test_list_properties(
-        self, client: AsyncClient, test_user, test_property
-    ):
+    async def test_list_properties(self, client: AsyncClient, test_user, test_property):
         """Should return the user's active properties."""
         response = await client.get(
             "/api/v1/properties",
@@ -61,9 +59,7 @@ class TestGetPropertyDetail:
         assert data["state"] == "TX"
         assert "units" in data
 
-    async def test_get_property_not_found(
-        self, client: AsyncClient, test_user
-    ):
+    async def test_get_property_not_found(self, client: AsyncClient, test_user):
         """A non-existent property ID should return 404."""
         fake_id = uuid.uuid4()
         response = await client.get(

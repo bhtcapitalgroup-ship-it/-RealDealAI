@@ -228,7 +228,7 @@ class BaseScraper(ABC):
                 )
 
             # Exponential backoff with jitter
-            backoff = self.BASE_BACKOFF * (2 ** attempt) + random.uniform(0, 1)
+            backoff = self.BASE_BACKOFF * (2**attempt) + random.uniform(0, 1)
             await asyncio.sleep(backoff)
 
         raise ScrapingError(
@@ -267,7 +267,7 @@ class BaseScraper(ABC):
             except (aiohttp.ClientError, asyncio.TimeoutError, ValueError) as exc:
                 last_exc = exc
 
-            backoff = self.BASE_BACKOFF * (2 ** attempt) + random.uniform(0, 1)
+            backoff = self.BASE_BACKOFF * (2**attempt) + random.uniform(0, 1)
             await asyncio.sleep(backoff)
 
         raise ScrapingError(

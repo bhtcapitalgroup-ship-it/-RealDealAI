@@ -31,12 +31,16 @@ class Lease(TimestampMixin, Base):
     __tablename__ = "leases"
 
     unit_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(), ForeignKey("units.id", ondelete="CASCADE"),
-        nullable=False, index=True,
+        UUID(),
+        ForeignKey("units.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
     tenant_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(), ForeignKey("tenants.id", ondelete="CASCADE"),
-        nullable=False, index=True,
+        UUID(),
+        ForeignKey("tenants.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
     rent_amount: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
     deposit_amount: Mapped[Optional[float]] = mapped_column(
@@ -66,12 +70,11 @@ class Lease(TimestampMixin, Base):
         index=True,
     )
     document_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(), ForeignKey("documents.id", ondelete="SET NULL"),
+        UUID(),
+        ForeignKey("documents.id", ondelete="SET NULL"),
         nullable=True,
     )
-    ai_analysis: Mapped[Optional[dict[str, Any]]] = mapped_column(
-        JSON, nullable=True
-    )
+    ai_analysis: Mapped[Optional[dict[str, Any]]] = mapped_column(JSON, nullable=True)
 
     # Relationships
     unit: Mapped["Unit"] = relationship("Unit", back_populates="leases")

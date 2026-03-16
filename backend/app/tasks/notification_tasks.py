@@ -41,6 +41,7 @@ CATEGORY_TYPE_MAP = {
 # Tasks
 # ---------------------------------------------------------------------------
 
+
 @celery_app.task(name="app.tasks.notification_tasks.send_sms")
 def send_sms(phone: str, message: str) -> dict:
     """
@@ -87,7 +88,11 @@ def send_sms(phone: str, message: str) -> dict:
     #     logger.error("Twilio SMS failed: %s", exc)
     #     return {"status": "failed", "reason": str(exc), "phone": cleaned}
 
-    return {"status": "sent_placeholder", "phone": cleaned, "message_length": len(sms_message)}
+    return {
+        "status": "sent_placeholder",
+        "phone": cleaned,
+        "message_length": len(sms_message),
+    }
 
 
 @celery_app.task(name="app.tasks.notification_tasks.send_email")
@@ -164,7 +169,9 @@ def create_notification(
         category: One of the NotificationType values (e.g., "payment_received")
     """
     return _run_async(
-        _create_notification(recipient_type, uuid.UUID(recipient_id), title, body, category)
+        _create_notification(
+            recipient_type, uuid.UUID(recipient_id), title, body, category
+        )
     )
 
 
@@ -183,9 +190,8 @@ async def _create_notification(
         elif recipient_type == "tenant":
             # Look up the tenant's landlord
             from app.models.tenant import Tenant
-            result = await db.execute(
-                select(Tenant).where(Tenant.id == recipient_id)
-            )
+
+            result = await db.execute(select(Tenant).where(Tenant.id == recipient_id))
             tenant = result.scalar_one_or_none()
             if not tenant:
                 logger.error("Tenant %s not found for notification", recipient_id)

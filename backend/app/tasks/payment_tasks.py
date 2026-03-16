@@ -32,6 +32,7 @@ def _run_async(coro):
 # Individual tasks
 # ---------------------------------------------------------------------------
 
+
 @celery_app.task(name="app.tasks.payment_tasks.send_rent_reminder")
 def send_rent_reminder(tenant_id: str, lease_id: str) -> dict:
     """Compose and send a rent reminder to a tenant."""
@@ -59,10 +60,12 @@ async def _send_rent_reminder(tenant_id: uuid.UUID, lease_id: uuid.UUID) -> dict
         # Send via available channels
         if tenant.phone:
             from app.tasks.notification_tasks import send_sms
+
             send_sms.delay(tenant.phone, message)
 
         if tenant.email:
             from app.tasks.notification_tasks import send_email
+
             send_email.delay(
                 tenant.email,
                 "Rent Payment Reminder",
@@ -71,6 +74,7 @@ async def _send_rent_reminder(tenant_id: uuid.UUID, lease_id: uuid.UUID) -> dict
 
         # Create in-app notification for the landlord
         from app.tasks.notification_tasks import create_notification
+
         create_notification.delay(
             "landlord",
             str(tenant.landlord_id),
@@ -82,7 +86,11 @@ async def _send_rent_reminder(tenant_id: uuid.UUID, lease_id: uuid.UUID) -> dict
         await db.commit()
 
         logger.info("Rent reminder sent to tenant %s for lease %s", tenant_id, lease_id)
-        return {"status": "sent", "tenant_id": str(tenant_id), "lease_id": str(lease_id)}
+        return {
+            "status": "sent",
+            "tenant_id": str(tenant_id),
+            "lease_id": str(lease_id),
+        }
 
 
 @celery_app.task(name="app.tasks.payment_tasks.process_late_fee")
@@ -143,7 +151,11 @@ async def _process_late_fee(lease_id: uuid.UUID) -> dict:
 
         await db.commit()
 
-        logger.info("Late fee of $%.2f created for lease %s", float(lease.late_fee_amount), lease_id)
+        logger.info(
+            "Late fee of $%.2f created for lease %s",
+            float(lease.late_fee_amount),
+            lease_id,
+        )
         return {
             "status": "created",
             "lease_id": str(lease_id),
@@ -171,19 +183,25 @@ async def _generate_receipt(payment_id: uuid.UUID) -> dict:
         result = await db.execute(select(Unit).where(Unit.id == lease.unit_id))
         unit = result.scalar_one()
 
-        result = await db.execute(select(Property).where(Property.id == unit.property_id))
+        result = await db.execute(
+            select(Property).where(Property.id == unit.property_id)
+        )
         prop = result.scalar_one()
 
         receipt = {
             "receipt_id": str(payment.id),
-            "date": payment.paid_date.isoformat() if payment.paid_date else date.today().isoformat(),
+            "date": payment.paid_date.isoformat()
+            if payment.paid_date
+            else date.today().isoformat(),
             "tenant_name": f"{tenant.first_name} {tenant.last_name}",
             "property_name": prop.name,
             "property_address": f"{prop.address_line1}, {prop.city}, {prop.state} {prop.zip_code}",
             "unit_number": unit.unit_number,
             "amount": float(payment.amount),
             "payment_type": payment.payment_type.value,
-            "payment_method": payment.payment_method.value if payment.payment_method else "N/A",
+            "payment_method": payment.payment_method.value
+            if payment.payment_method
+            else "N/A",
             "stripe_id": payment.stripe_payment_id or "N/A",
             "status": payment.status.value,
         }
@@ -191,6 +209,7 @@ async def _generate_receipt(payment_id: uuid.UUID) -> dict:
         # Send receipt via email
         if tenant.email:
             from app.tasks.notification_tasks import send_email
+
             receipt_body = (
                 f"Payment Receipt\n\n"
                 f"Property: {prop.name}\n"
@@ -210,6 +229,7 @@ async def _generate_receipt(payment_id: uuid.UUID) -> dict:
 # ---------------------------------------------------------------------------
 # Periodic / beat tasks
 # ---------------------------------------------------------------------------
+
 
 @celery_app.task(name="app.tasks.payment_tasks.check_rent_due")
 def check_rent_due() -> dict:
@@ -280,6 +300,7 @@ async def _check_late_payments() -> dict:
                 # If the day doesn't exist this month (e.g., day 31 in Feb),
                 # use the last day of the month
                 import calendar
+
                 last_day = calendar.monthrange(today.year, today.month)[1]
                 due_date = today.replace(day=min(due_day, last_day))
 
@@ -380,7 +401,9 @@ async def _check_lease_expirations() -> dict:
             leases = result.scalars().all()
 
             for lease in leases:
-                result = await db.execute(select(Tenant).where(Tenant.id == lease.tenant_id))
+                result = await db.execute(
+                    select(Tenant).where(Tenant.id == lease.tenant_id)
+                )
                 tenant = result.scalar_one()
 
                 result = await db.execute(select(Unit).where(Unit.id == lease.unit_id))
@@ -413,6 +436,7 @@ async def _check_lease_expirations() -> dict:
                 # Send email to tenant about upcoming expiration
                 if tenant.email:
                     from app.tasks.notification_tasks import send_email
+
                     send_email.delay(
                         tenant.email,
                         f"Lease Renewal Notice - {prop.name}",
@@ -427,7 +451,9 @@ async def _check_lease_expirations() -> dict:
 
         await db.commit()
 
-    logger.info("check_lease_expirations: %d notifications created", notifications_created)
+    logger.info(
+        "check_lease_expirations: %d notifications created", notifications_created
+    )
     return {"notifications_created": notifications_created}
 
 
@@ -467,7 +493,12 @@ async def _generate_monthly_report() -> dict:
                     data={
                         "insights_count": len(insights),
                         "insights": [
-                            {"type": i.type, "title": i.title, "body": i.body, "action": i.action}
+                            {
+                                "type": i.type,
+                                "title": i.title,
+                                "body": i.body,
+                                "action": i.action,
+                            }
                             for i in insights
                         ],
                     },

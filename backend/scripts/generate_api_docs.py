@@ -30,9 +30,12 @@ def generate() -> dict:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Generate OpenAPI JSON for RealDeal AI")
+    parser = argparse.ArgumentParser(
+        description="Generate OpenAPI JSON for RealDeal AI"
+    )
     parser.add_argument(
-        "-o", "--output",
+        "-o",
+        "--output",
         type=str,
         default=None,
         help="Output file path (default: stdout)",
@@ -52,7 +55,9 @@ def main() -> None:
         out_path = Path(args.output)
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_text(json_str + "\n", encoding="utf-8")
-        print(f"[+] OpenAPI spec written to {out_path} ({len(schema.get('paths', {}))} endpoints)")
+        print(
+            f"[+] OpenAPI spec written to {out_path} ({len(schema.get('paths', {}))} endpoints)"
+        )
     else:
         print(json_str)
 

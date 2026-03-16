@@ -102,7 +102,9 @@ class AnalyticsService:
             properties={
                 "from_tier": from_tier,
                 "to_tier": to_tier,
-                "direction": "upgrade" if _tier_rank(to_tier) > _tier_rank(from_tier) else "downgrade",
+                "direction": "upgrade"
+                if _tier_rank(to_tier) > _tier_rank(from_tier)
+                else "downgrade",
             },
             ip_address=ip_address,
         )
@@ -149,9 +151,7 @@ class AnalyticsService:
         # Days active in last 30 days
         days_result = await self.db.execute(
             select(
-                func.count(
-                    distinct(func.date_trunc("day", AnalyticsEvent.created_at))
-                )
+                func.count(distinct(func.date_trunc("day", AnalyticsEvent.created_at)))
             ).where(
                 AnalyticsEvent.user_id == user_id,
                 AnalyticsEvent.created_at >= thirty_days_ago,
@@ -238,9 +238,7 @@ class AnalyticsService:
     # Conversion funnel
     # ------------------------------------------------------------------
 
-    async def get_conversion_funnel(
-        self, days: int = 90
-    ) -> dict[str, Any]:
+    async def get_conversion_funnel(self, days: int = 90) -> dict[str, Any]:
         """Compute the Free -> Pro -> Pro+ conversion funnel.
 
         Returns counts and rates for each tier transition.
@@ -259,7 +257,10 @@ class AnalyticsService:
             .where(User.is_active.is_(True))
             .group_by(User.plan_tier)
         )
-        tier_counts = {row[0].value if hasattr(row[0], "value") else str(row[0]): row[1] for row in tier_result.all()}
+        tier_counts = {
+            row[0].value if hasattr(row[0], "value") else str(row[0]): row[1]
+            for row in tier_result.all()
+        }
 
         # Conversion events in period
         conv_result = await self.db.execute(
@@ -287,9 +288,13 @@ class AnalyticsService:
         growth_count = tier_counts.get("growth", 0)
         pro_count = tier_counts.get("pro", 0)
 
-        free_to_growth = conversions.get("starter->growth", 0) + conversions.get("free->growth", 0)
+        free_to_growth = conversions.get("starter->growth", 0) + conversions.get(
+            "free->growth", 0
+        )
         growth_to_pro = conversions.get("growth->pro", 0)
-        free_to_pro = conversions.get("starter->pro", 0) + conversions.get("free->pro", 0)
+        free_to_pro = conversions.get("starter->pro", 0) + conversions.get(
+            "free->pro", 0
+        )
 
         return {
             "period_days": days,
@@ -300,14 +305,10 @@ class AnalyticsService:
                 "free_to_paid": (
                     round((free_to_growth + free_to_pro) / max(free_count, 1) * 100, 2)
                 ),
-                "growth_to_pro": (
-                    round(growth_to_pro / max(growth_count, 1) * 100, 2)
-                ),
+                "growth_to_pro": (round(growth_to_pro / max(growth_count, 1) * 100, 2)),
                 "overall_paid": (
                     round(
-                        (growth_count + pro_count)
-                        / max(total_users, 1)
-                        * 100,
+                        (growth_count + pro_count) / max(total_users, 1) * 100,
                         2,
                     )
                 ),

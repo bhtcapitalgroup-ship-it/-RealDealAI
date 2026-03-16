@@ -307,6 +307,7 @@ async def complete_maintenance(
 
     # Determine property_id through unit
     from app.models.unit import Unit
+
     unit_result = await db.execute(select(Unit).where(Unit.id == req.unit_id))
     unit = unit_result.scalar_one_or_none()
     property_id = unit.property_id if unit else None

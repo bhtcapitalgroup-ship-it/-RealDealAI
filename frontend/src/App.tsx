@@ -13,8 +13,6 @@ import Financials from './pages/Financials';
 import Messages from './pages/Messages';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
-import OnboardingLayout from './app/onboarding/layout';
-import OnboardingPage from './app/onboarding/page';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -27,16 +25,6 @@ export default function App() {
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route
-        path="/onboarding"
-        element={
-          <ProtectedRoute>
-            <OnboardingLayout>
-              <OnboardingPage />
-            </OnboardingLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
         path="/*"
         element={
           <ProtectedRoute>
@@ -46,7 +34,6 @@ export default function App() {
                 <Route path="/properties" element={<Properties />} />
                 <Route path="/properties/:id" element={<PropertyDetail />} />
                 <Route path="/tenants" element={<Tenants />} />
-                <Route path="/tenants/:id" element={<PropertyDetail />} />
                 <Route path="/maintenance" element={<Maintenance />} />
                 <Route path="/maintenance/:id" element={<MaintenanceDetail />} />
                 <Route path="/payments" element={<Payments />} />

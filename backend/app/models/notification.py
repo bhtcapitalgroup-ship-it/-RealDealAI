@@ -27,12 +27,15 @@ class Notification(TimestampMixin, Base):
     __tablename__ = "notifications"
 
     landlord_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(), ForeignKey("users.id", ondelete="CASCADE"),
-        nullable=False, index=True,
+        UUID(),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
     type: Mapped[NotificationType] = mapped_column(
         Enum(NotificationType, name="notification_type"),
-        nullable=False, index=True,
+        nullable=False,
+        index=True,
     )
     title: Mapped[str] = mapped_column(String(500), nullable=False)
     message: Mapped[str] = mapped_column(Text, nullable=False)

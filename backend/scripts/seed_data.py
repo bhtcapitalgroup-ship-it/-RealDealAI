@@ -45,30 +45,120 @@ random.seed(42)
 # ═══════════════════════════════════════════════════════════════════════════
 
 CITIES: list[dict] = [
-    {"city": "Austin",        "state": "TX", "zip": "78745", "metro": "Austin-Round Rock-Georgetown"},
-    {"city": "Jacksonville",  "state": "FL", "zip": "32210", "metro": "Jacksonville"},
-    {"city": "Memphis",       "state": "TN", "zip": "38118", "metro": "Memphis"},
-    {"city": "Cleveland",     "state": "OH", "zip": "44102", "metro": "Cleveland-Elyria"},
-    {"city": "Indianapolis",  "state": "IN", "zip": "46201", "metro": "Indianapolis-Carmel-Anderson"},
-    {"city": "Kansas City",   "state": "MO", "zip": "64130", "metro": "Kansas City"},
-    {"city": "Birmingham",    "state": "AL", "zip": "35211", "metro": "Birmingham-Hoover"},
-    {"city": "Columbus",      "state": "OH", "zip": "43207", "metro": "Columbus"},
-    {"city": "San Antonio",   "state": "TX", "zip": "78223", "metro": "San Antonio-New Braunfels"},
-    {"city": "Charlotte",     "state": "NC", "zip": "28205", "metro": "Charlotte-Concord-Gastonia"},
+    {
+        "city": "Austin",
+        "state": "TX",
+        "zip": "78745",
+        "metro": "Austin-Round Rock-Georgetown",
+    },
+    {"city": "Jacksonville", "state": "FL", "zip": "32210", "metro": "Jacksonville"},
+    {"city": "Memphis", "state": "TN", "zip": "38118", "metro": "Memphis"},
+    {"city": "Cleveland", "state": "OH", "zip": "44102", "metro": "Cleveland-Elyria"},
+    {
+        "city": "Indianapolis",
+        "state": "IN",
+        "zip": "46201",
+        "metro": "Indianapolis-Carmel-Anderson",
+    },
+    {"city": "Kansas City", "state": "MO", "zip": "64130", "metro": "Kansas City"},
+    {"city": "Birmingham", "state": "AL", "zip": "35211", "metro": "Birmingham-Hoover"},
+    {"city": "Columbus", "state": "OH", "zip": "43207", "metro": "Columbus"},
+    {
+        "city": "San Antonio",
+        "state": "TX",
+        "zip": "78223",
+        "metro": "San Antonio-New Braunfels",
+    },
+    {
+        "city": "Charlotte",
+        "state": "NC",
+        "zip": "28205",
+        "metro": "Charlotte-Concord-Gastonia",
+    },
 ]
 
 # Real street name patterns per city
 STREETS: dict[str, list[str]] = {
-    "Austin":       ["S Congress Ave", "E Riverside Dr", "Manchaca Rd", "Oltorf St", "Stassney Ln", "William Cannon Dr"],
-    "Jacksonville": ["Blanding Blvd", "Cassat Ave", "Normandy Blvd", "Lane Ave S", "Timuquana Rd", "Wesconnett Blvd"],
-    "Memphis":      ["Lamar Ave", "Winchester Rd", "Getwell Rd", "Shelby Dr", "Raleigh-Millington Rd", "Elvis Presley Blvd"],
-    "Cleveland":    ["Lorain Ave", "Clark Ave", "Denison Ave", "Detroit Ave", "Madison Ave", "Fulton Rd"],
-    "Indianapolis": ["E Washington St", "N Meridian St", "Massachusetts Ave", "E 10th St", "N College Ave", "S East St"],
-    "Kansas City":  ["Prospect Ave", "Troost Ave", "E 63rd St", "Paseo Blvd", "E 31st St", "Swope Pkwy"],
-    "Birmingham":   ["Bessemer Rd", "Center St SW", "Arkadelphia Rd", "Lomb Ave SW", "Princeton Ave SW", "Jeff Davis Ave"],
-    "Columbus":     ["Parsons Ave", "S High St", "E Livingston Ave", "Lockbourne Rd", "E Main St", "Refugee Rd"],
-    "San Antonio":  ["S Presa St", "Rigsby Ave", "W Southcross Blvd", "S New Braunfels Ave", "Roosevelt Ave", "Pleasanton Rd"],
-    "Charlotte":    ["Central Ave", "N Davidson St", "The Plaza", "Shamrock Dr", "Eastway Dr", "Briar Creek Rd"],
+    "Austin": [
+        "S Congress Ave",
+        "E Riverside Dr",
+        "Manchaca Rd",
+        "Oltorf St",
+        "Stassney Ln",
+        "William Cannon Dr",
+    ],
+    "Jacksonville": [
+        "Blanding Blvd",
+        "Cassat Ave",
+        "Normandy Blvd",
+        "Lane Ave S",
+        "Timuquana Rd",
+        "Wesconnett Blvd",
+    ],
+    "Memphis": [
+        "Lamar Ave",
+        "Winchester Rd",
+        "Getwell Rd",
+        "Shelby Dr",
+        "Raleigh-Millington Rd",
+        "Elvis Presley Blvd",
+    ],
+    "Cleveland": [
+        "Lorain Ave",
+        "Clark Ave",
+        "Denison Ave",
+        "Detroit Ave",
+        "Madison Ave",
+        "Fulton Rd",
+    ],
+    "Indianapolis": [
+        "E Washington St",
+        "N Meridian St",
+        "Massachusetts Ave",
+        "E 10th St",
+        "N College Ave",
+        "S East St",
+    ],
+    "Kansas City": [
+        "Prospect Ave",
+        "Troost Ave",
+        "E 63rd St",
+        "Paseo Blvd",
+        "E 31st St",
+        "Swope Pkwy",
+    ],
+    "Birmingham": [
+        "Bessemer Rd",
+        "Center St SW",
+        "Arkadelphia Rd",
+        "Lomb Ave SW",
+        "Princeton Ave SW",
+        "Jeff Davis Ave",
+    ],
+    "Columbus": [
+        "Parsons Ave",
+        "S High St",
+        "E Livingston Ave",
+        "Lockbourne Rd",
+        "E Main St",
+        "Refugee Rd",
+    ],
+    "San Antonio": [
+        "S Presa St",
+        "Rigsby Ave",
+        "W Southcross Blvd",
+        "S New Braunfels Ave",
+        "Roosevelt Ave",
+        "Pleasanton Rd",
+    ],
+    "Charlotte": [
+        "Central Ave",
+        "N Davidson St",
+        "The Plaza",
+        "Shamrock Dr",
+        "Eastway Dr",
+        "Briar Creek Rd",
+    ],
 }
 
 PROPERTY_TYPES = [PropertyType.SFH, PropertyType.MULTI, PropertyType.TOWNHOUSE]
@@ -91,6 +181,7 @@ def _password_hash() -> str:
 # ═══════════════════════════════════════════════════════════════════════════
 # Builder functions
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def build_users() -> list[User]:
     """Create 3 demo users across the plan tiers."""
@@ -123,7 +214,11 @@ def build_users() -> list[User]:
             company_name="Chen Property Group",
             plan_tier=PlanTier.PRO,
             is_active=True,
-            settings={"onboarded": True, "theme": "dark", "default_market": "Charlotte"},
+            settings={
+                "onboarded": True,
+                "theme": "dark",
+                "default_market": "Charlotte",
+            },
         ),
     ]
 
@@ -143,7 +238,11 @@ def build_properties(users: list[User]) -> list[Property]:
         zip_code = base_zip[:4] + str(random.randint(0, 9))
 
         ptype = random.choice(PROPERTY_TYPES)
-        total_units = 1 if ptype == PropertyType.SFH else (random.choice([2, 3, 4]) if ptype == PropertyType.MULTI else 1)
+        total_units = (
+            1
+            if ptype == PropertyType.SFH
+            else (random.choice([2, 3, 4]) if ptype == PropertyType.MULTI else 1)
+        )
 
         bedrooms = random.randint(2, 5)
         bathrooms = random.choice([1, 1.5, 2, 2.5, 3])
@@ -152,9 +251,16 @@ def build_properties(users: list[User]) -> list[Property]:
 
         # Price depends on city tier
         city_tier = {
-            "Austin": 1.4, "Charlotte": 1.2, "Columbus": 1.0, "San Antonio": 1.1,
-            "Jacksonville": 1.0, "Indianapolis": 0.85, "Kansas City": 0.9,
-            "Memphis": 0.75, "Cleveland": 0.7, "Birmingham": 0.7,
+            "Austin": 1.4,
+            "Charlotte": 1.2,
+            "Columbus": 1.0,
+            "San Antonio": 1.1,
+            "Jacksonville": 1.0,
+            "Indianapolis": 0.85,
+            "Kansas City": 0.9,
+            "Memphis": 0.75,
+            "Cleveland": 0.7,
+            "Birmingham": 0.7,
         }
         multiplier = city_tier.get(city, 1.0)
         base_price = random.randint(80000, 280000)
@@ -201,16 +307,166 @@ def build_market_data() -> list[MarketData]:
     entries: list[MarketData] = []
 
     market_stats: dict[str, dict] = {
-        "Austin":       {"median_price": 345000, "median_rent": 1850, "price_growth": 4.2, "rent_growth": 3.8, "inventory": 1240, "dom": 28, "pop": 1028225, "pop_growth": 2.8, "unemp": 3.1, "income": 78500, "crime": 32, "school": 7.2, "mig_in": 45000, "mig_out": 18000},
-        "Jacksonville": {"median_price": 275000, "median_rent": 1450, "price_growth": 5.1, "rent_growth": 4.5, "inventory": 890, "dom": 35, "pop": 985843, "pop_growth": 2.1, "unemp": 3.4, "income": 58200, "crime": 45, "school": 6.1, "mig_in": 32000, "mig_out": 14000},
-        "Memphis":      {"median_price": 185000, "median_rent": 1150, "price_growth": 3.4, "rent_growth": 3.9, "inventory": 1650, "dom": 42, "pop": 633104, "pop_growth": -0.3, "unemp": 4.8, "income": 42100, "crime": 72, "school": 4.8, "mig_in": 12000, "mig_out": 15000},
-        "Cleveland":    {"median_price": 145000, "median_rent": 1050, "price_growth": 2.8, "rent_growth": 3.2, "inventory": 1420, "dom": 48, "pop": 372624, "pop_growth": -0.8, "unemp": 5.1, "income": 38600, "crime": 65, "school": 5.0, "mig_in": 8000, "mig_out": 12000},
-        "Indianapolis": {"median_price": 225000, "median_rent": 1250, "price_growth": 4.0, "rent_growth": 3.6, "inventory": 1100, "dom": 32, "pop": 887642, "pop_growth": 1.3, "unemp": 3.6, "income": 52400, "crime": 55, "school": 5.5, "mig_in": 22000, "mig_out": 14000},
-        "Kansas City":  {"median_price": 215000, "median_rent": 1200, "price_growth": 3.5, "rent_growth": 3.1, "inventory": 980, "dom": 38, "pop": 508090, "pop_growth": 0.8, "unemp": 3.8, "income": 55800, "crime": 58, "school": 5.8, "mig_in": 16000, "mig_out": 11000},
-        "Birmingham":   {"median_price": 165000, "median_rent": 1100, "price_growth": 2.5, "rent_growth": 2.8, "inventory": 1380, "dom": 52, "pop": 196353, "pop_growth": -0.5, "unemp": 4.5, "income": 40300, "crime": 68, "school": 4.5, "mig_in": 9000, "mig_out": 11500},
-        "Columbus":     {"median_price": 255000, "median_rent": 1350, "price_growth": 4.5, "rent_growth": 4.0, "inventory": 920, "dom": 30, "pop": 905748, "pop_growth": 1.5, "unemp": 3.3, "income": 56200, "crime": 42, "school": 6.5, "mig_in": 28000, "mig_out": 15000},
-        "San Antonio":  {"median_price": 265000, "median_rent": 1400, "price_growth": 3.8, "rent_growth": 3.5, "inventory": 1520, "dom": 36, "pop": 1547253, "pop_growth": 1.9, "unemp": 3.5, "income": 54100, "crime": 48, "school": 5.9, "mig_in": 38000, "mig_out": 20000},
-        "Charlotte":    {"median_price": 335000, "median_rent": 1750, "price_growth": 5.5, "rent_growth": 4.8, "inventory": 780, "dom": 25, "pop": 897720, "pop_growth": 2.5, "unemp": 3.0, "income": 68400, "crime": 38, "school": 6.8, "mig_in": 42000, "mig_out": 16000},
+        "Austin": {
+            "median_price": 345000,
+            "median_rent": 1850,
+            "price_growth": 4.2,
+            "rent_growth": 3.8,
+            "inventory": 1240,
+            "dom": 28,
+            "pop": 1028225,
+            "pop_growth": 2.8,
+            "unemp": 3.1,
+            "income": 78500,
+            "crime": 32,
+            "school": 7.2,
+            "mig_in": 45000,
+            "mig_out": 18000,
+        },
+        "Jacksonville": {
+            "median_price": 275000,
+            "median_rent": 1450,
+            "price_growth": 5.1,
+            "rent_growth": 4.5,
+            "inventory": 890,
+            "dom": 35,
+            "pop": 985843,
+            "pop_growth": 2.1,
+            "unemp": 3.4,
+            "income": 58200,
+            "crime": 45,
+            "school": 6.1,
+            "mig_in": 32000,
+            "mig_out": 14000,
+        },
+        "Memphis": {
+            "median_price": 185000,
+            "median_rent": 1150,
+            "price_growth": 3.4,
+            "rent_growth": 3.9,
+            "inventory": 1650,
+            "dom": 42,
+            "pop": 633104,
+            "pop_growth": -0.3,
+            "unemp": 4.8,
+            "income": 42100,
+            "crime": 72,
+            "school": 4.8,
+            "mig_in": 12000,
+            "mig_out": 15000,
+        },
+        "Cleveland": {
+            "median_price": 145000,
+            "median_rent": 1050,
+            "price_growth": 2.8,
+            "rent_growth": 3.2,
+            "inventory": 1420,
+            "dom": 48,
+            "pop": 372624,
+            "pop_growth": -0.8,
+            "unemp": 5.1,
+            "income": 38600,
+            "crime": 65,
+            "school": 5.0,
+            "mig_in": 8000,
+            "mig_out": 12000,
+        },
+        "Indianapolis": {
+            "median_price": 225000,
+            "median_rent": 1250,
+            "price_growth": 4.0,
+            "rent_growth": 3.6,
+            "inventory": 1100,
+            "dom": 32,
+            "pop": 887642,
+            "pop_growth": 1.3,
+            "unemp": 3.6,
+            "income": 52400,
+            "crime": 55,
+            "school": 5.5,
+            "mig_in": 22000,
+            "mig_out": 14000,
+        },
+        "Kansas City": {
+            "median_price": 215000,
+            "median_rent": 1200,
+            "price_growth": 3.5,
+            "rent_growth": 3.1,
+            "inventory": 980,
+            "dom": 38,
+            "pop": 508090,
+            "pop_growth": 0.8,
+            "unemp": 3.8,
+            "income": 55800,
+            "crime": 58,
+            "school": 5.8,
+            "mig_in": 16000,
+            "mig_out": 11000,
+        },
+        "Birmingham": {
+            "median_price": 165000,
+            "median_rent": 1100,
+            "price_growth": 2.5,
+            "rent_growth": 2.8,
+            "inventory": 1380,
+            "dom": 52,
+            "pop": 196353,
+            "pop_growth": -0.5,
+            "unemp": 4.5,
+            "income": 40300,
+            "crime": 68,
+            "school": 4.5,
+            "mig_in": 9000,
+            "mig_out": 11500,
+        },
+        "Columbus": {
+            "median_price": 255000,
+            "median_rent": 1350,
+            "price_growth": 4.5,
+            "rent_growth": 4.0,
+            "inventory": 920,
+            "dom": 30,
+            "pop": 905748,
+            "pop_growth": 1.5,
+            "unemp": 3.3,
+            "income": 56200,
+            "crime": 42,
+            "school": 6.5,
+            "mig_in": 28000,
+            "mig_out": 15000,
+        },
+        "San Antonio": {
+            "median_price": 265000,
+            "median_rent": 1400,
+            "price_growth": 3.8,
+            "rent_growth": 3.5,
+            "inventory": 1520,
+            "dom": 36,
+            "pop": 1547253,
+            "pop_growth": 1.9,
+            "unemp": 3.5,
+            "income": 54100,
+            "crime": 48,
+            "school": 5.9,
+            "mig_in": 38000,
+            "mig_out": 20000,
+        },
+        "Charlotte": {
+            "median_price": 335000,
+            "median_rent": 1750,
+            "price_growth": 5.5,
+            "rent_growth": 4.8,
+            "inventory": 780,
+            "dom": 25,
+            "pop": 897720,
+            "pop_growth": 2.5,
+            "unemp": 3.0,
+            "income": 68400,
+            "crime": 38,
+            "school": 6.8,
+            "mig_in": 42000,
+            "mig_out": 16000,
+        },
     }
 
     for city_info in CITIES:
@@ -260,8 +516,14 @@ def build_saved_deals(pro_user: User, properties: list[Property]) -> list[SavedD
             user_id=pro_user.id,
             property_id=prop.id,
             notes=notes_options[i],
-            custom_arv=Decimal(str(int(float(prop.purchase_price or 150000) * random.uniform(1.1, 1.4)))),
-            custom_rehab=Decimal(str(random.choice([5000, 12000, 25000, 40000, 65000]))),
+            custom_arv=Decimal(
+                str(
+                    int(float(prop.purchase_price or 150000) * random.uniform(1.1, 1.4))
+                )
+            ),
+            custom_rehab=Decimal(
+                str(random.choice([5000, 12000, 25000, 40000, 65000]))
+            ),
             custom_rent=Decimal(str(random.choice([950, 1100, 1350, 1600, 2100]))),
             is_favorite=i < 2,  # first two are favorites
         )
@@ -308,6 +570,7 @@ def build_alerts(pro_user: User) -> list[Alert]:
 # ═══════════════════════════════════════════════════════════════════════════
 # Main seed coroutine
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 async def seed() -> None:
     """Insert all seed data inside a single transaction."""

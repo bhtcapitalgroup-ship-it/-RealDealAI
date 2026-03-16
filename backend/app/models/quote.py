@@ -26,12 +26,16 @@ class Quote(TimestampMixin, Base):
     __tablename__ = "quotes"
 
     request_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(), ForeignKey("maintenance_requests.id", ondelete="CASCADE"),
-        nullable=False, index=True,
+        UUID(),
+        ForeignKey("maintenance_requests.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
     contractor_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(), ForeignKey("contractors.id", ondelete="CASCADE"),
-        nullable=False, index=True,
+        UUID(),
+        ForeignKey("contractors.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
     amount: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)

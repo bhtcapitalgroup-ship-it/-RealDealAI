@@ -25,16 +25,16 @@ class Unit(TimestampMixin, Base):
     __tablename__ = "units"
 
     property_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(), ForeignKey("properties.id", ondelete="CASCADE"),
-        nullable=False, index=True,
+        UUID(),
+        ForeignKey("properties.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
     unit_number: Mapped[str] = mapped_column(String(50), nullable=False)
     bedrooms: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     bathrooms: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     sqft: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
-    market_rent: Mapped[Optional[float]] = mapped_column(
-        Numeric(10, 2), nullable=True
-    )
+    market_rent: Mapped[Optional[float]] = mapped_column(Numeric(10, 2), nullable=True)
     status: Mapped[UnitStatus] = mapped_column(
         Enum(UnitStatus, name="unit_status"),
         default=UnitStatus.VACANT,

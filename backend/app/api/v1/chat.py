@@ -140,9 +140,7 @@ async def get_conversations(
 ) -> list[ConversationResponse]:
     """Get conversation history for a tenant."""
     # Verify tenant belongs to landlord
-    tenant_result = await db.execute(
-        select(Tenant).where(Tenant.id == tenant_id)
-    )
+    tenant_result = await db.execute(select(Tenant).where(Tenant.id == tenant_id))
     tenant = tenant_result.scalar_one_or_none()
 
     if tenant is None:
@@ -194,9 +192,7 @@ async def list_escalations(
             select(Tenant).where(Tenant.id == conv.tenant_id)
         )
         tenant = tenant_result.scalar_one_or_none()
-        tenant_name = (
-            f"{tenant.first_name} {tenant.last_name}" if tenant else "Unknown"
-        )
+        tenant_name = f"{tenant.first_name} {tenant.last_name}" if tenant else "Unknown"
 
         last_message = None
         if conv.messages:
@@ -207,8 +203,12 @@ async def list_escalations(
                 id=conv.id,
                 tenant_id=conv.tenant_id,
                 tenant_name=tenant_name,
-                channel=conv.channel.value if hasattr(conv.channel, 'value') else str(conv.channel),
-                status=conv.status.value if hasattr(conv.status, 'value') else str(conv.status),
+                channel=conv.channel.value
+                if hasattr(conv.channel, "value")
+                else str(conv.channel),
+                status=conv.status.value
+                if hasattr(conv.status, "value")
+                else str(conv.status),
                 last_message=last_message,
                 created_at=conv.created_at,
                 updated_at=conv.updated_at,

@@ -3,7 +3,16 @@
 import uuid as uuid_mod
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, Form, status
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    Query,
+    UploadFile,
+    File,
+    Form,
+    status,
+)
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -74,10 +83,7 @@ async def upload_document(
     file_size = len(content)
 
     # S3 upload placeholder — generates a fake S3 key
-    s3_key = (
-        f"documents/{current_user.id}/{uuid_mod.uuid4().hex[:12]}/"
-        f"{file.filename}"
-    )
+    s3_key = f"documents/{current_user.id}/{uuid_mod.uuid4().hex[:12]}/{file.filename}"
 
     doc = Document(
         landlord_id=current_user.id,

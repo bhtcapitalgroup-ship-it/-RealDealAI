@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 # Service
 # ---------------------------------------------------------------------------
 
+
 class MaintenanceService:
     """
     Manages the full lifecycle of maintenance requests: creation, AI diagnosis,
@@ -96,6 +97,7 @@ class MaintenanceService:
 
             # Trigger AI vision diagnosis in background
             from app.tasks.maintenance_tasks import process_photo_diagnosis
+
             process_photo_diagnosis.delay(str(request.id), image_keys)
 
         # Notify landlord
@@ -164,9 +166,7 @@ class MaintenanceService:
                 MaintenanceCategory.LANDSCAPING: "general_contractor",
                 MaintenanceCategory.OTHER: "general_contractor",
             }
-            trade_needed = category_to_trade.get(
-                request.category, "general_contractor"
-            )
+            trade_needed = category_to_trade.get(request.category, "general_contractor")
 
         # Query contractors belonging to this landlord
         query = (
@@ -184,9 +184,7 @@ class MaintenanceService:
 
         # If we know the trade, filter by it
         if trade_needed:
-            query = query.where(
-                Contractor.trades.any(trade_needed)
-            )
+            query = query.where(Contractor.trades.any(trade_needed))
 
         result = await self.db.execute(query)
         contractors = result.scalars().all()
@@ -277,6 +275,7 @@ class MaintenanceService:
 
         if contractor.email:
             from app.tasks.notification_tasks import send_email
+
             send_email.delay(
                 contractor.email,
                 f"Quote Approved: {request.title}",

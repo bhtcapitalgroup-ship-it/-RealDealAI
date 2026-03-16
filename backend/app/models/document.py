@@ -13,19 +13,25 @@ class Document(TimestampMixin, Base):
     __tablename__ = "documents"
 
     landlord_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(), ForeignKey("users.id", ondelete="CASCADE"),
-        nullable=False, index=True,
+        UUID(),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
     property_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(), ForeignKey("properties.id", ondelete="SET NULL"),
-        nullable=True, index=True,
+        UUID(),
+        ForeignKey("properties.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
     )
     unit_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(), ForeignKey("units.id", ondelete="SET NULL"),
+        UUID(),
+        ForeignKey("units.id", ondelete="SET NULL"),
         nullable=True,
     )
     tenant_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(), ForeignKey("tenants.id", ondelete="SET NULL"),
+        UUID(),
+        ForeignKey("tenants.id", ondelete="SET NULL"),
         nullable=True,
     )
     doc_type: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
@@ -33,13 +39,9 @@ class Document(TimestampMixin, Base):
     s3_key: Mapped[str] = mapped_column(String(1000), nullable=False)
     file_size: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     mime_type: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    ai_analysis: Mapped[Optional[dict[str, Any]]] = mapped_column(
-        JSON, nullable=True
-    )
+    ai_analysis: Mapped[Optional[dict[str, Any]]] = mapped_column(JSON, nullable=True)
     ocr_text: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    tags: Mapped[Optional[list[str]]] = mapped_column(
-        String, nullable=True
-    )
+    tags: Mapped[Optional[list[str]]] = mapped_column(String, nullable=True)
     is_deleted: Mapped[bool] = mapped_column(
         Boolean, default=False, server_default="false", nullable=False
     )

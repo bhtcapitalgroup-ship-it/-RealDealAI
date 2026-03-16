@@ -32,12 +32,15 @@ async def get_neighborhood_data(
 
     # Fetch all sources concurrently — failures are non-fatal
     import asyncio
+
     census_task = _fetch_census(zip_code)
     school_task = _fetch_school_rating(zip_code, latitude, longitude)
     crime_task = _fetch_crime_index(zip_code)
 
     census, schools, crime = await asyncio.gather(
-        census_task, school_task, crime_task,
+        census_task,
+        school_task,
+        crime_task,
         return_exceptions=True,
     )
 
@@ -114,7 +117,9 @@ async def _fetch_census(zip_code: str) -> dict[str, Any]:
     }
 
 
-async def _calc_pop_growth(zip_code: str, current_pop: Optional[int]) -> Optional[float]:
+async def _calc_pop_growth(
+    zip_code: str, current_pop: Optional[int]
+) -> Optional[float]:
     """Compare current ACS population to prior year for growth rate."""
     if not current_pop:
         return None

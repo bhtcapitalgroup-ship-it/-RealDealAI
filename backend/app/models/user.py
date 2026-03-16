@@ -30,9 +30,7 @@ class User(TimestampMixin, Base):
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
     full_name: Mapped[str] = mapped_column(String(255), nullable=False)
     company_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    stripe_account_id: Mapped[Optional[str]] = mapped_column(
-        String(255), nullable=True
-    )
+    stripe_account_id: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     plan_tier: Mapped[PlanTier] = mapped_column(
         Enum(PlanTier, name="plan_tier"),
         default=PlanTier.STARTER,
@@ -51,13 +49,22 @@ class User(TimestampMixin, Base):
 
     # Relationships
     properties: Mapped[List["Property"]] = relationship(
-        "Property", back_populates="landlord", cascade="all, delete-orphan", lazy="selectin"
+        "Property",
+        back_populates="landlord",
+        cascade="all, delete-orphan",
+        lazy="selectin",
     )
     tenants: Mapped[List["Tenant"]] = relationship(
-        "Tenant", back_populates="landlord", cascade="all, delete-orphan", lazy="selectin"
+        "Tenant",
+        back_populates="landlord",
+        cascade="all, delete-orphan",
+        lazy="selectin",
     )
     saved_deals: Mapped[List["SavedDeal"]] = relationship(
-        "SavedDeal", back_populates="user", cascade="all, delete-orphan", lazy="selectin"
+        "SavedDeal",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        lazy="selectin",
     )
     alerts: Mapped[List["Alert"]] = relationship(
         "Alert", back_populates="user", cascade="all, delete-orphan", lazy="selectin"

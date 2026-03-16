@@ -17,12 +17,8 @@ class MarketData(TimestampMixin, Base):
     state: Mapped[str] = mapped_column(String(2), nullable=False, index=True)
     metro_area: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
 
-    median_price: Mapped[Optional[float]] = mapped_column(
-        Numeric(14, 2), nullable=True
-    )
-    median_rent: Mapped[Optional[float]] = mapped_column(
-        Numeric(10, 2), nullable=True
-    )
+    median_price: Mapped[Optional[float]] = mapped_column(Numeric(14, 2), nullable=True)
+    median_rent: Mapped[Optional[float]] = mapped_column(Numeric(10, 2), nullable=True)
     price_growth_yoy: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     rent_growth_yoy: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     inventory_count: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
@@ -40,9 +36,7 @@ class MarketData(TimestampMixin, Base):
     migration_inflow: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     migration_outflow: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
 
-    snapshot_date: Mapped[date] = mapped_column(
-        Date, nullable=False, index=True
-    )
+    snapshot_date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
 
     def __repr__(self) -> str:
         return f"<MarketData {self.zip_code} {self.snapshot_date}>"

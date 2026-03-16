@@ -44,13 +44,10 @@ async def market_heatmap(
         .subquery()
     )
 
-    stmt = (
-        select(MarketData)
-        .join(
-            latest_sq,
-            (MarketData.zip_code == latest_sq.c.zip_code)
-            & (MarketData.snapshot_date == latest_sq.c.max_date),
-        )
+    stmt = select(MarketData).join(
+        latest_sq,
+        (MarketData.zip_code == latest_sq.c.zip_code)
+        & (MarketData.snapshot_date == latest_sq.c.max_date),
     )
 
     if state:
@@ -182,13 +179,10 @@ async def compare_markets(
         .subquery()
     )
 
-    stmt = (
-        select(MarketData)
-        .join(
-            latest_sq,
-            (MarketData.zip_code == latest_sq.c.zip_code)
-            & (MarketData.snapshot_date == latest_sq.c.max_date),
-        )
+    stmt = select(MarketData).join(
+        latest_sq,
+        (MarketData.zip_code == latest_sq.c.zip_code)
+        & (MarketData.snapshot_date == latest_sq.c.max_date),
     )
 
     result = await db.execute(stmt)
@@ -256,8 +250,7 @@ async def get_market_trends(
         )
 
     data_points = [
-        TrendPoint(date=r.snapshot_date, value=float(getattr(r, metric)))
-        for r in rows
+        TrendPoint(date=r.snapshot_date, value=float(getattr(r, metric))) for r in rows
     ]
 
     return MarketTrendResponse(
