@@ -1,0 +1,18 @@
+# Don't copy these into Docker image
+.git
+.github
+.env
+.env.*
+!.env.example
+*.db
+*.sqlite3
+__pycache__
+.pytest_cache
+node_modules
+frontend
+docs
+infra
+src
+.DS_Store
+*.md
+!backend/requirements.txt

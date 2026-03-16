@@ -22,7 +22,7 @@ primary_region = "iad"
     soft_limit = 200
 
 [[vm]]
-  memory = "512mb"
+  memory = "1gb"
   cpu_kind = "shared"
   cpus = 1
 
@@ -32,4 +32,5 @@ primary_region = "iad"
     port = 8000
     path = "/health"
     interval = "30s"
-    timeout = "5s"
+    timeout = "10s"
+    grace_period = "30s"
