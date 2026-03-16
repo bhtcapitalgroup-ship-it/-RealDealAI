@@ -33,6 +33,21 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str = "postgresql+asyncpg://realdeal:realdeal@localhost:5432/realdeal"
 
+    @property
+    def async_database_url(self) -> str:
+        """Convert DATABASE_URL to asyncpg format for SQLAlchemy async."""
+        url = self.DATABASE_URL
+        if url.startswith("postgres://"):
+            url = url.replace("postgres://", "postgresql+asyncpg://", 1)
+        elif url.startswith("postgresql://"):
+            url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        # Strip sslmode param (asyncpg doesn't support it in URL)
+        if "?sslmode=" in url:
+            url = url.split("?sslmode=")[0]
+        elif "&sslmode=" in url:
+            url = url.replace("&sslmode=disable", "").replace("&sslmode=require", "")
+        return url
+
     # Redis
     REDIS_URL: str = "redis://localhost:6379/0"
 
