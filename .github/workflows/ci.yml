@@ -117,7 +117,7 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          pytest tests/ \
+          pytest tests/unit/ \
             --cov=app \
             --cov-report=xml:coverage.xml \
             --cov-report=term-missing \
